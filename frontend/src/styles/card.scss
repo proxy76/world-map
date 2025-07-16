@@ -1,18 +1,59 @@
+@import './variables.scss';
+
 .card {
     margin: 1rem;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: 'Poppins', sans-serif;
-    max-width: 300px;
+    max-width: 320px;
     text-align: center;
     position: relative;
+    overflow: hidden;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #66ea9b, #208291, #4facfe);
+        opacity: 0.8;
+    }
+
+    &:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.15),
+            0 8px 16px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        border-color: rgba(255, 255, 255, 0.5);
+        
+        &::before {
+            opacity: 1;
+            height: 4px;
+        }
+        
+        img {
+            transform: scale(1.05);
+        }
+    }
 
     img {
-        height: auto;
-        border-radius: 8px;
-        margin-bottom: 1rem;
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .btns {
@@ -20,77 +61,148 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        gap: 5%;
-        font-size: 15px;
+        gap: 12px;
+        font-size: 14px;
         position: absolute;
-        bottom: 5px;
-        width: 85%;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+
+        .remove, .review {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            max-width: 120px;
+            border: none;
+            font-size: 13px;
+            position: relative;
+            overflow: hidden;
+            
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                transition: left 0.5s ease;
+            }
+            
+            &:hover::before {
+                left: 100%;
+            }
+        }
 
         .remove {
-            background-color: red;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             color: #fff;
-            border-radius: 3px;
-            width: 30%;
-            font-weight: bold;
-            text-shadow:
-              0 0 5px #fff,
-              0 0 10px #ff5050,
-              0 0 20px #ff0000;
-            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+                background: linear-gradient(135deg, #ff5252, #e53935);
+            }
+            
+            &:active {
+                transform: translateY(0);
+            }
         }
 
         .review {
-            background-color: rgb(105, 255, 36);
+            background: linear-gradient(135deg, #66ea9b, #4facfe);
             color: #fff;
-            border-radius: 3px;
-            width: 30%;
-            font-weight: bold;
-            text-shadow:
-              0 0 5px #fff,
-              0 0 10px #68ff66,
-              0 0 20px #00ff15;
-            cursor: pointer;
-        }
-    }
-
-    .name, .currencies, .capital, .languages, .population, .continent {
-        margin-bottom: 1rem;
-
-        p {
-            margin: 0.2rem 0;
-            font-size: 14px;
-            color: #555;
-
-            &:first-child {
-                font-weight: bold;
-                color: #333;
+            box-shadow: 0 4px 12px rgba(102, 234, 155, 0.3);
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 234, 155, 0.4);
+                background: linear-gradient(135deg, #4facfe, #208291);
+            }
+            
+            &:active {
+                transform: translateY(0);
             }
         }
     }
 
-    .name p:first-child {
-        font-size: 16px;
-        text-transform: uppercase;
-        color: #4caf50;
+    .name, .currencies, .capital, .languages, .population, .continent {
+        margin-bottom: 1.2rem;
+        padding: 8px 12px;
+        background: rgba(248, 250, 252, 0.6);
+        border-radius: 8px;
+        border-left: 3px solid transparent;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(248, 250, 252, 0.9);
+            border-left-color: #66ea9b;
+            transform: translateX(2px);
+        }
+
+        p {
+            margin: 0.3rem 0;
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.4;
+
+            &:first-child {
+                font-weight: 700;
+                color: #1e293b;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.5rem;
+            }
+            
+            &:last-child {
+                font-weight: 500;
+                color: #475569;
+            }
+        }
     }
 
-    .currencies p:first-child,
-    .capital p:first-child,
-    .languages p:first-child,
-    .population p:first-child,
-    .continent p:first-child {
-        font-size: 14px;
-        text-transform: uppercase;
-        color: #4caf50;
+    .name {
+        background: linear-gradient(135deg, rgba(102, 234, 155, 0.1), rgba(79, 172, 254, 0.1));
+        border-left-color: #66ea9b;
+        
+        p:first-child {
+            color: #208291;
+            font-size: 15px;
+        }
+        
+        p:last-child {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+    }
+
+    .currencies, .capital, .languages, .population, .continent {
+        p:first-child {
+            color: #64748b;
+        }
+    }
+    
+    .continent {
+        margin-bottom: 2rem; // Extra spacing before buttons
     }
 }
 
 .cardContainer {
-    padding: 1.5rem;
+    padding: 2rem;
     width: 100%;
-    min-height: 350px;
+    min-height: 420px;
     position: relative;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 @media (max-width: 800px) {
@@ -100,20 +212,59 @@
     .map {
         min-height:100%;
     }
-  .card {
-    margin: 0.5rem auto !important;
-    max-width: 96vw !important;
-    min-width: 0 !important;
-    font-size: 13px !important;
-    box-sizing: border-box !important;
-    position: static !important;
-  }
-  .cardContainer {
-    padding: 0.7rem;
-    min-height: 0;
-    height: auto;
-  }
+    .card {
+        margin: 0.8rem auto !important;
+        max-width: 96vw !important;
+        min-width: 0 !important;
+        font-size: 13px !important;
+        box-sizing: border-box !important;
+        position: static !important;
+        
+        .btns {
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            transform: none !important;
+            width: 100% !important;
+            margin-top: 1rem !important;
+            gap: 8px !important;
+            
+            .remove, .review {
+                font-size: 12px !important;
+                padding: 10px 16px !important;
+            }
+        }
+    }
+    .cardContainer {
+        padding: 1.2rem;
+        min-height: 0;
+        height: auto;
+        gap: 0.3rem;
+    }
+    
+    .card img {
+        height: 140px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .name, .currencies, .capital, .languages, .population, .continent {
+        margin-bottom: 0.8rem !important;
+        padding: 6px 10px !important;
+        
+        p {
+            font-size: 13px !important;
+            
+            &:first-child {
+                font-size: 12px !important;
+            }
+        }
+    }
+    
+    .name p:last-child {
+        font-size: 16px !important;
+    }
 }
+
 @media (min-width: 800px) {
     .card img {
         width: 100%;

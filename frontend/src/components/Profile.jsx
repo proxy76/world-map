@@ -89,17 +89,29 @@ const ProfilePage = ({ isLogged }) => {
   return (
     <>
       <GlobalHeader isLogged={isLogged} />
-      <div style={styles.container}>
-        {/* Enhanced Background Elements */}
-        <div style={styles.backgroundElements}>
-          <div style={{...styles.floatingElement, ...styles.circle1}}></div>
-          <div style={{...styles.floatingElement, ...styles.circle2}}></div>
-          <div style={{...styles.floatingElement, ...styles.circle3}}></div>
-          <div style={{...styles.floatingElement, ...styles.square1}}></div>
-          <div style={{...styles.floatingElement, ...styles.square2}}></div>
-          <div style={{...styles.floatingElement, ...styles.triangle1}}></div>
-          <div style={{...styles.floatingElement, ...styles.triangle2}}></div>
-        </div>
+      <div 
+        style={styles.container} 
+        className="profile-container"
+        onMouseMove={(e) => {
+          const container = e.currentTarget;
+          const rect = container.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          
+          container.style.setProperty('--mouse-x', `${x}%`);
+          container.style.setProperty('--mouse-y', `${y}%`);
+          container.classList.add('mouse-active');
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.classList.remove('mouse-active');
+        }}
+      >
+        {/* Floating decorative elements matching Journal/Bucketlist */}
+        <div style={styles.floatingDecorationExtra}></div>
+        <div style={styles.floatingDecoration1}></div>
+        <div style={styles.floatingDecoration2}></div>
+        <div style={styles.floatingDecoration3}></div>
+        <div style={styles.floatingDecorationAfter}></div>
         
         {/* Enhanced Card */}
         <div style={{
@@ -118,8 +130,8 @@ const ProfilePage = ({ isLogged }) => {
               style={{
                 ...styles.toggleBtn,
                 background: lang === "ro"
-                  ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                  : "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                  ? "linear-gradient(135deg, #0be044 0%, #0777d9 100%)"
+                  : "linear-gradient(135deg, #0777d9 0%, #0be044 100%)",
                 color: "#fff",
                 transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(-20px) scale(0.8)',
                 opacity: isVisible ? 1 : 0,
@@ -267,16 +279,53 @@ const ProfilePage = ({ isLogged }) => {
       
       {/* Enhanced CSS Animations */}
       <style jsx>{`
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-15px) rotate(120deg); }
-          66% { transform: translateY(-5px) rotate(240deg); }
+          33% { transform: translateY(-10px) rotate(1deg); }
+          66% { transform: translateY(-5px) rotate(-1deg); }
         }
         
         @keyframes floatReverse {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(10px) rotate(-120deg); }
-          66% { transform: translateY(-20px) rotate(-240deg); }
+          33% { transform: translateY(10px) rotate(-1deg); }
+          66% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        .profile-container::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(
+            circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.35) 0%,
+            rgba(255, 255, 255, 0.25) 20%,
+            rgba(255, 255, 255, 0.15) 40%,
+            rgba(255, 255, 255, 0.08) 60%,
+            transparent 80%
+          );
+          pointer-events: none;
+          z-index: 1;
+          transition: opacity 0.2s ease;
+          opacity: 0;
+        }
+        
+        .profile-container.mouse-active::before {
+          opacity: 1;
         }
         
         @keyframes rotate {
@@ -290,8 +339,8 @@ const ProfilePage = ({ isLogged }) => {
         }
         
         @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-          50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 0 60px rgba(102, 126, 234, 0.2); }
+          0%, 100% { box-shadow: 0 0 20px rgba(2, 247, 27, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(2, 161, 20, 0.6), 0 0 60px rgba(2, 161, 20, 0.2); }
         }
         
         @keyframes shimmer {
@@ -320,7 +369,7 @@ const AnimatedStatItem = ({ number, label, isVisible, color }) => {
           ? `linear-gradient(135deg, ${color}15, ${color}25)` 
           : 'rgba(255, 255, 255, 0.1)',
         borderColor: isHovered ? color : 'transparent',
-        transform: isVisible ? (isHovered ? 'translateY(-8px) scale(1.05)' : 'scale(1)') : 'scale(0.8)',
+        // transform: isVisible ? (isHovered ? 'translateY(-8px) scale(1.05)' : 'scale(1)') : 'scale(0.8)',
         opacity: isVisible ? 1 : 0,
         transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
@@ -389,7 +438,7 @@ const EnhancedButton = ({ label, onClick, disabled = false, isVisible, variant =
     if (isHovered) {
       return { 
         ...baseStyle, 
-        transform: 'translateY(-4px) scale(1.02)',
+        // transform: 'translateY(-4px) scale(1.02)',
         boxShadow: baseStyle.boxShadow.replace('0.3', '0.5')
       };
     }
@@ -428,88 +477,76 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'flex-start',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+    background: 'linear-gradient(-45deg, #66ea9b, #208291, #4facfe, #66ea9b, #208291, #4facfe)',
+    backgroundSize: '400% 400%',
+    animation: 'gradientShift 15s ease infinite',
     paddingTop: '50px',
     position: 'relative',
     overflow: 'hidden',
   },
-  backgroundElements: {
+  // Floating decorations matching Journal/Bucketlist
+  floatingDecorationExtra: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
+    top: '10%',
+    left: '10%',
+    width: '60px',
+    height: '60px',
+    background: 'rgba(255, 255, 255, 0.12)',
+    borderRadius: '50%',
+    animation: 'float 6s ease-in-out infinite',
     zIndex: 0,
     pointerEvents: 'none',
   },
-  floatingElement: {
+  floatingDecoration1: {
     position: 'absolute',
-    opacity: 0.15,
-  },
-  circle1: {
-    width: '100px',
-    height: '100px',
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-    borderRadius: '50%',
-    top: '10%',
-    left: '10%',
-    animation: 'float 8s ease-in-out infinite',
-  },
-  circle2: {
+    top: '30%',
+    right: '20%',
     width: '80px',
     height: '80px',
-    background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+    background: 'rgba(255, 255, 255, 0.08)',
     borderRadius: '50%',
+    animation: 'float 7s ease-in-out infinite',
+    animationDelay: '-2s',
+    zIndex: 0,
+    pointerEvents: 'none',
+  },
+  floatingDecoration2: {
+    position: 'absolute',
     top: '60%',
-    right: '15%',
-    animation: 'floatReverse 10s ease-in-out infinite',
-  },
-  circle3: {
-    width: '120px',
-    height: '120px',
-    background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+    left: '5%',
+    width: '50px',
+    height: '50px',
+    background: 'rgba(255, 255, 255, 0.08)',
     borderRadius: '50%',
-    bottom: '15%',
-    left: '8%',
-    animation: 'float 12s ease-in-out infinite',
+    animation: 'float 7s ease-in-out infinite',
+    animationDelay: '-4s',
+    zIndex: 0,
+    pointerEvents: 'none',
   },
-  square1: {
-    width: '60px',
-    height: '60px',
-    background: 'linear-gradient(135deg, #fa709a, #fee140)',
-    borderRadius: '15px',
-    top: '25%',
-    right: '8%',
-    animation: 'rotate 15s linear infinite',
+  floatingDecoration3: {
+    position: 'absolute',
+    top: '20%',
+    left: '60%',
+    width: '30px',
+    height: '30px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: '50%',
+    animation: 'float 7s ease-in-out infinite',
+    animationDelay: '-6s',
+    zIndex: 0,
+    pointerEvents: 'none',
   },
-  square2: {
+  floatingDecorationAfter: {
+    position: 'absolute',
+    top: '70%',
+    right: '15%',
     width: '40px',
     height: '40px',
-    background: 'linear-gradient(135deg, #a8edea, #fed6e3)',
-    borderRadius: '10px',
-    top: '45%',
-    left: '5%',
-    animation: 'rotate 18s linear infinite reverse',
-  },
-  triangle1: {
-    width: '0',
-    height: '0',
-    borderLeft: '25px solid transparent',
-    borderRight: '25px solid transparent',
-    borderBottom: '45px solid rgba(102, 126, 234, 0.3)',
-    top: '70%',
-    right: '5%',
-    animation: 'bounce 6s ease-in-out infinite',
-  },
-  triangle2: {
-    width: '0',
-    height: '0',
-    borderLeft: '20px solid transparent',
-    borderRight: '20px solid transparent',
-    borderBottom: '35px solid rgba(240, 147, 251, 0.3)',
-    top: '15%',
-    right: '25%',
-    animation: 'bounce 8s ease-in-out infinite reverse',
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '50%',
+    animation: 'floatReverse 8s ease-in-out infinite',
+    zIndex: 0,
+    pointerEvents: 'none',
   },
   card: {
     background: 'rgba(255, 255, 255, 0.1)',
@@ -564,7 +601,7 @@ const styles = {
     width: '156px',
     height: '156px',
     borderRadius: '50%',
-    border: '3px solid rgba(102, 126, 234, 0.5)',
+    border: '3px solid rgba(2, 247, 27, 0.5)',
     animation: 'pulse 3s infinite',
     zIndex: 2,
   },
@@ -575,7 +612,7 @@ const styles = {
     width: '170px',
     height: '170px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(2, 247, 27, 0.3) 0%, transparent 70%)',
     animation: 'glow 4s ease-in-out infinite',
     zIndex: 1,
   },
@@ -740,7 +777,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+    // boxShadow: '0 0 12px rgba(0, 0, 0, 0.2)',
     backdropFilter: 'blur(10px)',
     transition: 'all 0.3s ease',
   },
