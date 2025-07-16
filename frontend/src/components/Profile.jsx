@@ -9,6 +9,20 @@ import GlobalHeader from './GlobalHeader';
 import { FaWindows } from 'react-icons/fa';
 import ErrorPage from './ErrorPage';
 
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+`;
+if (!document.head.querySelector('style[data-profile-animations]')) {
+  style.setAttribute('data-profile-animations', 'true');
+  document.head.appendChild(style);
+}
+
 const ProfilePage = ({ isLogged }) => {
   const { lang, setLang } = useLanguage();
   const [profileInfo, setProfileInfo] = useState({});
@@ -127,15 +141,53 @@ const ProfilePage = ({ isLogged }) => {
           <div style={{ display: "flex", justifyContent: "flex-end", width: "100%", position: 'relative', zIndex: 10 }}>
             <button
               onClick={toggleLang}
+              onFocus={(e) => e.target.blur()}
               style={{
                 ...styles.toggleBtn,
                 background: lang === "ro"
-                  ? "linear-gradient(135deg, #0be044 0%, #0777d9 100%)"
-                  : "linear-gradient(135deg, #0777d9 0%, #0be044 100%)",
+                  ? "linear-gradient(135deg, #66ea9b 0%, #208291 100%)"
+                  : "linear-gradient(135deg, #208291 0%, #66ea9b 100%)",
                 color: "#fff",
                 transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(-20px) scale(0.8)',
                 opacity: isVisible ? 1 : 0,
-                transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s'
+                transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                MozUserSelect: 'none',
+                msUserSelect: 'none',
+                WebkitTouchCallout: 'none',
+                WebkitTapHighlightColor: 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = lang === "ro"
+                  ? "linear-gradient(135deg, #4facfe 0%, #66ea9b 50%, #208291 100%)"
+                  : "linear-gradient(135deg, #208291 0%, #66ea9b 50%, #4facfe 100%)";
+                e.target.style.backgroundSize = "200% 200%";
+                e.target.style.animation = "gradientShift 2s ease infinite";
+                e.target.style.transition = "background 0.3s ease, background-size 0.3s ease";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = lang === "ro"
+                  ? "linear-gradient(135deg, #66ea9b 0%, #208291 100%)"
+                  : "linear-gradient(135deg, #208291 0%, #66ea9b 100%)";
+                e.target.style.backgroundSize = "100% 100%";
+                e.target.style.animation = "none";
+                e.target.style.transition = "background 0.3s ease, background-size 0.3s ease";
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.target.style.background = lang === "ro"
+                  ? "linear-gradient(135deg, #208291 0%, #66ea9b 100%)"
+                  : "linear-gradient(135deg, #66ea9b 0%, #208291 100%)";
+                e.target.style.animation = "none";
+                e.target.style.transition = "background 0.15s ease";
+              }}
+              onMouseUp={(e) => {
+                e.target.style.background = lang === "ro"
+                  ? "linear-gradient(135deg, #4facfe 0%, #66ea9b 50%, #208291 100%)"
+                  : "linear-gradient(135deg, #208291 0%, #66ea9b 50%, #4facfe 100%)";
+                e.target.style.animation = "gradientShift 2s ease infinite";
+                e.target.style.transition = "background 0.3s ease";
               }}
             >
               <span style={{
@@ -334,8 +386,14 @@ const ProfilePage = ({ isLogged }) => {
         }
         
         @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.05); opacity: 1; }
+          0%, 100% { 
+            transform: scale(1); 
+            opacity: 0.6; 
+          }
+          50% { 
+            transform: scale(1.05); 
+            opacity: 0.9; 
+          }
         }
         
         @keyframes glow {
@@ -578,48 +636,64 @@ const styles = {
     position: 'relative',
     marginBottom: '30px',
     zIndex: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profilePictureWrapper: {
     position: 'relative',
-    display: 'inline-block',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '8px',
+    background: 'linear-gradient(135deg, #66ea9b, #208291, #4facfe, #66ea9b)',
+    borderRadius: '50%',
+    backgroundSize: '400% 400%',
+    animation: 'gradientShift 6s ease infinite',
+    width: '156px',
+    height: '156px',
   },
   profilePicture: {
     width: '140px',
     height: '140px',
     borderRadius: '50%',
     objectFit: 'cover',
-    border: '4px solid rgba(255, 255, 255, 0.3)',
+    border: '4px solid rgba(255, 255, 255, 0.9)',
     position: 'relative',
     zIndex: 3,
     cursor: 'pointer',
     transition: 'all 0.3s ease',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.2)',
   },
   profileRing: {
     position: 'absolute',
-    top: '-8px',
-    left: '-8px',
-    width: '156px',
-    height: '156px',
+    top: '50%',
+    left: '50%',
+    width: '180px',
+    height: '180px',
+    transform: 'translate(-50%, -50%)',
     borderRadius: '50%',
-    border: '3px solid rgba(2, 247, 27, 0.5)',
-    animation: 'pulse 3s infinite',
-    zIndex: 2,
+    border: '2px solid rgba(102, 234, 155, 0.4)',
+    animation: 'rotate 20s linear infinite',
+    zIndex: 1,
+    background: 'conic-gradient(from 0deg, transparent, rgba(102, 234, 155, 0.3), transparent)',
   },
   profileGlow: {
     position: 'absolute',
-    top: '-15px',
-    left: '-15px',
-    width: '170px',
-    height: '170px',
+    top: '50%',
+    left: '50%',
+    width: '196px',
+    height: '196px',
+    transform: 'translate(-50%, -50%)',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(2, 247, 27, 0.3) 0%, transparent 70%)',
-    animation: 'glow 4s ease-in-out infinite',
-    zIndex: 1,
+    background: 'radial-gradient(circle, rgba(102, 234, 155, 0.2) 0%, rgba(32, 130, 145, 0.15) 40%, transparent 70%)',
+    animation: 'pulse 4s ease-in-out infinite',
+    zIndex: 0,
   },
   name: {
     fontSize: '28px',
     fontWeight: '700',
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    background: 'linear-gradient(135deg, #66ea9b, #208291)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
@@ -767,8 +841,8 @@ const styles = {
   },
   toggleBtn: {
     border: 'none',
-    borderRadius: '30px',
-    padding: '12px 24px',
+    borderRadius: '25px',
+    padding: '12px 20px',
     fontWeight: '600',
     fontSize: '14px',
     cursor: 'pointer',
@@ -776,16 +850,50 @@ const styles = {
     outline: 'none',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    // boxShadow: '0 0 12px rgba(0, 0, 0, 0.2)',
-    backdropFilter: 'blur(10px)',
-    transition: 'all 0.3s ease',
+    gap: '12px',
+    backdropFilter: 'blur(15px)',
+    transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+    position: 'relative',
+    overflow: 'hidden',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
+    msUserSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    '&:focus': {
+      outline: 'none',
+      boxShadow: 'none',
+    },
+    '&:active': {
+      outline: 'none',
+      boxShadow: 'none',
+    },
+    minWidth: '100px',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: '25px',
+      opacity: 0,
+      transition: 'opacity 0.3s ease',
+    },
+    '&:hover::before': {
+      opacity: 1,
+    },
+    '&:active': {
+      transform: 'scale(0.95)',
+    }
   },
   langSeparator: {
     width: '2px',
-    height: '16px',
-    background: 'rgba(255, 255, 255, 0.3)',
+    height: '18px',
+    background: 'rgba(255, 255, 255, 0.4)',
     borderRadius: '1px',
+    transition: 'all 0.3s ease',
   },
 };
 
