@@ -53,6 +53,7 @@ const ProfilePage = ({ isLogged }) => {
       .catch((error) => console.error('Failed to fetch profile info:', error));
   };
 
+  // Animarea numerelor din stats
   const animateNumbers = (data) => {
     const visitedTarget = data.countriesVisited?.length || 0;
     const wishlistTarget = data.countriesWishlist?.length || 0;
@@ -208,7 +209,14 @@ const ProfilePage = ({ isLogged }) => {
           
           {/* Enhanced Profile Picture */}
           <div style={styles.profilePictureContainer}>
-            <div style={styles.profilePictureWrapper}>
+            <div 
+              style={styles.profilePictureWrapper}
+              onMouseMove={(e) => e.stopPropagation()}
+              onMouseEnter={(e) => e.stopPropagation()}
+              onMouseLeave={(e) => e.stopPropagation()}
+              onWheel={(e) => e.preventDefault()}
+              onScroll={(e) => e.preventDefault()}
+            >
               <img
                 src={BACKEND_BASE_URL + profileInfo.profile_picture}
                 alt="Profile"
@@ -216,20 +224,30 @@ const ProfilePage = ({ isLogged }) => {
                   ...styles.profilePicture,
                   transform: isVisible ? 'scale(1)' : 'scale(0.6)',
                   opacity: isVisible ? 1 : 0,
-                  transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s'
+                  transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  MozUserSelect: 'none',
+                  msUserSelect: 'none',
+                  pointerEvents: 'none'
                 }}
                 onError={e => { e.target.onerror = null; e.target.src = pfp }}
+                onWheel={(e) => e.preventDefault()}
+                onScroll={(e) => e.preventDefault()}
+                draggable={false}
               />
               <div style={{
                 ...styles.profileRing,
                 transform: isVisible ? 'scale(1) rotate(0deg)' : 'scale(0.6) rotate(-180deg)',
                 opacity: isVisible ? 1 : 0,
-                transition: 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s'
+                transition: 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s',
+                pointerEvents: 'none'
               }}></div>
               <div style={{
                 ...styles.profileGlow,
                 opacity: isVisible ? 1 : 0,
-                transition: 'all 1.5s ease 0.5s'
+                transition: 'all 1.5s ease 0.5s',
+                pointerEvents: 'none'
               }}></div>
             </div>
           </div>
@@ -538,7 +556,7 @@ const styles = {
     background: 'linear-gradient(-45deg, #66ea9b, #208291, #4facfe, #66ea9b, #208291, #4facfe)',
     backgroundSize: '400% 400%',
     animation: 'gradientShift 15s ease infinite',
-    paddingTop: '50px',
+    paddingTop: '80px', // Account for fixed transparent header
     position: 'relative',
     overflow: 'hidden',
   },
@@ -639,6 +657,8 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+    pointerEvents: 'none',
   },
   profilePictureWrapper: {
     position: 'relative',
@@ -652,6 +672,8 @@ const styles = {
     animation: 'gradientShift 6s ease infinite',
     width: '156px',
     height: '156px',
+    overflow: 'hidden',
+    pointerEvents: 'none',
   },
   profilePicture: {
     width: '140px',
@@ -664,6 +686,12 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.2)',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
+    msUserSelect: 'none',
+    WebkitUserDrag: 'none',
+    pointerEvents: 'none',
   },
   profileRing: {
     position: 'absolute',
