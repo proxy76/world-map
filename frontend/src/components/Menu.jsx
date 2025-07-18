@@ -1,70 +1,49 @@
 import { ADD_WISHLIST_ENDPOINT_URL, ADD_JOURNAL_ENDPOINT_URL } from "../utils/ApiHost";
 import axios from "axios";
 import { useState } from "react";
-import Card from "./Card"; // Import the Card component
+import { Link } from "react-router-dom";
+import Card from "./Card";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../utils/translations";
 
-export default function Menu({ setMenuOpen, menuOpen, country, isLogged }) {
-    const [cardOpened, setCardOpened] = useState(false);
-    const toggleCard = () => {
-        setCardOpened(!cardOpened);
-    };
-    const toggleMenu = () => {
-        setMenuOpen(false);
-    }
-    console.log(isLogged)
-    const add_wishlist = (e) => {
-        axios.post(ADD_WISHLIST_ENDPOINT_URL, {
-            country: country,
-        }, {
-            withCredentials: true,
-        })
-            .then((response) => {
-                console.log(response.status);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+export default function Menu({ setMenuOpen, menuOpen, country, countryCode, isLogged }) {
+  const [cardOpened, setCardOpened] = useState(false);
+  const { lang } = useLanguage();
 
-    const add_journal = (e) => {
-        axios.post(ADD_JOURNAL_ENDPOINT_URL, {
-            country: country,
-        }, {
-            withCredentials: true,
-        })
-            .then((response) => {
-                console.log(response.status);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-    return (
+  const toggleCard = () => setCardOpened(!cardOpened);
+  const toggleMenu = () => setMenuOpen(false);
 
-        <div className="menus">
-            {menuOpen && (
-            <div className="backgroundMenu">
-                <div className="countryMenu">
-                    <h1>{country}</h1>
-                    {isLogged ? (
-                    <>
-                        <button onClick={(e) => add_wishlist(e)}>Add to Bucketlist</button>
-                        <button onClick={(e) => add_journal(e)}>Add to Travel Journal</button>
-                    </>
-                    )
-                    : (
-                    <p>You have to login in order to add to journal or bucketlist.</p>
-                    )}
-                    <button onClick={toggleCard}>Show Country Card</button>
-                    <button onClick={toggleMenu}>Close Menu</button>
-                </div>
+  const add_wishlist = () => {
+    axios.post(ADD_WISHLIST_ENDPOINT_URL, { country }, { withCredentials: true });
+  };
 
-                {cardOpened && (
-                    <Card name={country} />
-                )}
-            </div>
+  const add_journal = () => {
+    axios.post(ADD_JOURNAL_ENDPOINT_URL, { country }, { withCredentials: true });
+  };
+
+  return (
+    <div className="menus">
+      {menuOpen && (
+        <div className="backgroundMenu">
+          <div className="countryMenu">
+            <h1>{country}</h1>
+            {isLogged ? (
+              <>
+                <button onClick={add_wishlist}>{translations[lang].add} {translations[lang].bucketlist}</button>
+                <button onClick={add_journal}>{translations[lang].add} {translations[lang].travelJournal}</button>
+              </>
+            ) : (
+              <p>{translations[lang].unloggedMessage}.</p>
             )}
+            <Link to={`/country/${countryCode}`}>
+              <button onClick={toggleMenu}>{translations[lang].countryPage}</button>
+            </Link>
+            <button onClick={toggleCard}>{translations[lang].showCard}</button>
+            <button onClick={toggleMenu}>{translations[lang].close}</button>
+          </div>
+          {cardOpened && <Card name={country} />}
+        </div>
+      )}
     </div>
-    );
-    
+  );
 }

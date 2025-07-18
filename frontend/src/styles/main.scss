@@ -4,7 +4,6 @@
 @import "landingPage.scss";
 @import "errorPage.scss";
 @import "reviewModal.scss";
-
 * {
     box-sizing: border-box;
     padding: 0;
@@ -47,16 +46,10 @@ path {
 .menus {
 
     height: auto;
-    position: fixed;
-
 
     .backgroundMenu {
         z-index: 1;
         width: auto;
-        height: 1000px;
-        position: fixed;
-        left: 1rem;
-        top: 1rem;
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
@@ -212,4 +205,34 @@ path {
     .mainMap {
         z-index:999;
     }
+}
+
+@media (min-width: 800px) {
+    .menus { 
+        position: fixed;
+        .backgroundMenu {
+            height: 1000px;
+            position: fixed;
+            left: 1rem;
+            top: 1rem;
+    }
+    }
+}
+
+@media (max-width: 800px) {
+    .menus, .backgroundMenu {
+        overflow: scroll;
+    }
+    .backgroundMenu {
+        flex-direction: column;
+
+        .countryMenu {
+            align-self:center;
+        }
+        .countryMenu, .card {
+            max-width: 95% !important;
+            min-width: 300px !important;
+        }
+    }
+
 }

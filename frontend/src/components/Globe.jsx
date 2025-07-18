@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../utils/translations";
 
 const preloadTexture = new THREE.TextureLoader().load('/earth3.png');
 
@@ -12,6 +14,7 @@ const Globe = () => {
     const rendererRef = useRef(null);
     const globeRef = useRef(null);
     const cameraRef = useRef(null);
+    const { lang } = useLanguage();
 
     useEffect(() => {
         const container = containerRef.current;
@@ -81,7 +84,7 @@ const Globe = () => {
             }}
         >
             <div className='globeText'>
-                Călătorește cu NOI!
+                {translations[lang].globeText}
             </div>
         </div>
     );

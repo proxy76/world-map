@@ -5,16 +5,30 @@ import { FaArrowAltCircleDown } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
 import axios from 'axios';
+import { useLocation } from "react-router-dom";
 
 import img1 from "../assets/img1.png";
 import img2 from "../assets/img2.png";
 
-export default function LandingPage({ isLogged, setIsLogged }) {
-    const [pfp, setPfp] = useState("");
+import pfp from '../assets/anonymous.png';
+import React from "react";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../utils/translations";
+
+export default function LandingPage({ profilePic, isLogged, setIsLogged }) {
     const headerRef = useRef(null);
     const [isOpened, setIsOpened] = useState(false);
     const dropdownRef = useRef(null);
-
+    const { lang } = useLanguage();
+    const location = useLocation();
+    useEffect(() => {
+        if (!location.search.includes("reloaded=1")) {
+            window.location.replace(location.pathname + "?reloaded=1");
+        } else {
+            // Ascunde parametru după reload
+            window.history.replaceState({}, "", location.pathname);
+        }
+    }, [location]);
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (e.target.className !== 'dropdownWrapper' && e.target.className !== 'profilePic') {
@@ -113,7 +127,7 @@ export default function LandingPage({ isLogged, setIsLogged }) {
             s.parentNode.insertBefore(v, s);
         })(document, 'script');
     }, []);
-//  ceva
+    //  ceva
     return (
         <div className="pageWrapper">
             <div className="headerWrapper">
@@ -135,8 +149,12 @@ export default function LandingPage({ isLogged, setIsLogged }) {
                             ref={dropdownRef} className="dropdownWrapper" >
                             <img
                                 className="profilePic"
-                                src="/anonymous.png"
+                                src={profilePic}
                                 alt=""
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = pfp
+                                }}
                             />
                             {
                                 isOpened && (
@@ -146,12 +164,12 @@ export default function LandingPage({ isLogged, setIsLogged }) {
                                                 <div className="dropdown">
                                                     <Link to='profile'>
                                                         <div className="dropdownItem">
-                                                            Profile
+                                                        {translations[lang].profile}
                                                         </div>
                                                     </Link>
 
                                                     <div onClick={(e) => handleLogout(e)} className="dropdownItem">
-                                                        Logout
+                                                        {translations[lang].logout}
                                                     </div>
 
                                                 </div>
@@ -159,13 +177,13 @@ export default function LandingPage({ isLogged, setIsLogged }) {
                                                 <div className="dropdown">
                                                     <Link to='login'>
                                                         <div className="dropdownItem">
-                                                            Login
+                                                        {translations[lang].login}
                                                         </div>
                                                     </Link>
 
                                                     <Link to='register'>
                                                         <div className="dropdownItem">
-                                                            Register
+                                                        {translations[lang].register}
                                                         </div>
                                                     </Link>
 
@@ -192,21 +210,20 @@ export default function LandingPage({ isLogged, setIsLogged }) {
 
             <div className="buttonWrapper">
                 <div className="txt">
-                    <h2>Travel. Experience. Find Yourself!</h2>
+                    <h2>{translations[lang].travelExperience}</h2>
                 </div>
                 <div className="btns btnsLanding">
-                    <Link to='map'><button>World Map</button></Link>
-                    <Link to='journal'><button>Travel Journal</button></Link>
-                    <Link to='bucketlist'><button>Bucketlist</button></Link>
+                    <Link to='map'><button>{translations[lang].worldMap}</button></Link>
+                    <Link to='journal'><button>{translations[lang].travelJournal}</button></Link>
+                    <Link to='bucketlist'><button>{translations[lang].bucketlist}</button></Link>
                 </div>
             </div>
-
             <div className="infoWrapper">
                 <div className="info1">
                     <a id="gen"></a>
                     <div className="text1">
-                        <h1>Alege unde vrei să călătorești</h1>
-                        <p>Cu noi, fiecare călătorie devine mai mult decât o amintire. Îți oferim un spațiu special unde poți să îți setezi obiective de călătorie, să notezi destinațiile deja explorate și să îți planifici următoarele aventuri. E ca un jurnal personalizat, dedicat pasiunii tale pentru descoperirea lumii – un loc unde fiecare țară vizitată capătă un sens mai profund și fiecare experiență se transformă într-o poveste de păstrat și rememorat.</p>
+                        <h1>{translations[lang].chooseWhere}</h1>
+                        <p>{translations[lang].chooseWhereDesc}</p>
                     </div>
                     <div className="img1">
                         <img src={img1} alt="" />
@@ -217,8 +234,8 @@ export default function LandingPage({ isLogged, setIsLogged }) {
                         <img src={img2} alt="" />
                     </div>
                     <div className="text2">
-                        <h1>Folosește-te de ce îți oferim</h1>
-                        <p>Pornește într-o aventură fără sfârșit cu harta noastră interactivă! La fiecare pas, vei descoperi informații fascinante despre țările în care ajungi, povești mai puțin știute și curiozități care îți vor îmbogăți călătoria. Marchează-ți destinațiile, scrie-ți amintirile și lasă fiecare loc vizitat să spună o parte din povestea ta.</p>
+                        <h1>{translations[lang].useWhatWeOffer}</h1>
+                        <p>{translations[lang].useWhatWeOfferDesc}</p>
                     </div>
                 </div>
             </div>

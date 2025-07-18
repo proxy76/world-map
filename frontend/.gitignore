@@ -23,3 +23,4 @@ db.sqlite3
 *.sln
 *.sw?
 frontend/public/bgvid.mp4
+backend/backend/media

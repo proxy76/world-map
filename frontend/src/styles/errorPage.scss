@@ -12,33 +12,65 @@
     }
     button {
         align-items: center;
-        background-color: #FFFFFF;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: .25rem;
-        box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(76,175,80,0.09);
         box-sizing: border-box;
-        color: rgba(0, 0, 0, 0.85);
+        color: #FFFFFF;
         cursor: pointer;
         display: inline-flex;
         font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 1rem;
+        font-weight: bold;
         justify-content: center;
         line-height: 1.25;
         margin: 10px;
         min-height: 3rem;
-        padding: calc(.5rem - 1px) calc(1rem - 1px);
+        padding: 0.7rem 1.5rem;
         position: relative;
         text-decoration: none;
-        transition: all 250ms;
+        transition: background 0.2s, transform 0.2s;
         user-select: none;
         -webkit-user-select: none;
         touch-action: manipulation;
         vertical-align: baseline;
         width: auto;
+    }
+
+    p {
+        color: #e53935;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .error-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    button:hover {
+        background: #388e3c;
+        transform: translateY(-2px) scale(1.04);
+    }
+
+    .back-btn {
+        margin-top: 2rem;
+        background: #FFFFFF;
         color: #4caf50;
-        text-decoration: none;
-        border-radius: 8px;
-        border: 1px solid #4caf50;
+        border: 2px solid #4caf50;
+        font-weight: bold;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        transition: background 0.2s, color 0.2s, border 0.2s, transform 0.2s;
+        box-shadow: none;
+    }
+
+    .back-btn:hover {
+        background: #4caf50;
+        color: #FFFFFF;
+        border: 2px solid #388e3c;
+        transform: translateY(-2px) scale(1.06);
     }
 }

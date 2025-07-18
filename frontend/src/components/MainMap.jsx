@@ -35,14 +35,16 @@ const DARKER_GREEN = "#3eb262";
 const MainMap = ({ isLogged }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryName, setCountryName] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleClick = useCallback((geo) => {
     setSelectedCountry(() => geo.id);
     setCountryName(() => geo.properties.name);
+    setCountryCode(() => geo.id); // geo.id is typically the ISO country code
     setMenuOpen(() => true);
   }, []);
-
+  
   return (
     <div
       className="mainMap"
@@ -59,6 +61,7 @@ const MainMap = ({ isLogged }) => {
             setMenuOpen={setMenuOpen}
             menuOpen={menuOpen}
             country={countryName}
+            countryCode={countryCode}
             isLogged={isLogged}
           />
         )}

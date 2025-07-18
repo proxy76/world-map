@@ -8,7 +8,7 @@ class User(AbstractUser):
     profile_picture = models.ImageField(
         upload_to='user_images/',
         default='user_images/anonymous.png'
-    )        
+    )   
     
     groups = models.ManyToManyField(
         'auth.Group',
@@ -45,13 +45,3 @@ class Review(models.Model):
             "review_text": self.review_text,  
             "created_at": self.created_at,
         }
-
-class Post(models.Model)Ș
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    country_name = models.CharField(max_length=255)
-    post_text = models.TextField()
-    images = models.Count
-
-class PostImages(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='user_images/')

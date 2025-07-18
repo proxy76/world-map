@@ -1,55 +1,56 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';  
-
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../utils/translations";
 import '../styles/Card.scss'; 
 
 const Card = ({ name }) => {
-    const [info, setInfo] = useState(null);  // Changed from [] to null to better handle async data
+    const { lang } = useLanguage();
+    const [info, setInfo] = useState(null);
 
     useEffect(() => {
-        if (name == "United States") name = 'usa';
-        if (name == "India") name = 'Republic of India';
-        if (name == "China") name = 'Zhonghua';
+        let countryName = name;
+        if (countryName === "United States") countryName = 'usa';
+        if (countryName === "India") countryName = 'Republic of India';
+        if (countryName === "China") countryName = 'Zhonghua';
         const getInfo = async () => {
             try {
-                const response = await axios.get(`https://restcountries.com/v3.1/name/${name}`);
-                // The API returns an array. We'll pick the first result.
+                const response = await axios.get(`https://restcountries.com/v3.1/name/${countryName}`);
                 setInfo(response.data[0]);
             } catch (error) {
                 console.error('Failed to fetch country info:', error);
             }
         };
-
-        if (name) getInfo();
+        if (countryName) getInfo();
     }, [name]);
 
-    if (!info) return <p>Loading...</p>;
+    if (!info) return <p>{translations[lang].loading}</p>;
 
     return (
         <div className='card'>
             <img src={info.flags.png} alt="" />
             <div className="name">
-                <p><b>Nume</b></p>
+                <p><b>{translations[lang].name}</b></p>
                 <p>{info.name.common}</p>
             </div>
             <div className="currencies">
-                <p><b>Monedă</b></p>
+                <p><b>{translations[lang].currency}</b></p>
                 <p>{Object.values(info.currencies)[0].name}</p>
             </div>
             <div className="capital">
-                <p><b>Capitală</b></p>
+                <p><b>{translations[lang].capital}</b></p>
                 <p>{info.capital?.[0]}</p>
             </div>
             <div className="languages">
-                <p><b>Limbă oficială</b></p>
+                <p><b>{translations[lang].officialLanguage}</b></p>
                 <p>{Object.values(info.languages)[0]}</p>
             </div>
             <div className="population">
-                <p><b>Populație</b></p>
+                <p><b>{translations[lang].population}</b></p>
                 <p>{info.population.toLocaleString()}</p>
             </div>
             <div className="continent">
-                <p><b>Continent</b></p>
+                <p><b>{translations[lang].continent}</b></p>
                 <p>{info.continents[0]}</p>
             </div>
         </div>

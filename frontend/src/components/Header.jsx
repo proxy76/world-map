@@ -7,12 +7,20 @@ import "../styles/header.scss";
 
 import axios from 'axios';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
+import { getProfileInfo } from '../utils/profileInfo.js';
+
+import pfp from '../assets/anonymous.png';
 
 const Header = ({isLogged}) => {
 
-    const [pfp, setPfp] = useState("");
     const headerRef = useRef(null);
     const [isOpened, setIsOpened] = useState(false);
+    const [profilePic, setProfilePic] = useState('')
+    
+      useEffect(() => {
+        getProfileInfo()
+          .then(data => setProfilePic(data.profilePic))
+      }, []);
 
     // Close dropdown when clicking outside
     const dropdownRef = useRef(null);
@@ -66,9 +74,12 @@ const Header = ({isLogged}) => {
                             ref={dropdownRef} className="dropdownWrapper" >
                             <img
                                 className="profilePic"
-                                src="/anonymous.png"
+                                src={profilePic}
                                 alt=""
-
+                                onError = {(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = pfp
+                                    }}
                             />
                             {
                                 isOpened && (
