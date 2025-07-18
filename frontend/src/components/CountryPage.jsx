@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useLanguage } from "../context/LanguageContext";
@@ -18,69 +18,135 @@ const CountryPage = ({ isLogged }) => {
     const [isMapModalOpen, setIsMapModalOpen] = useState(false);
     const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
     const [translatedData, setTranslatedData] = useState({});
+    const [isTranslating, setIsTranslating] = useState(false);
 
-    const translate = async (text) => {
-        if (!text || typeof text !== 'string') return text;
-        if (lang !== 'ro') return text;
-        
+    // Persist cache across renders
+    const translationCache = useRef(new Map());
+
+    const translateBatch = async (texts) => {
+        if (!texts || texts.length === 0) return [];
+        if (lang !== 'ro') return texts;
+
         try {
+            const uncachedTexts = texts.filter(text => !translationCache.current.has(text));
+            if (uncachedTexts.length === 0) {
+                return texts.map(text => translationCache.current.get(text) || text);
+            }
+
+            const combinedText = uncachedTexts.join(' ||| ');
             const res = await axios.get(
-                `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ro`
+                `https://api.mymemory.translated.net/get?q=${encodeURIComponent(combinedText)}&langpair=en|ro`
             );
-            return res.data.responseData.translatedText;
+
+            const translatedCombined = res.data.responseData.translatedText;
+            const translatedTexts = translatedCombined.split(' ||| ');
+
+            uncachedTexts.forEach((text, index) => {
+                if (translatedTexts[index]) {
+                    translationCache.current.set(text, translatedTexts[index]);
+                }
+            });
+
+            return texts.map(text => translationCache.current.get(text) || text);
         } catch (err) {
-            console.error('Translation error:', err);
-            return text;
+            console.error('Batch translation error:', err);
+            return texts;
         }
     };
 
     const translateCountryData = async (countryData) => {
         if (lang !== 'ro') return;
-        
+
+        setIsTranslating(true);
+
         try {
-            const translations = {};
-            
-            // Basic translations
+            const textsToTranslate = [];
+            const textKeys = [];
+
             if (countryData.name?.common) {
-                translations.commonName = await translate(countryData.name.common);
+                textsToTranslate.push(countryData.name.common);
+                textKeys.push('commonName');
             }
             if (countryData.name?.official) {
-                translations.officialName = await translate(countryData.name.official);
+                textsToTranslate.push(countryData.name.official);
+                textKeys.push('officialName');
             }
             if (countryData.capital?.[0]) {
-                translations.capital = await translate(countryData.capital[0]);
+                textsToTranslate.push(countryData.capital[0]);
+                textKeys.push('capital');
             }
             if (countryData.continents?.[0]) {
-                translations.continent = await translate(countryData.continents[0]);
+                textsToTranslate.push(countryData.continents[0]);
+                textKeys.push('continent');
             }
             if (countryData.region) {
-                translations.region = await translate(countryData.region);
+                textsToTranslate.push(countryData.region);
+                textKeys.push('region');
             }
             if (countryData.subregion) {
-                translations.subregion = await translate(countryData.subregion);
+                textsToTranslate.push(countryData.subregion);
+                textKeys.push('subregion');
             }
-            
-            // Languages
+
             if (countryData.languages) {
                 const languageValues = Object.values(countryData.languages);
-                const translatedLanguages = await Promise.all(
-                    languageValues.map(lang => translate(lang))
+                languageValues.forEach(lang => {
+                    textsToTranslate.push(lang);
+                    textKeys.push('language_' + lang);
+                });
+            }
+
+            if (countryData.currencies) {
+                const currencyNames = Object.values(countryData.currencies).map(curr => curr.name);
+                currencyNames.forEach(curr => {
+                    textsToTranslate.push(curr);
+                    textKeys.push('currency_' + curr);
+                });
+            }
+
+            const batchSize = 10;
+            const translatedResults = {};
+
+            for (let i = 0; i < textsToTranslate.length; i += batchSize) {
+                const batch = textsToTranslate.slice(i, i + batchSize);
+                const batchKeys = textKeys.slice(i, i + batchSize);
+                const translatedBatch = await translateBatch(batch);
+
+                batchKeys.forEach((key, index) => {
+                    translatedResults[key] = translatedBatch[index];
+                });
+            }
+
+            const translations = {
+                commonName: translatedResults.commonName,
+                officialName: translatedResults.officialName,
+                capital: translatedResults.capital,
+                continent: translatedResults.continent,
+                region: translatedResults.region,
+                subregion: translatedResults.subregion,
+            };
+
+            if (countryData.languages) {
+                const languageValues = Object.values(countryData.languages);
+                const translatedLanguages = languageValues.map(lang =>
+                    translatedResults['language_' + lang] || lang
                 );
                 translations.languages = translatedLanguages.join(', ');
             }
-            
-            // Currencies
+
             if (countryData.currencies) {
                 const currencyNames = Object.values(countryData.currencies).map(curr => curr.name);
-                const translatedCurrencies = await Promise.all(
-                    currencyNames.map(curr => translate(curr))
+                const translatedCurrencies = currencyNames.map(curr =>
+                    translatedResults['currency_' + curr] || curr
                 );
                 translations.currencies = translatedCurrencies.join(', ');
             }
-            
+
             setTranslatedData(translations);
         } catch (error) {
             console.error('Translation error:', error);
+        } finally {
+            setIsTranslating(false);
         }
     };
 
@@ -89,17 +155,15 @@ const CountryPage = ({ isLogged }) => {
             try {
                 setLoading(true);
                 setError(false);
-                
+
                 const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
                 const countryData = response.data[0];
                 setCountryInfo(countryData);
-                
-                // Translate data if needed
-                await translateCountryData(countryData);
+                setLoading(false); // ✅ allow immediate render
+                translateCountryData(countryData); // ✅ async translate after render
             } catch (error) {
                 console.error('Failed to fetch country info:', error);
                 setError(true);
-            } finally {
                 setLoading(false);
             }
         };
@@ -134,21 +198,24 @@ const CountryPage = ({ isLogged }) => {
     return (
         <div className="country-page">
             <GlobalHeader isLogged={isLogged} />
-            
+
             <div className="country-content">
                 <div className="country-header">
-                    <img 
-                        src={countryInfo.flags.png} 
+                    <img
+                        src={countryInfo.flags.png}
                         alt={`${countryInfo.name.common} flag`}
                         className="country-flag"
                     />
                     <div className="country-title-section">
                         <h1 className="country-title">
                             {getDisplayValue(countryInfo.name.common, 'commonName')}
+                            {isTranslating && lang === 'ro' && (
+                                <span style={{ fontSize: '0.8rem', opacity: 0.6 }}> (translating...)</span>
+                            )}
                         </h1>
                         <div className="action-buttons">
                             {countryInfo.capital?.[0] && (
-                                <button 
+                                <button
                                     className="map-button"
                                     onClick={() => setIsMapModalOpen(true)}
                                     title={translations[lang]?.viewOnMap || 'View on Map'}
@@ -157,7 +224,7 @@ const CountryPage = ({ isLogged }) => {
                                 </button>
                             )}
                             {countryInfo.currencies && (
-                                <button 
+                                <button
                                     className="currency-button"
                                     onClick={() => setIsCurrencyModalOpen(true)}
                                     title={translations[lang]?.currencyConverter || 'Currency Converter'}
@@ -216,16 +283,16 @@ const CountryPage = ({ isLogged }) => {
                                 <strong>{translations[lang]?.currency || 'Currencies'}:</strong>
                                 <span>
                                     {getDisplayValue(
-                                        countryInfo.currencies ? Object.values(countryInfo.currencies).map(curr => curr.name).join(', ') : 'N/A',
+                                        countryInfo.currencies
+                                            ? Object.values(countryInfo.currencies).map(curr => curr.name).join(', ')
+                                            : 'N/A',
                                         'currencies'
                                     )}
                                 </span>
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.timezone || 'Timezones'}:</strong>
-                                <span>
-                                    {countryInfo.timezones ? countryInfo.timezones.join(', ') : 'N/A'}
-                                </span>
+                                <span>{countryInfo.timezones ? countryInfo.timezones.join(', ') : 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -242,19 +309,17 @@ const CountryPage = ({ isLogged }) => {
                             <div className="detail-item">
                                 <strong>{translations[lang]?.borders || 'Borders'}:</strong>
                                 <span>
-                                    {countryInfo.borders 
+                                    {countryInfo.borders
                                         ? countryInfo.borders.join(', ')
-                                        : translations[lang]?.none || 'None'
-                                    }
+                                        : translations[lang]?.none || 'None'}
                                 </span>
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.landlocked || 'Landlocked'}:</strong>
                                 <span>
-                                    {countryInfo.landlocked 
+                                    {countryInfo.landlocked
                                         ? translations[lang]?.yes || 'Yes'
-                                        : translations[lang]?.no || 'No'
-                                    }
+                                        : translations[lang]?.no || 'No'}
                                 </span>
                             </div>
                         </div>
@@ -263,8 +328,8 @@ const CountryPage = ({ isLogged }) => {
                     {countryInfo.coatOfArms?.png && (
                         <div className="detail-section">
                             <h2>{translations[lang]?.coatOfArms || 'Coat of Arms'}</h2>
-                            <img 
-                                src={countryInfo.coatOfArms.png} 
+                            <img
+                                src={countryInfo.coatOfArms.png}
                                 alt={`${countryInfo.name.common} coat of arms`}
                                 className="coat-of-arms"
                             />
@@ -272,15 +337,15 @@ const CountryPage = ({ isLogged }) => {
                     )}
                 </div>
             </div>
-            
-            <MapModal 
+
+            <MapModal
                 isOpen={isMapModalOpen}
                 onClose={() => setIsMapModalOpen(false)}
                 capital={countryInfo.capital?.[0]}
                 countryName={countryInfo.name.common}
             />
 
-            <CurrencyConverterModal 
+            <CurrencyConverterModal
                 isOpen={isCurrencyModalOpen}
                 onClose={() => setIsCurrencyModalOpen(false)}
                 countryCurrency={countryInfo.currencies}
