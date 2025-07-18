@@ -16,3 +16,13 @@ export const REMOVE_BUCKETLIST_ENDPOINT_URL = `${BASE_API_HOST}/remove_bucketlis
 export const ALL_REVIEWS_ENDPOINT_URL = `${BASE_API_HOST}/view_reviews`
 export const MY_REVIEWS_ENDPOINT_URL = `${BASE_API_HOST}/view_self_reviews`
 export const ADD_REVIEW_ENDPOINT_URL = `${BASE_API_HOST}/add_review`
+
+export const GET_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/get_posts`
+export const ADD_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/add_posts`
+export const ADD_POST_IMAGE_ENDPOINT_URL = `${BASE_API_HOST}/add_post_image`
+export const TOGGLE_LIKE_ENDPOINT_URL = `${BASE_API_HOST}/toggle_like`
+export const ADD_COMMENT_ENDPOINT_URL = `${BASE_API_HOST}/add_comment`
+export const GET_COMMENTS_ENDPOINT_URL = `${BASE_API_HOST}/get_comments`
+export const REMOVE_POST_ENDPOINT_URL = `${BASE_API_HOST}/remove_post`
+export const REMOVE_COMMENT_ENDPOINT_URL = `${BASE_API_HOST}/remove_comment`
+export const GET_USER_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/get_user_posts`

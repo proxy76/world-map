@@ -1,0 +1,33 @@
+.create-post {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  input[type="text"],
+  textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  input[type="file"] {
+    font-size: 0.9rem;
+  }
+
+  button {
+    align-self: flex-start;
+    padding: 0.5rem 1.2rem;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,31 @@
+.post {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fff;
+
+  .post-header {
+    h3 {
+      margin: 0 0 0.5rem;
+    }
+
+    .post-image {
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 4px;
+    }
+  }
+
+  .post-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  }
+}

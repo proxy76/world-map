@@ -185,11 +185,15 @@ export default function LandingPage({ isLogged, setIsLogged }) {
                 >
                 </div>
             </div>
-
+            
             <div className="globeWrapper">
                 <Globe />
             </div>
-
+            
+            <div className="social-platform-btn">
+                <button>GEN INSTA</button>
+            </div>
+            
             <div className="buttonWrapper">
                 <div className="txt">
                     <h2>Travel. Experience. Find Yourself!</h2>
