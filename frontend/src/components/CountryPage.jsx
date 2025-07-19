@@ -254,7 +254,7 @@ const CountryPage = ({ isLogged }) => {
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.region || 'Region'}:</strong>
-                                <span>{getDisplayValue(countryInfo.region, 'region')}</span>
+                             kj   <span>{getDisplayValue(countryInfo.region, 'region')}</span>
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.subregion || 'Subregion'}:</strong>
@@ -356,3 +356,4 @@ const CountryPage = ({ isLogged }) => {
 };
 
 export default CountryPage;
+

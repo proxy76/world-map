@@ -26,6 +26,7 @@
         font-weight: bolder;
         position: relative;
         padding: 1.2rem;
+        cursor: pointer;
 
         .titleText {
             a {
@@ -75,9 +76,10 @@
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     padding: 10px 0;
-    min-width: 180px;
+    min-width: 150px;
     z-index: 1000;
     font-family: 'Poppins', sans-serif;
+    animation: slideDown 0.3s ease-out;
     overflow: hidden;
     transition: all 0.3s ease;
     text-decoration: none;
@@ -106,11 +108,11 @@ a {
 @keyframes slideDown {
     0% {
         opacity: 0;
-        // transform: translateY(-8px);
+        transform: translateY(-8px);
     }
     100% {
         opacity: 1;
-        // transform: translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -126,7 +128,7 @@ a {
     }
 
     .finisher-header {
-    width: 200% !important; 
+    width: 200% !important;   
     height: 1200px !important; 
   }
   .btns {
@@ -141,4 +143,67 @@ a {
     margin-left: 0 !important;
   }
 
+  .dropdown {
+    width: fit-content !important;
+     min-width: 50px !important;
+  }
+
+  .dropdownContainer {
+    width: 125px !important;
+    margin-left: -14%;
+  }
+  .globeWrapper > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > canvas {
+        height:auto !important;
+        
+    }
+    }
+
+}
+
+@media (max-width:1200px) and (min-width:700px) {
+    .dropdown {
+     min-width: 120px !important;
+  }
+}
+
+@media (max-width: 450px) {
+    .globeWrapper > div > canvas {
+        width: 300px !important;
+    }
+
+    .titleText {
+        font-size: 1.5rem !important;
+    }
+
+}
+@media (max-width: 500px) and (min-width:450px){
+    .globeWrapper > div > canvas {
+        width: 375px !important;
+    }
+}
+@media (max-width: 600px) and (min-width:500px){
+    .globeWrapper > div > canvas {
+        width: 450px !important;
+    }
+}
+@media (max-width: 700px) and (min-width:600px){
+    .globeWrapper > div > canvas {
+        width: 600px !important;
+    }
+}
+@media (max-width: 400px) {
+    .globeWrapper > div > canvas {
+        width: 250px !important;
+    }
+
+}
+
+@media (max-width: 360px) {
+    .titleText {
+        font-size: 1.3rem !important;
+    }
 }
