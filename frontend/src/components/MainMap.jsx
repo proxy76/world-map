@@ -29,14 +29,21 @@ const LIGHT_GREEN = "#b6f5c6";
 const LIGHTER_GREEN = "#e3fbe9";
 const HOVER_LIGHT = "#f8fff9";
 const DARKER_GREEN = "#3eb262"; 
+const SEARCH_HIGHLIGHT = "#ff4444"; // Red color for search highlights
 
 
 
-const MainMap = ({ isLogged }) => {
+const MainMap = ({ isLogged, searchTerm = "" }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryName, setCountryName] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Function to check if a country matches the search term
+  const isCountryMatching = useCallback((countryName) => {
+    if (!searchTerm) return false;
+    return countryName.toLowerCase().startsWith(searchTerm.toLowerCase());
+  }, [searchTerm]);
 
   const handleClick = useCallback((geo) => {
     setSelectedCountry(() => geo.id);
@@ -74,8 +81,18 @@ const MainMap = ({ isLogged }) => {
               {({ geographies }) =>
                 geographies.map((geo) => {
                   const isLargest = largestCountries.includes(geo.id);
-                  const baseColor = isLargest ? LIGHT_GREEN : LIGHTER_GREEN;
                   const isSelected = selectedCountry === geo.id;
+                  const isMatching = isCountryMatching(geo.properties.name);
+                  
+                  let fillColor;
+                  if (isSelected) {
+                    fillColor = DARKER_GREEN;
+                  } else if (isMatching) {
+                    fillColor = SEARCH_HIGHLIGHT;
+                  } else {
+                    fillColor = isLargest ? LIGHT_GREEN : LIGHTER_GREEN;
+                  }
+                  
                   return (
                     <Geography
                       key={geo.rsmKey}
@@ -83,20 +100,23 @@ const MainMap = ({ isLogged }) => {
                       onClick={() => handleClick(geo)}
                       style={{
                         default: {
-                          fill: isSelected ? DARKER_GREEN : baseColor,
+                          fill: fillColor,
                           stroke: "#000",
+                          strokeWidth: isMatching ? 2 : 1,
                           outline: "none",
-                          transition: "fill 0.2s",
+                          transition: "fill 0.2s, stroke-width 0.2s",
                         },
                         hover: {
                           fill: HOVER_LIGHT,
                           stroke: "#000",
+                          strokeWidth: isMatching ? 2 : 1,
                           outline: "none",
                           cursor: "pointer",
                         },
                         pressed: {
                           fill: DARKER_GREEN,
                           stroke: "#000",
+                          strokeWidth: 1,
                           outline: "none",
                         },
                       }}

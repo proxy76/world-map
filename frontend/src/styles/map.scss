@@ -36,11 +36,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index:-2;
+    z-index: -2;
     margin-top: -13%;
 
     .map {
         width: 75%;
     }
+}
+
+.map {
+    position: relative;
 }
 
