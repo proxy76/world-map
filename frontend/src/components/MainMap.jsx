@@ -4,6 +4,9 @@ import React, {
   Suspense,
   useMemo,
   useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
 } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 
@@ -33,17 +36,114 @@ const SEARCH_HIGHLIGHT = "#ff4444"; // Red color for search highlights
 
 
 
-const MainMap = ({ isLogged, searchTerm = "" }) => {
+const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryName, setCountryName] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [position, setPosition] = useState({ coordinates: [0, 20], zoom: 1 });
 
   // Function to check if a country matches the search term
   const isCountryMatching = useCallback((countryName) => {
     if (!searchTerm) return false;
     return countryName.toLowerCase().startsWith(searchTerm.toLowerCase());
   }, [searchTerm]);
+
+  const handleZoomIn = useCallback(() => {
+    if (position.zoom >= 8) return;
+    setPosition(pos => ({ ...pos, zoom: Math.min(pos.zoom * 1.5, 8) }));
+  }, [position.zoom]);
+
+  const handleZoomOut = useCallback(() => {
+    if (position.zoom <= 0.5) return;
+    setPosition(pos => ({ ...pos, zoom: Math.max(pos.zoom / 1.5, 0.5) }));
+  }, [position.zoom]);
+
+  const handleResetView = useCallback(() => {
+    setPosition({ coordinates: [0, 20], zoom: 1 });
+  }, []);
+
+  // Movement controls for when zoomed in
+  const handleMoveUp = useCallback(() => {
+    setPosition(pos => ({
+      ...pos,
+      coordinates: [pos.coordinates[0], Math.min(pos.coordinates[1] + 10, 80)]
+    }));
+  }, []);
+
+  const handleMoveDown = useCallback(() => {
+    setPosition(pos => ({
+      ...pos,
+      coordinates: [pos.coordinates[0], Math.max(pos.coordinates[1] - 10, -80)]
+    }));
+  }, []);
+
+  const handleMoveLeft = useCallback(() => {
+    setPosition(pos => ({
+      ...pos,
+      coordinates: [Math.max(pos.coordinates[0] - 10, -180), pos.coordinates[1]]
+    }));
+  }, []);
+
+  const handleMoveRight = useCallback(() => {
+    setPosition(pos => ({
+      ...pos,
+      coordinates: [Math.min(pos.coordinates[0] + 10, 180), pos.coordinates[1]]
+    }));
+  }, []);
+
+  // Keyboard controls
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Only allow movement when zoomed in
+      if (position.zoom <= 1) return;
+      
+      switch (event.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          event.preventDefault();
+          handleMoveUp();
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          event.preventDefault();
+          handleMoveDown();
+          break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          event.preventDefault();
+          handleMoveLeft();
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          event.preventDefault();
+          handleMoveRight();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [position.zoom, handleMoveUp, handleMoveDown, handleMoveLeft, handleMoveRight]);
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    zoomIn: handleZoomIn,
+    zoomOut: handleZoomOut,
+    resetView: handleResetView,
+  }), [handleZoomIn, handleZoomOut, handleResetView]);
+
+  const handleMoveEnd = useCallback((position) => {
+    setPosition(position);
+  }, []);
 
   const handleClick = useCallback((geo) => {
     setSelectedCountry(() => geo.id);
@@ -75,8 +175,28 @@ const MainMap = ({ isLogged, searchTerm = "" }) => {
       </Suspense>
 
       <div className="mapContainer">
-        <ComposableMap className="map">
-          <ZoomableGroup center={[0, 20]} zoom={1}>
+        <ComposableMap 
+          className="map"
+          projectionConfig={{
+            rotate: [-10, 0, 0],
+            scale: 147
+          }}
+          style={{
+            width: "100%",
+            height: "auto"
+          }}
+        >
+          <ZoomableGroup
+            center={position.coordinates}
+            zoom={position.zoom}
+            minZoom={0.5}
+            maxZoom={8}
+            onMoveEnd={handleMoveEnd}
+            filterZoomEvent={(evt) => {
+              // Disable zoom on scroll wheel
+              return evt.type !== 'wheel';
+            }}
+          >
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
                 geographies.map((geo) => {
@@ -131,6 +251,6 @@ const MainMap = ({ isLogged, searchTerm = "" }) => {
       </div>
     </div>
   );
-};
+});
 
 export default React.memo(MainMap);
