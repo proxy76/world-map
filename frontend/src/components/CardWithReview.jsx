@@ -8,10 +8,29 @@ import {
 } from '../utils/ApiHost';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
+import { countries } from '../utils/countries';
 
 const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page }) => {
   const [info, setInfo] = useState(null);
   const { lang } = useLanguage();
+
+  // Funcție pentru traducerea numelor de țări
+  const translateCountryName = (countryName) => {
+    if (!countryName) return countryName;
+    
+    // Găsim indexul țării în lista română (care e limba salvată în backend)
+    const roIndex = countries.ro.findIndex(country => 
+      country.toLowerCase() === countryName.toLowerCase()
+    );
+    
+    // Dacă găsim țara, returnăm numele în limba curentă
+    if (roIndex !== -1 && countries[lang] && countries[lang][roIndex]) {
+      return countries[lang][roIndex];
+    }
+    
+    // Dacă nu găsim, returnăm numele original
+    return countryName;
+  };
 
   // Helper function to get the correct name for RESTCountries API
   const getApiName = (name) => {
@@ -96,7 +115,7 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page })
         <img src={info.flags.png} alt={`${info.name.common} flag`} />
         <div className="name">
           <p><b>{translations[lang].name}</b></p>
-          <p>{info.name.common}</p>
+          <p>{translateCountryName(name)}</p>
         </div>
         <div className="currencies">
           <p><b>{translations[lang].currency}</b></p>

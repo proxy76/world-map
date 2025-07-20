@@ -484,10 +484,29 @@
     }
   }
 
+  .single-btn {
+    margin-top: 1rem;
+    justify-content: center;
+    
+    .wide-btn {
+      min-width: 250px !important; 
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+  }
+
 }
 
 @media (max-width:700px) {
   .btnsLanding {
     flex-direction: column !important;
+  }
+  
+  .single-btn {
+    margin-top: 1rem;
+    
+    .wide-btn {
+      width: 180px !important; // Slightly smaller on mobile
+    }
   }
 }

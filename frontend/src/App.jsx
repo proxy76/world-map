@@ -6,6 +6,8 @@ import Profile from './components/Profile';
 import Journal from './components/Journal';
 import Bucketlist from './components/Bucketlist';
 import CountryPage from './components/CountryPage';
+import SocialFeed from './components/SocialFeed';
+import PostDetails from './components/PostDetails';
 import {CHECK_LOGIN_ENDPOINT_URL} from './utils/ApiHost'
 import axios from 'axios';
 import MapPage from './components/MapPage';
@@ -60,6 +62,8 @@ function App() {
           <Route path="/profile" element={<Profile isLogged={isLogged} />} />
           <Route path="/journal" element={<Journal isLogged={isLogged} />} />
           <Route path="/bucketlist" element={<Bucketlist isLogged={isLogged} />} />
+          <Route path="/social" element={<SocialFeed isLogged={isLogged} />} />
+          <Route path="/post/:id" element={<PostDetails isLogged={isLogged} />} />
           <Route path="/country/:countryCode" element={<CountryPage isLogged={isLogged} />} />
         </Routes>
       </BrowserRouter>

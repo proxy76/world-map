@@ -217,6 +217,9 @@ export default function LandingPage({ profilePic, isLogged, setIsLogged }) {
                     <Link to='journal'><button>{translations[lang].travelJournal}</button></Link>
                     <Link to='bucketlist'><button>{translations[lang].bucketlist}</button></Link>
                 </div>
+                <div className="btns btnsLanding single-btn">
+                    <Link to='social'><button className="wide-btn">{translations[lang].socialFeed}</button></Link>
+                </div>
             </div>
             <div className="infoWrapper">
                 <div className="info1">
