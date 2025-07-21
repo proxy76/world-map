@@ -50,8 +50,11 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
   const handlePassportStamp = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    
     if (isStamping) return;
+    
     const currentScrollPosition = window.scrollY;
+    
     try {
       setIsStamping(true);
       const response = await axios.post(
@@ -61,9 +64,11 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       );
       setPassportStamps(response.data.count);
       setHasStamped(response.data.stamped);
+      
       requestAnimationFrame(() => {
         window.scrollTo(0, currentScrollPosition);
       });
+      
       if (onStampUpdate) {
         onStampUpdate(post.id, response.data.count, response.data.stamped);
       }
@@ -263,15 +268,15 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
         </div>
       </div>
       <div className="post-actions">
-        <button 
-          type="button"
+        <div 
           className={`passport-stamp-btn ${hasStamped ? 'stamped' : ''} ${isStamping ? 'loading' : ''}`}
           onClick={handlePassportStamp}
-          disabled={isStamping}
+          role="button"
+          aria-label="Stamp passport"
         >
-          <span className="passport-icon"></span>
+          <span className="passport-icon">📓</span>
           <span className="stamp-count">{passportStamps}</span>
-        </button>
+        </div>
         <div className="action-buttons">
           <button 
             type="button"

@@ -200,7 +200,7 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
                           e.target.style.color = '#333';
                         }}
                       >
-                        ðŸŒ {country}
+                        🌎 {country}
                       </div>
                     ))
                   ) : (

@@ -303,7 +303,7 @@ const CreatePost = ({ onClose, onSubmit }) => {
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => selectCountry(country)}
                         >
-                          ðŸŒ {country}
+                        🌎 {country}
                         </div>
                       ))
                     ) : (
