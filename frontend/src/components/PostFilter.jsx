@@ -7,7 +7,22 @@ import '../styles/postFilter.scss';
 
 const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
   const { lang } = useLanguage();
-  const [countryQuery, setCountryQuery] = useState(filters.country || '');
+  
+  // Initialize countryQuery with proper language conversion
+  const getDisplayCountry = (backendCountry) => {
+    if (!backendCountry) return '';
+    
+    // Backend stores in Romanian, convert to display language if needed
+    if (lang === 'en') {
+      const roIndex = countries.ro.indexOf(backendCountry);
+      if (roIndex !== -1 && countries.en[roIndex]) {
+        return countries.en[roIndex];
+      }
+    }
+    return backendCountry;
+  };
+  
+  const [countryQuery, setCountryQuery] = useState(getDisplayCountry(filters.country || ''));
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [countryResults, setCountryResults] = useState([]);
   const countryInputRef = useRef(null);
@@ -95,10 +110,24 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     setShowCountryDropdown(false);
     setCountryResults([]);
     
+    // Find the country in the current language and get its equivalent in both languages
     let countryForBackend = country;
-    if (countries.en.includes(country)) {
+    
+    // If we're in English mode and selected an English country name
+    if (lang === 'en' && countries.en.includes(country)) {
+      const index = countries.en.indexOf(country);
+      countryForBackend = countries.ro[index]; // Convert to Romanian for backend
+    }
+    // If we're in Romanian mode and selected a Romanian country name
+    else if (lang === 'ro' && countries.ro.includes(country)) {
+      countryForBackend = country; // Keep Romanian for backend
+    }
+    // If somehow we selected a country name from the opposite language
+    else if (countries.en.includes(country)) {
       const index = countries.en.indexOf(country);
       countryForBackend = countries.ro[index];
+    } else if (countries.ro.includes(country)) {
+      countryForBackend = country;
     }
     
     handleFilterChange('country', countryForBackend);
@@ -124,10 +153,20 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
   }, [showCountryDropdown]);
 
   useEffect(() => {
-    if (filters.country !== countryQuery) {
-      setCountryQuery(filters.country || '');
+    // When filters.country changes, we need to update the display
+    const newDisplayCountry = getDisplayCountry(filters.country || '');
+    if (newDisplayCountry !== countryQuery) {
+      setCountryQuery(newDisplayCountry);
     }
-  }, [filters.country]);
+  }, [filters.country, lang]);
+
+  // Additional effect to handle language changes for existing country filter
+  useEffect(() => {
+    if (filters.country) {
+      const newDisplayCountry = getDisplayCountry(filters.country);
+      setCountryQuery(newDisplayCountry);
+    }
+  }, [lang]);
 
   const clearFilters = () => {
     const clearedFilters = {
@@ -138,6 +177,7 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     };
     setFilters(clearedFilters);
     setCountryQuery('');
+    setCountryResults([]);
     setShowCountryDropdown(false);
   };
 

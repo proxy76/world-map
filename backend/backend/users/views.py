@@ -91,7 +91,7 @@ def user_info(request):
             "profile_picture": user.profile_picture.url if user.profile_picture else None
         }
 
-        cache.set(cache_key, user_data, timeout=60 * 5)  # 5 min cache
+        cache.set(cache_key, user_data, timeout=60 * 5)
         return JsonResponse(user_data, status=200)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -100,7 +100,6 @@ def user_info(request):
 @csrf_exempt
 def check_login_view(request):
     if request.method == "GET":
-        # short-term caching based on session key
         cache_key = f"login_status:{request.session.session_key}"
         cached_status = cache.get(cache_key)
 
@@ -108,7 +107,7 @@ def check_login_view(request):
             return JsonResponse({"isLogged": cached_status}, status=200)
 
         is_logged = request.user.is_authenticated
-        cache.set(cache_key, is_logged, timeout=30)  # short TTL
+        cache.set(cache_key, is_logged, timeout=30)
         return JsonResponse({"isLogged": is_logged}, status=200)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -126,7 +125,6 @@ def add_bucketlist(request):
                 user.countriesWishlist.append(country)
                 user.save()
 
-                # Invalidate user_info cache
                 cache.delete(f"user_info:{user.id}")
 
             return JsonResponse({"isAdded": True}, status=200)
@@ -224,7 +222,6 @@ def add_review(request):
         )
         review.save()
 
-        # Invalidate cache for this country
         cache.delete(f"reviews:{country_name}")
         cache.delete(f"user_reviews:{user.id}:{country_name}")
 
@@ -302,22 +299,17 @@ def update_profile_picture(request):
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
 # Social Media Endpoints
 
 @csrf_exempt
 @login_required
 def create_post(request):
-    """Endpoint pentru crearea unei postări noi în social media"""
     if request.method == 'OPTIONS':
-        # Handle CORS preflight
         return JsonResponse({}, status=200)
     
     if request.method == 'POST':
         try:
-            # Pentru request-uri cu file uploads, datele vin în request.POST, nu request.body
             if request.content_type and 'multipart/form-data' in request.content_type:
-                # Request cu file uploads
                 title = request.POST.get('title', '').strip()
                 content = request.POST.get('content', '').strip()
                 countries_visited = json.loads(request.POST.get('countries', '[]'))
@@ -325,42 +317,33 @@ def create_post(request):
                 travel_type = request.POST.get('travelType', '')
                 theme = request.POST.get('theme', '')
                 
-                # Procesare imagini - SALVARE REALĂ a imaginilor utilizatorului
                 uploaded_images = []
                 
                 for key in request.FILES:
                     if key.startswith('images'):
                         file = request.FILES[key]
                         
-                        # Import-uri necesare pentru salvarea fișierelor
                         import os
                         from django.conf import settings
                         
-                        # Generez un nume unic pentru fișier
                         timestamp = int(time.time())
-                        file_extension = os.path.splitext(file.name)[1]  # .jpg, .png, etc.
+                        file_extension = os.path.splitext(file.name)[1]
                         safe_filename = f"post_{request.user.id}_{timestamp}_{len(uploaded_images)}{file_extension}"
                         
-                        # Calea relativă pentru salvare
                         relative_path = f"post_images/{safe_filename}"
                         
-                        # Mă asigur că directorul post_images există
                         post_images_dir = os.path.join(settings.MEDIA_ROOT, 'post_images')
                         os.makedirs(post_images_dir, exist_ok=True)
                         
-                        # Calea completă pentru salvarea fișierului
                         full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
                         
-                        # Salvez fișierul pe disk
                         with open(full_path, 'wb+') as destination:
                             for chunk in file.chunks():
                                 destination.write(chunk)
                         
-                        # Adaug calea în lista de imagini (cu /media/ pentru URL)
                         uploaded_images.append(f"/media/{relative_path}")
                         
             else:
-                # Request JSON normal
                 data = json.loads(request.body)
                 title = data.get('title', '').strip()
                 content = data.get('content', '').strip()
@@ -368,9 +351,8 @@ def create_post(request):
                 post_type = data.get('postType', '')
                 travel_type = data.get('travelType', '')
                 theme = data.get('theme', '')
-                uploaded_images = []  # Pentru moment, nu procesez imagini din JSON
+                uploaded_images = []
             
-            # Validare câmpuri obligatorii
             if not title:
                 return JsonResponse({"error": "Title is required"}, status=400)
             if not content:
@@ -382,7 +364,6 @@ def create_post(request):
             if not theme:
                 return JsonResponse({"error": "Theme is required"}, status=400)
             
-            # Verificare că valorile sunt din choices-urile definite
             valid_post_types = [choice[0] for choice in Post.POST_TYPE_CHOICES]
             valid_travel_types = [choice[0] for choice in Post.TRAVEL_TYPE_CHOICES]
             valid_themes = [choice[0] for choice in Post.THEME_CHOICES]
@@ -394,7 +375,6 @@ def create_post(request):
             if theme not in valid_themes:
                 return JsonResponse({"error": f"Invalid theme. Valid options: {valid_themes}"}, status=400)
             
-            # Crearea postării
             post = Post.objects.create(
                 author=request.user,
                 title=title,
@@ -423,19 +403,29 @@ def create_post(request):
 
 @csrf_exempt
 def get_posts(request):
-    """Endpoint pentru a obține toate postările cu filtrare opțională"""
     if request.method == 'GET':
         try:
             posts = Post.objects.all()
             
-            # Aplicare filtre opționale
             country = request.GET.get('country')
             post_type = request.GET.get('postType')
             travel_type = request.GET.get('travelType')
             theme = request.GET.get('theme')
             
             if country:
-                posts = posts.filter(countries_visited__icontains=country)
+                matching_posts = []
+                for post in posts:
+                    if post.countries_visited and isinstance(post.countries_visited, list):
+                        for visited_country in post.countries_visited:
+                            if visited_country and country.lower() == visited_country.lower():
+                                matching_posts.append(post.id)
+                                break
+                
+                if matching_posts:
+                    posts = Post.objects.filter(id__in=matching_posts)
+                else:
+                    posts = Post.objects.none()
+                        
             if post_type:
                 posts = posts.filter(post_type=post_type)
             if travel_type:
@@ -443,7 +433,6 @@ def get_posts(request):
             if theme:
                 posts = posts.filter(theme=theme)
                 
-            # Ordonează postările după data creării (cele mai noi primul)
             posts = posts.order_by('-created_at')
             
             serialized_posts = [post.serializer(request.user) for post in posts]
@@ -461,12 +450,10 @@ def get_posts(request):
 
 @csrf_exempt
 def get_post_details(request, post_id):
-    """Endpoint pentru a obține detaliile unei postări specifice"""
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=post_id)
             
-            # Verifică dacă user-ul curent a dat stamp la această postare
             user_has_stamped = False
             if request.user.is_authenticated:
                 user_has_stamped = PostPassport.objects.filter(
@@ -491,7 +478,6 @@ def get_post_details(request, post_id):
 @csrf_exempt
 @login_required  
 def stamp_post(request, post_id):
-    """Endpoint pentru a adăuga/elimina stamp (passport) la o postare"""
     if request.method == 'OPTIONS':
         return JsonResponse({}, status=200)
         
@@ -499,24 +485,19 @@ def stamp_post(request, post_id):
         try:
             post = Post.objects.get(id=post_id)
             
-            # Verifică dacă user-ul a dat deja stamp
             passport, created = PostPassport.objects.get_or_create(
                 user=request.user,
                 post=post
             )
             
             if not created:
-                # Dacă exista deja, îl ștergem (unstamp)
                 passport.delete()
                 stamped = False
             else:
-                # Dacă nu exista, îl adăugăm (stamp)
                 stamped = True
             
-            # Calculăm numărul real de passport-uri din baza de date
             passport_count = PostPassport.objects.filter(post=post).count()
             
-            # Actualizăm câmpul passport_count din model
             post.passport_count = passport_count
             post.save()
             
@@ -535,12 +516,10 @@ def stamp_post(request, post_id):
 
 @csrf_exempt
 def get_post_comments(request, post_id):
-    """Endpoint pentru a obține comentariile unei postări"""
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=post_id)
             
-            # Luăm doar comentariile părinte (fără parent_comment)
             parent_comments = Comment.objects.filter(
                 post=post, 
                 parent_comment=None
@@ -570,7 +549,6 @@ def get_post_comments(request, post_id):
 @csrf_exempt
 @login_required
 def create_comment(request, post_id):
-    """Endpoint pentru a crea un comentariu nou la o postare"""
     if request.method == 'OPTIONS':
         return JsonResponse({}, status=200)
         
@@ -607,7 +585,6 @@ def create_comment(request, post_id):
 @csrf_exempt
 @login_required
 def create_reply(request, comment_id):
-    """Endpoint pentru a crea un răspuns la un comentariu"""
     if request.method == 'OPTIONS':
         return JsonResponse({}, status=200)
         

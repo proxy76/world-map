@@ -31,31 +31,26 @@ const SocialFeed = ({ isLogged }) => {
   }, []);
 
   useEffect(() => {
-    fetchPosts(); // Refetch cu filtrele noi
+    fetchPosts();
   }, [filters]);
 
   const fetchPosts = async () => {
     try {
       setLoading(true);
       
-      // Construiesc parametrii doar pentru valorile non-empty
       const params = {};
       if (filters.country) params.country = filters.country;
       if (filters.postType) params.postType = filters.postType;
       if (filters.travelType) params.travelType = filters.travelType;
       if (filters.theme) params.theme = filters.theme;
       
-      console.log('Sending request with params:', params);
-      
       const response = await axios.get(GET_POSTS_ENDPOINT_URL, {
         withCredentials: true,
         params: params
       });
       
-      console.log('Received posts count:', response.data.posts.length);
-      
       setPosts(response.data.posts);
-      setFilteredPosts(response.data.posts); // Setez direct rezultatul de la backend
+      setFilteredPosts(response.data.posts);
     } catch (error) {
       console.error('Failed to fetch posts:', error);
       setPosts([]);
@@ -67,7 +62,7 @@ const SocialFeed = ({ isLogged }) => {
 
   const handleNewPost = (newPost) => {
     setPosts([newPost, ...posts]);
-    setFilteredPosts([newPost, ...filteredPosts]); // Actualizez și lista filtrată
+    setFilteredPosts([newPost, ...filteredPosts]);
     setShowCreatePost(false);
   };
 
