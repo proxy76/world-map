@@ -323,12 +323,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
                 ))}
               </div>
             )}
-            <div className="image-info">
-              <h4>{post.title}</h4>
-              {post.images.length > 1 && (
-                <span>{currentImageIndex + 1} / {post.images.length}</span>
-              )}
-            </div>
           </div>
         </div>,
         document.body
