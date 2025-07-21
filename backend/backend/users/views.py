@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from .models import User, Review
+from .models import User, Review, Post, Comment, PostPassport
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import json
 import logging
 import re
+import time
 from django.core.cache import cache
 
 @csrf_exempt
@@ -298,5 +299,322 @@ def update_profile_picture(request):
                 return JsonResponse({"error": str(e)}, status=500)
         else:
             return JsonResponse({"error": "Not authenticated"}, status=403)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+@csrf_exempt
+@login_required
+def create_post(request):
+    if request.method == 'OPTIONS':
+        return JsonResponse({}, status=200)
+    
+    if request.method == 'POST':
+        try:
+            if request.content_type and 'multipart/form-data' in request.content_type:
+                title = request.POST.get('title', '').strip()
+                content = request.POST.get('content', '').strip()
+                countries_visited = json.loads(request.POST.get('countries', '[]'))
+                post_type = request.POST.get('postType', '')
+                travel_type = request.POST.get('travelType', '')
+                theme = request.POST.get('theme', '')
+                
+                uploaded_images = []
+                
+                for key in request.FILES:
+                    if key.startswith('images'):
+                        file = request.FILES[key]
+                        
+                        import os
+                        from django.conf import settings
+                        
+                        timestamp = int(time.time())
+                        file_extension = os.path.splitext(file.name)[1]
+                        safe_filename = f"post_{request.user.id}_{timestamp}_{len(uploaded_images)}{file_extension}"
+                        
+                        relative_path = f"post_images/{safe_filename}"
+                        
+                        post_images_dir = os.path.join(settings.MEDIA_ROOT, 'post_images')
+                        os.makedirs(post_images_dir, exist_ok=True)
+                        
+                        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+                        
+                        with open(full_path, 'wb+') as destination:
+                            for chunk in file.chunks():
+                                destination.write(chunk)
+                        
+                        uploaded_images.append(f"/media/{relative_path}")
+                        
+            else:
+                data = json.loads(request.body)
+                title = data.get('title', '').strip()
+                content = data.get('content', '').strip()
+                countries_visited = data.get('countries', [])
+                post_type = data.get('postType', '')
+                travel_type = data.get('travelType', '')
+                theme = data.get('theme', '')
+                uploaded_images = []
+            
+            if not title:
+                return JsonResponse({"error": "Title is required"}, status=400)
+            if not content:
+                return JsonResponse({"error": "Content is required"}, status=400)
+            if not post_type:
+                return JsonResponse({"error": "Post type is required"}, status=400)
+            if not travel_type:
+                return JsonResponse({"error": "Travel type is required"}, status=400)
+            if not theme:
+                return JsonResponse({"error": "Theme is required"}, status=400)
+            
+            valid_post_types = [choice[0] for choice in Post.POST_TYPE_CHOICES]
+            valid_travel_types = [choice[0] for choice in Post.TRAVEL_TYPE_CHOICES]
+            valid_themes = [choice[0] for choice in Post.THEME_CHOICES]
+            
+            if post_type not in valid_post_types:
+                return JsonResponse({"error": f"Invalid post_type. Valid options: {valid_post_types}"}, status=400)
+            if travel_type not in valid_travel_types:
+                return JsonResponse({"error": f"Invalid travel_type. Valid options: {valid_travel_types}"}, status=400)
+            if theme not in valid_themes:
+                return JsonResponse({"error": f"Invalid theme. Valid options: {valid_themes}"}, status=400)
+            
+            post = Post.objects.create(
+                author=request.user,
+                title=title,
+                content=content,
+                countries_visited=countries_visited,
+                post_type=post_type,
+                travel_type=travel_type,
+                theme=theme,
+                travel_duration=request.POST.get('travel_duration', '') if 'multipart/form-data' in str(request.content_type) else data.get('travel_duration', ''),
+                images=uploaded_images,
+                is_in_journal=True
+            )
+            
+            return JsonResponse({
+                "message": "Post created successfully",
+                "post": post.serializer(request.user)
+            }, status=201)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+def get_posts(request):
+    if request.method == 'GET':
+        try:
+            posts = Post.objects.all()
+            
+            country = request.GET.get('country')
+            post_type = request.GET.get('postType')
+            travel_type = request.GET.get('travelType')
+            theme = request.GET.get('theme')
+            
+            if country:
+                matching_posts = []
+                for post in posts:
+                    if post.countries_visited and isinstance(post.countries_visited, list):
+                        for visited_country in post.countries_visited:
+                            if visited_country and country.lower() == visited_country.lower():
+                                matching_posts.append(post.id)
+                                break
+                
+                if matching_posts:
+                    posts = Post.objects.filter(id__in=matching_posts)
+                else:
+                    posts = Post.objects.none()
+                        
+            if post_type:
+                posts = posts.filter(post_type=post_type)
+            if travel_type:
+                posts = posts.filter(travel_type=travel_type)
+            if theme:
+                posts = posts.filter(theme=theme)
+                
+            posts = posts.order_by('-created_at')
+            
+            serialized_posts = [post.serializer(request.user) for post in posts]
+            
+            return JsonResponse({
+                "posts": serialized_posts,
+                "count": len(serialized_posts)
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+def get_post_details(request, post_id):
+    if request.method == 'GET':
+        try:
+            post = Post.objects.get(id=post_id)
+            
+            user_has_stamped = False
+            if request.user.is_authenticated:
+                user_has_stamped = PostPassport.objects.filter(
+                    user=request.user, 
+                    post=post
+                ).exists()
+            
+            post_data = post.serializer(request.user)
+            post_data['userHasStamped'] = user_has_stamped
+            post_data['passportStamps'] = post.passport_count
+            
+            return JsonResponse(post_data, status=200)
+            
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required  
+def stamp_post(request, post_id):
+    if request.method == 'OPTIONS':
+        return JsonResponse({}, status=200)
+        
+    if request.method == 'POST':
+        try:
+            post = Post.objects.get(id=post_id)
+            
+            passport, created = PostPassport.objects.get_or_create(
+                user=request.user,
+                post=post
+            )
+            
+            if not created:
+                passport.delete()
+                stamped = False
+            else:
+                stamped = True
+            
+            passport_count = PostPassport.objects.filter(post=post).count()
+            
+            post.passport_count = passport_count
+            post.save()
+            
+            return JsonResponse({
+                "stamped": stamped,
+                "count": passport_count
+            }, status=200)
+            
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+def get_post_comments(request, post_id):
+    if request.method == 'GET':
+        try:
+            post = Post.objects.get(id=post_id)
+            
+            parent_comments = Comment.objects.filter(
+                post=post, 
+                parent_comment=None
+            ).order_by('created_at')
+            
+            def get_comment_with_replies(comment):
+                comment_data = comment.serializer()
+                replies = Comment.objects.filter(parent_comment=comment).order_by('created_at')
+                comment_data['replies'] = [get_comment_with_replies(reply) for reply in replies]
+                return comment_data
+            
+            comments_data = [get_comment_with_replies(comment) for comment in parent_comments]
+            
+            return JsonResponse({
+                "comments": comments_data,
+                "count": len(comments_data)
+            }, status=200)
+            
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def create_comment(request, post_id):
+    if request.method == 'OPTIONS':
+        return JsonResponse({}, status=200)
+        
+    if request.method == 'POST':
+        try:
+            post = Post.objects.get(id=post_id)
+            data = json.loads(request.body)
+            
+            content = data.get('content', '').strip()
+            if not content:
+                return JsonResponse({"error": "Content is required"}, status=400)
+            
+            comment = Comment.objects.create(
+                post=post,
+                author=request.user,
+                content=content
+            )
+            
+            return JsonResponse({
+                "message": "Comment created successfully",
+                "comment": comment.serializer()
+            }, status=201)
+            
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found"}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def create_reply(request, comment_id):
+    if request.method == 'OPTIONS':
+        return JsonResponse({}, status=200)
+        
+    if request.method == 'POST':
+        try:
+            parent_comment = Comment.objects.get(id=comment_id)
+            data = json.loads(request.body)
+            
+            content = data.get('content', '').strip()
+            if not content:
+                return JsonResponse({"error": "Content is required"}, status=400)
+            
+            reply = Comment.objects.create(
+                post=parent_comment.post,
+                author=request.user,
+                parent_comment=parent_comment,
+                content=content
+            )
+            
+            return JsonResponse({
+                "message": "Reply created successfully",
+                "reply": reply.serializer()
+            }, status=201)
+            
+        except Comment.DoesNotExist:
+            return JsonResponse({"error": "Comment not found"}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)

@@ -1,4 +1,4 @@
-const translations = {
+﻿﻿const translations = {
   ro: {
     // General
     save: "Salvează",
@@ -9,6 +9,7 @@ const translations = {
     worldMap: "Harta lumii",
     travelJournal: "Jurnal de călătorie",
     bucketlist: "Bucketlist",
+    socialFeed: "Platformă de socializare",
     loading: "Se încarcă...",
     error: "Eroare",
     close: "Închide",
@@ -96,6 +97,80 @@ const translations = {
     exchangeRateError: "Nu s-au putut încărca ratele de schimb",
     invalidAmount: "Vă rugăm să introduceți o sumă validă",
     convertingTo: "Se convertește în",
+    
+    // Comments
+    comments: "Comentarii",
+    writeComment: "Scrie un comentariu...",
+    publishComment: "Publică comentariul",
+    publishing: "Se publică...",
+    mustBeLoggedToComment: "Trebuie să fii conectat pentru a comenta.",
+    noCommentsYet: "Nu există comentarii încă. Fii primul care comentează!",
+    showMoreComments: "Arată mai multe comentarii",
+    showLessComments: "Arată mai puține comentarii",
+    more: "mai multe",
+    reply: "Răspunde",
+    replies: "răspunsuri",
+    writeReply: "Scrie un răspuns...",
+    showMoreReplies: "Arată mai multe răspunsuri",
+    showLessReplies: "Arată mai puține răspunsuri",
+    previous: "Anterior",
+    next: "Următorul",
+    
+    // Filters and Autocomplete
+    country: "Țară",
+    searchCountry: "Caută după țară...",
+    searchSelectCountry: "Caută și selectează o țară...",
+    postType: "Tip postare",
+    travelType: "Tip călătorie",
+    theme: "Tematică",
+    clearFilters: "Șterge filtrele",
+    applyFilters: "Aplică filtrele",
+    all: "Toate",
+    noCountriesFound: "Nu s-au găsit țări pentru",
+    typeToSearch: "Scrie pentru a căuta țări...",
+    selectValidCountry: "Te rog selectează o țară validă din listă!",
+    addAtLeastOneCountry: "Adaugă cel puțin o țară!",
+    
+    // Create Post
+    createNewPost: "Creează o postare nouă",
+    title: "Titlu",
+    content: "Conținut",
+    addCountry: "Adaugă țară",
+    addTag: "Adaugă tag",
+    images: "Imagini",
+    tags: "Tag-uri",
+    optional: "opțional",
+    cancel: "Anulează",
+    createPost: "Creează postarea",
+    publishing: "Se publică...",
+    publishPost: "Publică postarea",
+    
+    // Post Types
+    journal: "Jurnal",
+    review: "Recenzie", 
+    itinerary: "Itinerariu",
+    tips: "Sfaturi & Ghiduri",
+    questions: "Întrebări",
+    
+    // Travel Types
+    solo: "Solo",
+    family: "Familie",
+    friends: "Grup prieteni",
+    honeymoon: "Luna de miere",
+    business: "Călătorie de afaceri",
+    guidedTour: "Tur ghidat",
+    couple: "Cuplu",
+    backpacking: "Backpacking",
+    
+    // Themes
+    nature: "Natură",
+    sea: "Mare",
+    culture: "Cultură",
+    gastronomy: "Gastronomie",
+    festival: "Festivaluri",
+    relaxation: "Relaxare",
+    sport: "Sport",
+    
     // Others
     profilePictureUpdated: "Poza de profil a fost actualizată",
     noImageUploaded: "Nu a fost încărcată nicio imagine",
@@ -111,6 +186,7 @@ const translations = {
     worldMap: "World Map",
     travelJournal: "Travel Journal",
     bucketlist: "Bucketlist",
+    socialFeed: "Social Feed",
     loading: "Loading...",
     error: "Error",
     close: "Close",
@@ -137,6 +213,7 @@ const translations = {
     invalidEmail: "Invalid email!",
     registrationFailed: "Registration failed!",
     unloggedMessage: "Log in to add country to journal or bucketlist",
+    backToCommunity: "← Back to community",
 
     // Profile
     profile: "My Profile",
@@ -199,10 +276,85 @@ const translations = {
     exchangeRateError: "Failed to fetch exchange rates",
     invalidAmount: "Please enter a valid amount",
     convertingTo: "Converting to",
+    
+    // Filters and Autocomplete
+    country: "Country",
+    searchCountry: "Search by country...",
+    searchSelectCountry: "Search and select a country...",
+    postType: "Post Type",
+    travelType: "Travel Type",
+    theme: "Theme",
+    clearFilters: "Clear Filters",
+    applyFilters: "Apply Filters",
+    all: "All",
+    noCountriesFound: "No countries found for",
+    typeToSearch: "Type to search countries...",
+    selectValidCountry: "Please select a valid country from the list!",
+    addAtLeastOneCountry: "Add at least one country!",
+    
+    // Create Post
+    createNewPost: "Create New Post",
+    title: "Title",
+    content: "Content",
+    addCountry: "Add Country",
+    addTag: "Add Tag",
+    images: "Images",
+    tags: "Tags",
+    optional: "optional",
+    cancel: "Cancel",
+    createPost: "Create Post",
+    publishing: "Publishing...",
+    publishPost: "Publish Post",
+    
+    // Post Types
+    journal: "Journal",
+    review: "Review",
+    itinerary: "Itinerary", 
+    tips: "Tips & Guides",
+    questions: "Questions",
+    
+    // Travel Types
+    solo: "Solo",
+    family: "Family",
+    friends: "Friends Group",
+    honeymoon: "Honeymoon",
+    business: "Business Travel",
+    guidedTour: "Guided Tour",
+    couple: "Couple",
+    backpacking: "Backpacking",
+    
+    // Themes
+    nature: "Nature",
+    sea: "Sea",
+    culture: "Culture",
+    gastronomy: "Gastronomy",
+    festival: "Festivals",
+    relaxation: "Relaxation",
+    sport: "Sport",
+    
     // Others
     profilePictureUpdated: "Profile picture updated",
     noImageUploaded: "No image uploaded",
-    // etc.
+    
+    // Comments
+    comments: "Comments",
+    writeComment: "Write a comment...",
+    publishComment: "Publish comment",
+    publishing: "Publishing...",
+    mustBeLoggedToComment: "You must be logged in to comment.",
+    noCommentsYet: "No comments yet. Be the first to comment!",
+    showMoreComments: "Show more comments",
+    showLessComments: "Show less comments",
+    more: "more",
+    reply: "Reply",
+    replies: "replies",
+    writeReply: "Write a reply...",
+    showMoreReplies: "Show more replies",
+    showLessReplies: "Show less replies",
+    previous: "Previous", 
+    next: "Next",
+    cancel: "Cancel",
+    
   }
 };
 

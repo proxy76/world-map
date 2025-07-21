@@ -16,7 +16,14 @@ urlpatterns = [
     path("add_review", views.add_review, name="add_review"),
     path("view_reviews", views.view_reviews, name="view_reviews"),
     path("view_self_reviews", views.view_self_reviews, name="view_self_reviews"),
-    path("update_pfp", views.update_profile_picture, name="update_pfp")
+    path("update_pfp", views.update_profile_picture, name="update_pfp"),
+    path("create_post", views.create_post, name="create_post"),
+    path("posts/", views.get_posts, name="get_posts"),
+    path("posts/<int:post_id>/", views.get_post_details, name="get_post_details"),
+    path("posts/<int:post_id>/stamp/", views.stamp_post, name="stamp_post"),
+    path("posts/<int:post_id>/comments/", views.get_post_comments, name="get_post_comments"),
+    path("posts/<int:post_id>/comments/create/", views.create_comment, name="create_comment"),
+    path("comments/<int:comment_id>/reply/", views.create_reply, name="create_reply"),
 ]
 
 

@@ -45,3 +45,117 @@ class Review(models.Model):
             "review_text": self.review_text,  
             "created_at": self.created_at,
         }
+class Post(models.Model):
+    POST_TYPE_CHOICES = [
+        ('jurnal', 'Jurnal'),
+        ('recenzie', 'Recenzie'),
+        ('itinerariu', 'Itinerariu'),
+        ('sfaturi', 'Sfaturi & Ghiduri'),
+        ('intrebari', 'Întrebări pentru Comunitate'),
+    ]
+    
+    TRAVEL_TYPE_CHOICES = [
+        ('solo', 'Solo'),
+        ('family', 'Familie'),
+        ('friends', 'Grup de Prieteni'),
+        ('honeymoon', 'Luna de Miere'),
+        ('business', 'Muncă'),
+        ('guided_tour', 'Tur Ghidat'),
+        ('couple', 'Cuplu'),
+        ('backpacking', 'Backpacking'),
+    ]
+    
+    THEME_CHOICES = [
+        ('natura', 'Natură'),
+        ('mare', 'Mare'),
+        ('cultura', 'Cultură'),
+        ('gastronomie', 'Gastronomie'),
+        ('festival', 'Festival'),
+        ('relaxare', 'Relaxare'),
+        ('sport', 'Sport'),
+    ]
+    
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    countries_visited = models.JSONField(default=list)  # Lista de țări vizitate
+    post_type = models.CharField(max_length=50, choices=POST_TYPE_CHOICES)
+    travel_type = models.CharField(max_length=50, choices=TRAVEL_TYPE_CHOICES)
+    theme = models.CharField(max_length=50, choices=THEME_CHOICES)
+    travel_duration = models.CharField(max_length=100, blank=True)  # "2 săptămâni", "3 zile", etc.
+    images = models.JSONField(default=list, blank=True)  # URL-uri către imagini
+    passport_count = models.IntegerField(default=0)  # Count pentru "passport likes"
+    is_in_journal = models.BooleanField(default=True)  # Dacă e inclus în jurnalul autorului
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def serializer(self, user=None):
+        # Calculăm numărul real de comentarii
+        comments_count = self.comments.count()
+        
+        # Verificăm dacă user-ul curent a dat stamp (dacă user este furnizat)
+        user_has_stamped = False
+        if user and user.is_authenticated:
+            user_has_stamped = PostPassport.objects.filter(user=user, post=self).exists()
+        
+        return {
+            "id": self.id,
+            "author": {
+                "id": self.author.id,
+                "username": self.author.username,
+                "avatar": self.author.profile_picture.url if self.author.profile_picture else '/anonymous.png'
+            },
+            "title": self.title,
+            "content": self.content,
+            "countries_visited": self.countries_visited,
+            "post_type": self.post_type,
+            "travel_type": self.travel_type,
+            "theme": self.theme,
+            "travel_duration": self.travel_duration,
+            "images": self.images,
+            "passport_count": self.passport_count,
+            "comments_count": comments_count,
+            "user_has_stamped": user_has_stamped,
+            "is_in_journal": self.is_in_journal,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+class PostPassport(models.Model):
+    """Model pentru 'passport likes' - când un user vrea să încerce o locație"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='passports')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'post')  # Un user poate da un singur passport per postare
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['created_at']
+    
+    def serializer(self):
+        return {
+            "id": self.id,
+            "post_id": self.post.id,
+            "author": {
+                "id": self.author.id,
+                "username": self.author.username,
+                "avatar": self.author.profile_picture.url if self.author.profile_picture else '/anonymous.png'
+            },
+            "parent_comment_id": self.parent_comment.id if self.parent_comment else None,
+            "content": self.content,
+            "createdAt": self.created_at.isoformat(),
+            "updatedAt": self.updated_at.isoformat(),
+            "replies_count": self.replies.count(),
+        }
