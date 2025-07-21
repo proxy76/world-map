@@ -1,5 +1,4 @@
-@import "variables.scss";
-
+﻿@import "variables.scss";
 @import "header.scss";
 @import "landingPage.scss";
 @import "errorPage.scss";
@@ -9,44 +8,33 @@
     padding: 0;
     margin: 0;
 }
-
 html {
     font-family: system-ui, sans-serif;
     font-size: 1.25rem;
 }
-
 body {
     margin: 0;
 }
-
 svg {
     display: inline-block;
     vertical-align: middle;
 }
-
 path {
     .focused {
         fill: pink;
         stroke: black;
     }
-
     z-index: 1;
 }
-
 .App {
     font-family: sans-serif;
     text-align: center;
 }
-
 ::-webkit-scrollbar {
     width: 0;
 }
-
-
 .menus {
-
     height: auto;
-
     .backgroundMenu {
         z-index: 1;
         width: auto;
@@ -57,7 +45,6 @@ path {
         text-align: center;
         gap: 1rem;
         margin-top: 7%;
-
         .countryMenu {
             z-index: 2;
             text-align: center;
@@ -76,12 +63,10 @@ path {
             color: #222;
             border-radius: 2rem;
             padding: 20px;
-
             h1 {
                 margin-bottom: 1.2rem;
                 text-align: center;
             }
-
             button {
                 align-items: center;
                 background-color: #FFFFFF;
@@ -109,7 +94,6 @@ path {
                 vertical-align: baseline;
                 width: auto;
             }
-
             button:hover,
             button:focus {
                 border-color: rgba(0, 0, 0, 0.15);
@@ -117,11 +101,9 @@ path {
                 color: rgb(255, 255, 255);
                 background-color: #324dff;
             }
-
             button:hover {
                 transform: translateY(-1px);
             }
-
             button:active {
                 background-color: #F0F0F1;
                 border-color: rgba(0, 0, 0, 0.15);
@@ -132,7 +114,6 @@ path {
         }
     }
 }
-
 .button {
     align-items: center;
         background-color: #FFFFFF;
@@ -164,7 +145,6 @@ path {
         border-radius: 8px;
         border: 1px solid #4caf50;
 }
-
 .button {
     align-items: center;
         background-color: #FFFFFF;
@@ -196,17 +176,14 @@ path {
         border-radius: 8px;
         border: 1px solid #4caf50;
 }
-
 .map {
     display: flex;
     flex-direction: column;
     pointer-events: auto;
-
     .mainMap {
         z-index:999;
     }
 }
-
 @media (min-width: 800px) {
     .menus { 
         position: fixed;
@@ -218,14 +195,12 @@ path {
     }
     }
 }
-
 @media (max-width: 800px) {
     .menus, .backgroundMenu {
         overflow: scroll;
     }
     .backgroundMenu {
         flex-direction: column;
-
         .countryMenu {
             align-self:center;
         }
@@ -234,5 +209,4 @@ path {
             min-width: 300px !important;
         }
     }
-
 }

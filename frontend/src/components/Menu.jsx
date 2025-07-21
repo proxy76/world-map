@@ -1,26 +1,21 @@
-import { ADD_WISHLIST_ENDPOINT_URL, ADD_JOURNAL_ENDPOINT_URL } from "../utils/ApiHost";
+﻿import { ADD_WISHLIST_ENDPOINT_URL, ADD_JOURNAL_ENDPOINT_URL } from "../utils/ApiHost";
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "./Card";
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
-
 export default function Menu({ setMenuOpen, menuOpen, country, countryCode, isLogged }) {
   const [cardOpened, setCardOpened] = useState(false);
   const { lang } = useLanguage();
-
   const toggleCard = () => setCardOpened(!cardOpened);
   const toggleMenu = () => setMenuOpen(false);
-
   const add_wishlist = () => {
     axios.post(ADD_WISHLIST_ENDPOINT_URL, { country }, { withCredentials: true });
   };
-
   const add_journal = () => {
     axios.post(ADD_JOURNAL_ENDPOINT_URL, { country }, { withCredentials: true });
   };
-
   return (
     <div className="menus">
       {menuOpen && (

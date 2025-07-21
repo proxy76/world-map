@@ -1,19 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import '../styles/MapModal.scss';
-
-
 const MapModal = ({ isOpen, onClose, capital, countryName }) => {
     const { lang } = useLanguage();
-    
     if (!isOpen) return null;
-
-    // Using import.meta.env for Vite environment variables
     const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-    
-    const mapSrc = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(capital + ', ' + countryName)}&zoom=12`;
-
+    const mapSrc = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
     return (
         <div className="map-modal-overlay" onClick={onClose}>
             <div className="map-modal-content" onClick={e => e.stopPropagation()}>
@@ -24,10 +17,9 @@ const MapModal = ({ isOpen, onClose, capital, countryName }) => {
                         onClick={onClose}
                         aria-label={translations[lang]?.close || 'Close'}
                     >
-                        ✕
+                        âœ•
                     </button>
                 </div>
-                
                 <div className="map-modal-body">
                     {GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE' ? (
                         <iframe
@@ -50,7 +42,6 @@ const MapModal = ({ isOpen, onClose, capital, countryName }) => {
                         </div>
                     )}
                 </div>
-                
                 <div className="map-modal-footer">
                     <p className="map-info">
                         {translations[lang]?.showingLocation || 'Showing location of'} <strong>{capital}</strong> {translations[lang]?.in || 'in'} <strong>{countryName}</strong>
@@ -60,5 +51,4 @@ const MapModal = ({ isOpen, onClose, capital, countryName }) => {
         </div>
     );
 };
-
 export default MapModal;

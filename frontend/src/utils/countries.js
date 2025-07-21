@@ -1,9 +1,9 @@
-// Lista completă de țări cu numele în română și engleză
+﻿
 export const countries = {
   ro: [
-    'România',
+    'RomÃ¢nia',
     'Germania',
-    'Franța',
+    'FranÈ›a',
     'Italia',
     'Spania',
     'Portugalia',
@@ -11,16 +11,16 @@ export const countries = {
     'Bulgaria',
     'Ungaria',
     'Austria',
-    'Elveția',
+    'ElveÈ›ia',
     'Olanda',
     'Belgia',
     'Luxemburg',
-    'Republica Cehă',
+    'Republica CehÄƒ',
     'Slovacia',
     'Slovenia',
-    'Croația',
+    'CroaÈ›ia',
     'Serbia',
-    'Bosnia și Herțegovina',
+    'Bosnia È™i HerÈ›egovina',
     'Muntenegru',
     'Macedonia de Nord',
     'Albania',
@@ -37,8 +37,8 @@ export const countries = {
     'Islanda',
     'Irlanda',
     'Regatul Unit',
-    'Scoția',
-    'Țara Galilor',
+    'ScoÈ›ia',
+    'Èšara Galilor',
     'Irlanda de Nord',
     'Anglia',
     'Malta',
@@ -52,7 +52,7 @@ export const countries = {
     'Kazahstan',
     'Uzbekistan',
     'Turkmenistan',
-    'Kârgâzstan',
+    'KÃ¢rgÃ¢zstan',
     'Tadjikistan',
     'Mongolia',
     'China',
@@ -87,7 +87,7 @@ export const countries = {
     'Iordania',
     'Israel',
     'Palestina',
-    'Arabia Saudită',
+    'Arabia SauditÄƒ',
     'Emiratele Arabe Unite',
     'Qatar',
     'Kuweit',
@@ -110,9 +110,9 @@ export const countries = {
     'Tanzania',
     'Rwanda',
     'Burundi',
-    'Republica Democratică Congo',
+    'Republica DemocraticÄƒ Congo',
     'Republica Congo',
-    'Republica Centrafricană',
+    'Republica CentrafricanÄƒ',
     'Ciad',
     'Camerun',
     'Nigeria',
@@ -126,13 +126,13 @@ export const countries = {
     'Guinea',
     'Sierra Leone',
     'Liberia',
-    'Coasta de Fildeș',
+    'Coasta de FildeÈ™',
     'Ghana',
     'Togo',
     'Benin',
     'Gabon',
-    'Guinea Ecuatorială',
-    'São Tomé și Príncipe',
+    'Guinea EcuatorialÄƒ',
+    'SÃ£o TomÃ© È™i PrÃ­ncipe',
     'Angola',
     'Zambia',
     'Malawi',
@@ -160,16 +160,16 @@ export const countries = {
     'Cuba',
     'Jamaica',
     'Haiti',
-    'Republica Dominicană',
+    'Republica DominicanÄƒ',
     'Bahamas',
     'Barbados',
-    'Trinidad și Tobago',
+    'Trinidad È™i Tobago',
     'Grenada',
-    'Saint Vincent și Grenadine',
+    'Saint Vincent È™i Grenadine',
     'Saint Lucia',
     'Dominica',
-    'Antigua și Barbuda',
-    'Saint Kitts și Nevis',
+    'Antigua È™i Barbuda',
+    'Saint Kitts È™i Nevis',
     'Brazilia',
     'Argentina',
     'Chile',
@@ -182,9 +182,9 @@ export const countries = {
     'Uruguay',
     'Guyana',
     'Suriname',
-    'Guyana Franceză',
+    'Guyana FrancezÄƒ',
     'Australia',
-    'Noua Zeelandă',
+    'Noua ZeelandÄƒ',
     'Papua Noua Guinee',
     'Fiji',
     'Samoa',
@@ -330,7 +330,7 @@ export const countries = {
     'Benin',
     'Gabon',
     'Equatorial Guinea',
-    'São Tomé and Príncipe',
+    'SÃ£o TomÃ© and PrÃ­ncipe',
     'Angola',
     'Zambia',
     'Malawi',
@@ -397,17 +397,13 @@ export const countries = {
     'Tuvalu'
   ]
 };
-
-// Funcție pentru căutarea țărilor
 export const searchCountries = (query, lang = 'ro') => {
   if (!query || query.length < 1) {
     return [];
   }
-  
   const countryList = countries[lang] || countries.ro;
   const results = countryList.filter(country => 
     country.toLowerCase().includes(query.toLowerCase())
-  ).slice(0, 10); // Limitez la 10 rezultate pentru performanță
-  
+  ).slice(0, 10); 
   return results;
 };

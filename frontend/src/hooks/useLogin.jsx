@@ -1,9 +1,7 @@
-import {useEffect, useState} from "react";
+﻿import {useEffect, useState} from "react";
 import {LOGIN_ENDPOINT_URL} from "../utils/ApiHost";
 import axios from 'axios';
-
 const useLogin = ({username, password}) => {
-
     useEffect(() => {
         axios.post(LOGIN_ENDPOINT_URL, {
             username: username,
@@ -18,9 +16,6 @@ const useLogin = ({username, password}) => {
             console.log(error);
             localStorage.setItem('isLogged', 0);
           });
-
     }, []);
-
 }
-
 export default useLogin;

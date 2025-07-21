@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
@@ -6,23 +6,18 @@ import pfp from '../assets/anonymous.png';
 import { getProfileInfo } from '../utils/profileInfo.js';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
 import axios from 'axios';
-
 import "../styles/header.scss";
-
 const GlobalHeader = ({ isLogged }) => {
   const { lang } = useLanguage();
   const [profilePic, setProfilePic] = useState('');
   const [isOpened, setIsOpened] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
-
   useEffect(() => {
     getProfileInfo()
       .then(data => setProfilePic(data.profilePic))
       .catch(() => setProfilePic('/anonymous.png'));
   }, []);
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (e.target.className !== 'dropdownWrapper' && e.target.className !== 'profilePic') {
@@ -34,13 +29,11 @@ const GlobalHeader = ({ isLogged }) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
-
   const handleLogout = async (e) => {
     e.preventDefault();
     axios.post(LOGOUT_ENDPOINT_URL, {}, { withCredentials: true })
       .then(() => window.location.reload());
   };
-
   return (
     <div className="headerWrapper">
       <div className="headerText">
@@ -53,10 +46,10 @@ const GlobalHeader = ({ isLogged }) => {
               <a href='/'>GlobeTales.</a>
             </div>
           </div>
-          {/* NU mai afișați selectorul de limbă aici pe pagina de profil */}
+          {}
           {location.pathname !== "/profile" && (
             <div style={{ marginLeft: "auto", marginRight: "1rem" }}>
-              {/* Dacă vrei selector global pe alte pagini, îl poți lăsa aici */}
+              {}
             </div>
           )}
           <div
@@ -99,5 +92,4 @@ const GlobalHeader = ({ isLogged }) => {
     </div>
   );
 };
-
 export default GlobalHeader;

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ALL_REVIEWS_ENDPOINT_URL, MY_REVIEWS_ENDPOINT_URL, ADD_REVIEW_ENDPOINT_URL } from '../utils/ApiHost';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
-
 const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
   const [allReviews, setAllReviews] = useState([]);
   const [myReviews, setMyReviews] = useState([]);
@@ -12,14 +11,12 @@ const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
   const [activeTab, setActiveTab] = useState('all');
   const [showAddReviewForm, setShowAddReviewForm] = useState(false);
   const { lang } = useLanguage();
-
   const fetchReviews = async () => {
     setIsLoading(true);
     try {
       const allReviewsResponse = await axios.post(ALL_REVIEWS_ENDPOINT_URL, {
         country_name: reviewsOpened,
       }, { withCredentials: true });
-
       let myReviewsResponse = { data: { reviews: [] } };
       if (isLogged) {
         try {
@@ -30,7 +27,6 @@ const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
           console.warn('Could not fetch personal reviews:', error);
         }
       }
-
       setAllReviews(allReviewsResponse.data.reviews || []);
       setMyReviews(myReviewsResponse.data.reviews || []);
     } catch (error) {
@@ -39,13 +35,11 @@ const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     if (reviewsOpened) {
       fetchReviews();
     }
   }, [reviewsOpened, showAddReviewForm]);
-
   const addReview = async () => {
     try {
       await axios.post(ADD_REVIEW_ENDPOINT_URL, {
@@ -59,11 +53,9 @@ const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
       console.error('Error adding review:', error);
     }
   };
-
   const closeModal = () => {
     setReviewsOpened('');
   };
-
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -148,5 +140,4 @@ const ReviewModal = ({ reviewsOpened, setReviewsOpened, isLogged }) => {
     </div>
   );
 };
-
 export default ReviewModal;

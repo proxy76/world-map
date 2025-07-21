@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import translations from '../utils/translations';
 import axios from 'axios';
 import { GET_POST_COMMENTS_ENDPOINT_URL, CREATE_COMMENT_ENDPOINT_URL, CREATE_REPLY_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/commentSection.scss';
-
 const CommentSection = ({ postId, isLogged, isVisible }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showAllComments, setShowAllComments] = useState(false);
   const { lang } = useLanguage();
-
+  const INITIAL_COMMENTS_DISPLAY = 3;
   useEffect(() => {
     fetchComments();
   }, [postId]);
-
   const fetchComments = async () => {
     try {
       const response = await axios.get(`${GET_POST_COMMENTS_ENDPOINT_URL}/${postId}/comments/`, {
@@ -28,11 +27,9 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
       setLoading(false);
     }
   };
-
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !isLogged) return;
-
     setIsSubmitting(true);
     try {
       await axios.post(
@@ -41,14 +38,13 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
         { withCredentials: true }
       );
       setNewComment('');
-      fetchComments(); // Refresh comments
+      fetchComments(); 
     } catch (error) {
       console.error('Failed to create comment:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(lang === 'ro' ? 'ro-RO' : 'en-US', {
@@ -59,7 +55,14 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
       minute: '2-digit'
     });
   };
-
+  const getTotalCommentsCount = (comments) => {
+    return comments.reduce((total, comment) => {
+      return total + 1 + (comment.replies ? comment.replies.length : 0);
+    }, 0);
+  };
+  const totalCommentsCount = getTotalCommentsCount(comments);
+  const displayedComments = showAllComments ? comments : comments.slice(0, INITIAL_COMMENTS_DISPLAY);
+  const hasMoreComments = comments.length > INITIAL_COMMENTS_DISPLAY;
   if (loading) {
     return (
       <div className="comments-section">
@@ -67,7 +70,6 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
       </div>
     );
   }
-
   return (
     <div 
       className="comments-section"
@@ -78,30 +80,28 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
       }}
     >
       <div className="comments-header">
-        <h3>💬 Comentarii ({comments.length})</h3>
+        <h3>¬ {translations[lang].comments} ({totalCommentsCount})</h3>
       </div>
-
       {isLogged ? (
         <form onSubmit={handleSubmitComment} className="comment-form">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Scrie un comentariu..."
+            placeholder={translations[lang].writeComment}
             rows={3}
             required
           />
           <button type="submit" disabled={isSubmitting || !newComment.trim()}>
-            {isSubmitting ? 'Se publică...' : 'Publică comentariul'}
+            {isSubmitting ? translations[lang].publishing : translations[lang].publishComment}
           </button>
         </form>
       ) : (
         <div className="login-prompt">
-          <p>Trebuie să fii conectat pentru a comenta.</p>
+          <p>{translations[lang].mustBeLoggedToComment}</p>
         </div>
       )}
-
       <div className="comments-list">
-        {comments.map(comment => (
+        {displayedComments.map(comment => (
           <Comment 
             key={comment.id} 
             comment={comment} 
@@ -110,25 +110,45 @@ const CommentSection = ({ postId, isLogged, isVisible }) => {
             onReplySubmit={fetchComments}
           />
         ))}
+        {hasMoreComments && !showAllComments && (
+          <button 
+            className="show-more-comments"
+            onClick={() => setShowAllComments(true)}
+          >
+            {translations[lang].showMoreComments} ({comments.length - INITIAL_COMMENTS_DISPLAY} {translations[lang].more})
+          </button>
+        )}
+        {showAllComments && hasMoreComments && (
+          <button 
+            className="show-less-comments"
+            onClick={() => setShowAllComments(false)}
+          >
+            {translations[lang].showLessComments}
+          </button>
+        )}
         {comments.length === 0 && (
           <div className="no-comments">
-            <p>Nu există comentarii încă. Fii primul care comentează!</p>
+            <p>{translations[lang].noCommentsYet}</p>
           </div>
         )}
       </div>
     </div>
   );
 };
-
 const Comment = ({ comment, formatDate, isLogged, onReplySubmit }) => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showAllReplies, setShowAllReplies] = useState(false);
+  const { lang } = useLanguage();
+  const MAX_REPLIES_DISPLAY = 3;
+  const hasMoreReplies = comment.replies && comment.replies.length > MAX_REPLIES_DISPLAY;
+  const displayedReplies = showAllReplies || !hasMoreReplies 
+    ? comment.replies 
+    : comment.replies?.slice(0, MAX_REPLIES_DISPLAY);
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     if (!replyText.trim()) return;
-
     setIsSubmitting(true);
     try {
       await axios.post(
@@ -138,14 +158,13 @@ const Comment = ({ comment, formatDate, isLogged, onReplySubmit }) => {
       );
       setReplyText('');
       setShowReplyForm(false);
-      onReplySubmit(); // Refresh comments
+      onReplySubmit(); 
     } catch (error) {
       console.error('Failed to create reply:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="comment">
       <div className="comment-header">
@@ -160,45 +179,41 @@ const Comment = ({ comment, formatDate, isLogged, onReplySubmit }) => {
           <span className="comment-date">{formatDate(comment.createdAt)}</span>
         </div>
       </div>
-      
       <div className="comment-content">
         <p>{comment.content}</p>
       </div>
-
       <div className="comment-actions">
         {isLogged && (
           <button 
             className="reply-btn"
             onClick={() => setShowReplyForm(!showReplyForm)}
           >
-            💬 Răspunde
+            ¬ {translations[lang].reply}
           </button>
         )}
       </div>
-
       {showReplyForm && (
         <form onSubmit={handleReplySubmit} className="reply-form">
           <textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
-            placeholder="Scrie un răspuns..."
+            placeholder={translations[lang].writeReply}
             rows={2}
             required
           />
           <div className="reply-actions">
             <button type="button" onClick={() => setShowReplyForm(false)}>
-              Anulează
+              {translations[lang].cancel}
             </button>
             <button type="submit" disabled={isSubmitting || !replyText.trim()}>
-              {isSubmitting ? 'Se publică...' : 'Răspunde'}
+              {isSubmitting ? translations[lang].publishing : translations[lang].reply}
             </button>
           </div>
         </form>
       )}
-
       {comment.replies && comment.replies.length > 0 && (
         <div className="replies">
-          {comment.replies.map(reply => (
+          {displayedReplies.map(reply => (
             <Comment 
               key={reply.id} 
               comment={reply} 
@@ -207,10 +222,25 @@ const Comment = ({ comment, formatDate, isLogged, onReplySubmit }) => {
               onReplySubmit={onReplySubmit}
             />
           ))}
+          {hasMoreReplies && !showAllReplies && (
+            <button 
+              className="show-more-replies"
+              onClick={() => setShowAllReplies(true)}
+            >
+              ¬ {translations[lang].showMoreReplies} ({comment.replies.length - MAX_REPLIES_DISPLAY})
+            </button>
+          )}
+          {showAllReplies && hasMoreReplies && (
+            <button 
+              className="show-less-replies"
+              onClick={() => setShowAllReplies(false)}
+            >
+              â¬†ï¸ {translations[lang].showLessReplies}
+            </button>
+          )}
         </div>
       )}
     </div>
   );
 };
-
 export default CommentSection;

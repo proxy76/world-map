@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/Card.scss';
 import {
@@ -18,21 +18,17 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page })
   const translateCountryName = (countryName) => {
     if (!countryName) return countryName;
     
-    // Găsim indexul țării în lista română (care e limba salvată în backend)
     const roIndex = countries.ro.findIndex(country => 
       country.toLowerCase() === countryName.toLowerCase()
     );
     
-    // Dacă găsim țara, returnăm numele în limba curentă
     if (roIndex !== -1 && countries[lang] && countries[lang][roIndex]) {
       return countries[lang][roIndex];
     }
     
-    // Dacă nu găsim, returnăm numele original
     return countryName;
   };
 
-  // Helper function to get the correct name for RESTCountries API
   const getApiName = (name) => {
     const overrides = {
       'United States': 'usa',

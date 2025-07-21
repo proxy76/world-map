@@ -1,4 +1,4 @@
-.menus {
+﻿.menus {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: 1000;
@@ -7,14 +7,12 @@
   align-items: flex-start;
   background: rgba(0,0,0,0.08);
 }
-
 .backgroundMenu {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .countryMenu {
   background: #fff;
   border-radius: 12px;
@@ -27,13 +25,11 @@
   flex-direction: column;
   align-items: stretch;
   gap: 0.7rem;
-
   h1 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
     text-align: center;
   }
-
   button {
     font-size: 1rem;
     padding: 0.5rem 0.7rem;
@@ -45,19 +41,16 @@
     font-weight: bold;
     transition: background 0.2s;
     box-shadow: 0 2px 6px rgba(76,175,80,0.07);
-
     &:active {
       background: #388e3c;
     }
   }
-
   p {
     font-size: 0.95rem;
     color: #444;
     text-align: center;
   }
 }
-
 @media (max-width: 800px) {
   .menus,
   .backgroundMenu {

@@ -1,4 +1,4 @@
-const translations = {
+﻿const translations = {
   ro: {
     // General
     save: "Salvează",
@@ -98,6 +98,24 @@ const translations = {
     invalidAmount: "Vă rugăm să introduceți o sumă validă",
     convertingTo: "Se convertește în",
     
+    // Comments
+    comments: "Comentarii",
+    writeComment: "Scrie un comentariu...",
+    publishComment: "Publică comentariul",
+    publishing: "Se publică...",
+    mustBeLoggedToComment: "Trebuie să fii conectat pentru a comenta.",
+    noCommentsYet: "Nu există comentarii încă. Fii primul care comentează!",
+    showMoreComments: "Arată mai multe comentarii",
+    showLessComments: "Arată mai puține comentarii",
+    more: "mai multe",
+    reply: "Răspunde",
+    replies: "răspunsuri",
+    writeReply: "Scrie un răspuns...",
+    showMoreReplies: "Arată mai multe răspunsuri",
+    showLessReplies: "Arată mai puține răspunsuri",
+    previous: "Anterior",
+    next: "Următorul",
+    
     // Filters and Autocomplete
     country: "Țară",
     searchCountry: "Caută după țară...",
@@ -112,6 +130,20 @@ const translations = {
     typeToSearch: "Scrie pentru a căuta țări...",
     selectValidCountry: "Te rog selectează o țară validă din listă!",
     addAtLeastOneCountry: "Adaugă cel puțin o țară!",
+    
+    // Create Post
+    createNewPost: "Creează o postare nouă",
+    title: "Titlu",
+    content: "Conținut",
+    addCountry: "Adaugă țară",
+    addTag: "Adaugă tag",
+    images: "Imagini",
+    tags: "Tag-uri",
+    optional: "opțional",
+    cancel: "Anulează",
+    createPost: "Creează postarea",
+    publishing: "Se publică...",
+    publishPost: "Publică postarea",
     
     // Post Types
     journal: "Jurnal",
@@ -181,6 +213,7 @@ const translations = {
     invalidEmail: "Invalid email!",
     registrationFailed: "Registration failed!",
     unloggedMessage: "Log in to add country to journal or bucketlist",
+    backToCommunity: "← Back to community",
 
     // Profile
     profile: "My Profile",
@@ -259,6 +292,20 @@ const translations = {
     selectValidCountry: "Please select a valid country from the list!",
     addAtLeastOneCountry: "Add at least one country!",
     
+    // Create Post
+    createNewPost: "Create New Post",
+    title: "Title",
+    content: "Content",
+    addCountry: "Add Country",
+    addTag: "Add Tag",
+    images: "Images",
+    tags: "Tags",
+    optional: "optional",
+    cancel: "Cancel",
+    createPost: "Create Post",
+    publishing: "Publishing...",
+    publishPost: "Publish Post",
+    
     // Post Types
     journal: "Journal",
     review: "Review",
@@ -288,6 +335,26 @@ const translations = {
     // Others
     profilePictureUpdated: "Profile picture updated",
     noImageUploaded: "No image uploaded",
+    
+    // Comments
+    comments: "Comments",
+    writeComment: "Write a comment...",
+    publishComment: "Publish comment",
+    publishing: "Publishing...",
+    mustBeLoggedToComment: "You must be logged in to comment.",
+    noCommentsYet: "No comments yet. Be the first to comment!",
+    showMoreComments: "Show more comments",
+    showLessComments: "Show less comments",
+    more: "more",
+    reply: "Reply",
+    replies: "replies",
+    writeReply: "Write a reply...",
+    showMoreReplies: "Show more replies",
+    showLessReplies: "Show less replies",
+    previous: "Previous", 
+    next: "Next",
+    cancel: "Cancel",
+    
     // etc.
   }
 };

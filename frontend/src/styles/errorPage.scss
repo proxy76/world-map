@@ -1,12 +1,10 @@
-.errorPage {
+﻿.errorPage {
     width: 100%;
     height: 100vh;
-
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
     b {
         margin-bottom: 3%;
     }
@@ -37,23 +35,19 @@
         vertical-align: baseline;
         width: auto;
     }
-
     p {
         color: #e53935;
         font-size: 1.2rem;
         margin-bottom: 1rem;
     }
-
     .error-buttons {
         display: flex;
         gap: 1rem;
     }
-
     button:hover {
         background: #388e3c;
         transform: translateY(-2px) scale(1.04);
     }
-
     .back-btn {
         margin-top: 2rem;
         background: #FFFFFF;
@@ -66,7 +60,6 @@
         transition: background 0.2s, color 0.2s, border 0.2s, transform 0.2s;
         box-shadow: none;
     }
-
     .back-btn:hover {
         background: #4caf50;
         color: #FFFFFF;

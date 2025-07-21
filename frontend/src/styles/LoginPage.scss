@@ -1,11 +1,10 @@
-.login-container {
+﻿.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   background: linear-gradient(135deg, #a8e6cf, #dcedf7);
 }
-
 .login-card {
   background-color: #ffffff;
   padding: 30px;
@@ -14,20 +13,17 @@
   text-align: center;
   width: 350px;
 }
-
 .login-title {
   font-size: 24px;
   font-weight: bold;
   color: #4caf50;
   margin-bottom: 10px;
 }
-
 .login-subtitle {
   font-size: 16px;
   color: #000;
   margin-bottom: 20px;
 }
-
 .login-input {
   display: block;
   margin: 10px auto;
@@ -39,7 +35,6 @@
   outline: none;
   background-color: #f9f9f9;
 }
-
 .login-button {
   background-color: #4caf50;
   color: #ffffff;
@@ -54,14 +49,12 @@
   display: block;
   width: 100%;
 }
-
 .login-error {
   color: #e53935;
   margin-top: 1rem;
   text-align: center;
   font-weight: bold;
 }
-
 @media (max-width: 500px) {
   .login-card {
     width: 95vw;
@@ -80,7 +73,6 @@
     padding: 10px;
   }
 }
-
 @media (max-width: 350px) {
   .login-card {
     padding: 8px;

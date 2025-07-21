@@ -1,11 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import { LOGIN_ENDPOINT_URL } from '../utils/ApiHost';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-
-
 const LoginPage = ({ setIsLogged }) => {
   const { lang } = useLanguage();
   const [username, setUsername] = useState('');
@@ -25,7 +23,6 @@ const LoginPage = ({ setIsLogged }) => {
   useEffect(() => {
     usernameRef.current && usernameRef.current.focus();
   }, []);
-
   const login = (e) => {
     setError('');
     if (
@@ -47,7 +44,6 @@ const LoginPage = ({ setIsLogged }) => {
         });
     }
   };
-
   return (
     <div style={styles.container}>
       <div style={styles.floatingElements}>
@@ -55,13 +51,11 @@ const LoginPage = ({ setIsLogged }) => {
         <div style={{...styles.floatingCircle, ...styles.circle2}}></div>
         <div style={{...styles.floatingCircle, ...styles.circle3}}></div>
       </div>
-      
       <div style={styles.card}>
         <div style={styles.header}>
           <h2 style={styles.title}>{translations[lang].welcome}</h2>
           <p style={styles.subtitle}>{translations[lang].login}</p>
         </div>
-
         <div style={styles.formGroup}>
           <label style={styles.label}>Username</label>
           <input
@@ -69,7 +63,7 @@ const LoginPage = ({ setIsLogged }) => {
             ref={usernameRef}
             onChange={(e) => setUsername(e.target.value)}
             value={username}
-            placeholder="Introduceți numele dvs."
+            placeholder="IntroduceÈ›i numele dvs."
             style={styles.input}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
@@ -81,7 +75,6 @@ const LoginPage = ({ setIsLogged }) => {
             onBlur={(e) => e.target.style.transform = 'translateY(0)'}
           />
         </div>
-
         <div style={styles.formGroup}>
           <label style={styles.label}>Password</label>
           <input
@@ -89,7 +82,7 @@ const LoginPage = ({ setIsLogged }) => {
             ref={passwordRef}
             onChange={(e) => setPassword(e.target.value)}
             value={password}
-            placeholder="Introduceți parola"
+            placeholder="IntroduceÈ›i parola"
             style={styles.input}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
@@ -100,7 +93,6 @@ const LoginPage = ({ setIsLogged }) => {
             onBlur={(e) => e.target.style.transform = 'translateY(0)'}
           />
         </div>
-
         <div style={styles.buttonContainer}>
           <button 
             onClick={login} 
@@ -121,62 +113,41 @@ const LoginPage = ({ setIsLogged }) => {
             {translations[lang].login}
           </button>
         </div>
-        
         {error && <div style={styles.error}>{error}</div>}
       </div>
     </div>
   );
 };
-
-// Color Variables
 const colors = {
-  // Primary Colors
   primary: '#66ea9b',
   primaryDark: '#118515',
-  
-  // Background Colors
   backgroundGradientStart: '#66ea9b',
   backgroundGradientEnd: '#208291',
-  
-  // Card Colors
   cardBackground: 'rgba(255, 255, 255, 0.95)',
   cardBorder: 'rgba(255, 255, 255, 0.2)',
-  
-  // Text Colors
   titleGradientStart: '#66ea9b',
   titleGradientEnd: '#208291',
   subtitleText: '#64748b',
   labelText: '#374151',
   inputText: '#374151',
-  
-  // Input Colors
   inputBackground: '#fafafa',
   inputBackgroundHover: 'white',
   inputBackgroundFocus: 'white',
   inputBorder: '#e5e7eb',
   inputBorderHover: '#66ea9b',
   inputBorderFocus: '#66ea9b',
-  
-  // Button Colors
   buttonGradientStart: '#66ea9b',
   buttonGradientEnd: '#208291',
   buttonText: 'white',
   buttonShadow: 'rgba(102, 126, 234, 0)',
   buttonShadowHover: 'rgba(102, 126, 234, 0)',
-  
-  // Error Colors
   errorText: '#ef4444',
   errorBackground: 'rgba(239, 68, 68, 0.1)',
   errorBorder: 'rgba(239, 68, 68, 0.2)',
-  
-  // Floating Elements
   floatingCircle: 'rgba(255, 255, 255, 0.1)',
-  
-  // Shadow Colors
   cardShadow: 'rgba(0, 0, 0, 0.15)',
   inputFocusShadow: 'rgba(102, 126, 234, 0)',
 };
-
 const styles = {
   container: {
     display: 'flex',
@@ -312,8 +283,6 @@ const styles = {
     animation: 'shake 0.5s ease-in-out',
   },
 };
-
-// Add CSS animations via a style tag
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
   @keyframes slideUp {
@@ -326,44 +295,36 @@ styleSheet.textContent = `
       transform: translateY(0);
     }
   }
-  
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
   }
-  
   @keyframes float {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-20px) rotate(180deg); }
   }
-  
   input:focus {
     border-color: ${colors.inputBorderFocus} !important;
     background: ${colors.inputBackgroundFocus} !important;
     box-shadow: 0 0 0 3px ${colors.inputFocusShadow} !important;
   }
-  
   input:hover {
     border-color: ${colors.inputBorderHover} !important;
     background: ${colors.inputBackgroundHover} !important;
   }
-  
   @media (max-width: 480px) {
     .card {
       padding: 30px 20px !important;
       margin: 10px !important;
     }
-    
     .title {
       font-size: 2rem !important;
     }
   }
 `;
-
 if (!document.head.querySelector('style[data-login-styles]')) {
   styleSheet.setAttribute('data-login-styles', 'true');
   document.head.appendChild(styleSheet);
 }
-
 export default LoginPage;

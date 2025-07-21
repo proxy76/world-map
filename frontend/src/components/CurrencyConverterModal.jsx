@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import '../styles/CurrencyConverterModal.scss';
-
 const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName }) => {
     const { lang } = useLanguage();
     const [amount, setAmount] = useState('');
@@ -13,19 +12,13 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
     const [exchangeRates, setExchangeRates] = useState({});
     const [isClosing, setIsClosing] = useState(false);
     const [animatedAmount, setAnimatedAmount] = useState(null);
-
-    // Extract the first currency code from the country
     const targetCurrency = countryCurrency 
         ? Object.keys(countryCurrency)[0]
         : 'USD';
-
-    // Common currencies for the dropdown
     const commonCurrencies = [
         'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
         'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW'
     ];
-
-    // Fetch exchange rates when modal opens
     useEffect(() => {
         if (isOpen) {
             const fetchExchangeRates = async () => {
@@ -42,42 +35,32 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                     setIsLoading(false);
                 }
             };
-
             fetchExchangeRates();
         }
     }, [isOpen, lang]);
-
-    // Animate the result value
     useEffect(() => {
         if (convertedAmount && !isNaN(convertedAmount)) {
             const targetValue = parseFloat(convertedAmount);
-            const duration = 800; // ms
+            const duration = 800; 
             const steps = 60;
             const stepValue = targetValue / steps;
             const stepTime = duration / steps;
-            
             let currentValue = 0;
             let currentStep = 0;
-            
             const timer = setInterval(() => {
                 currentStep++;
                 currentValue = stepValue * currentStep;
-                
                 if (currentStep >= steps) {
                     currentValue = targetValue;
                     clearInterval(timer);
                 }
-                
                 setAnimatedAmount(currentValue.toFixed(2));
             }, stepTime);
-            
             return () => clearInterval(timer);
         } else {
             setAnimatedAmount(null);
         }
     }, [convertedAmount]);
-
-    // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
             setAmount('');
@@ -88,34 +71,25 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
             setIsClosing(false);
         }
     }, [isOpen]);
-
     const handleClose = () => {
         setIsClosing(true);
         setTimeout(() => {
             onClose();
-        }, 300); // Match the animation duration
+        }, 300); 
     };
-
     if (!isOpen && !isClosing) return null;
-
     const handleConvert = () => {
         if (!amount || !exchangeRates[fromCurrency] || !exchangeRates[targetCurrency]) {
             setError(translations[lang]?.invalidAmount || 'Please enter a valid amount');
             return;
         }
-
         setError('');
-        
-        // Convert from source currency to USD, then to target currency
         const usdAmount = parseFloat(amount) / exchangeRates[fromCurrency];
         const converted = usdAmount * exchangeRates[targetCurrency];
-        
         setConvertedAmount(converted.toFixed(2));
     };
-
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        // Only allow numbers and decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             setAmount(value);
             setConvertedAmount(null);
@@ -123,7 +97,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
             setError('');
         }
     };
-
     return (
         <div 
             className={`currency-modal-overlay ${isClosing ? 'closing' : ''}`} 
@@ -140,10 +113,9 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                         onClick={handleClose}
                         aria-label={translations[lang]?.close || 'Close'}
                     >
-                        ✕
+                        âœ•
                     </button>
                 </div>
-                
                 <div className="currency-modal-body">
                     <div className="converter-form">
                         <div className="input-group">
@@ -160,7 +132,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                                 disabled={isLoading}
                             />
                         </div>
-
                         <div className="input-group">
                             <label htmlFor="fromCurrency">
                                 {translations[lang]?.fromCurrency || 'From Currency'}:
@@ -183,7 +154,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                                 ))}
                             </select>
                         </div>
-
                         <div className="convert-button-container">
                             <button
                                 onClick={handleConvert}
@@ -196,13 +166,11 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                                 }
                             </button>
                         </div>
-
                         {error && (
                             <div className="error-message">
                                 {error}
                             </div>
                         )}
-
                         {convertedAmount && !error && (
                             <div className="conversion-result">
                                 <div className="result-text">
@@ -224,7 +192,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                         )}
                     </div>
                 </div>
-                
                 <div className="currency-modal-footer">
                     <p className="currency-info">
                         {translations[lang]?.convertingTo || 'Converting to'} <strong>{countryName}</strong> {translations[lang]?.currency || 'currency'} ({targetCurrency})
@@ -234,5 +201,4 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
         </div>
     );
 };
-
 export default CurrencyConverterModal;

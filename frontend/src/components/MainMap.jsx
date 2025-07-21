@@ -1,4 +1,4 @@
-import React, {
+﻿import React, {
   useState,
   lazy,
   Suspense,
@@ -6,45 +6,36 @@ import React, {
   useCallback,
 } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
-
 import "../styles/map.scss";
 const Menu = lazy(() => import("./Menu"));
 const GEO_URL = "/features.json";
-
-// ISO A3 codes for the 10 largest countries by area
 const largestCountries = [
-  "RUS", // Russia
-  "CAN", // Canada
-  "USA", // United States
-  "CHN", // China
-  "BRA", // Brazil
-  "AUS", // Australia
-  "IND", // India
-  "ARG", // Argentina
-  "KAZ", // Kazakhstan
-  "DZA", // Algeria
+  "RUS", 
+  "CAN", 
+  "USA", 
+  "CHN", 
+  "BRA", 
+  "AUS", 
+  "IND", 
+  "ARG", 
+  "KAZ", 
+  "DZA", 
 ];
-
 const LIGHT_GREEN = "#b6f5c6";
 const LIGHTER_GREEN = "#e3fbe9";
 const HOVER_LIGHT = "#f8fff9";
 const DARKER_GREEN = "#3eb262"; 
-
-
-
 const MainMap = ({ isLogged }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryName, setCountryName] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-
   const handleClick = useCallback((geo) => {
     setSelectedCountry(() => geo.id);
     setCountryName(() => geo.properties.name);
-    setCountryCode(() => geo.id); // geo.id is typically the ISO country code
+    setCountryCode(() => geo.id); 
     setMenuOpen(() => true);
   }, []);
-  
   return (
     <div
       className="mainMap"
@@ -55,7 +46,7 @@ const MainMap = ({ isLogged }) => {
         overflow: "hidden",
       }}
     >
-      <Suspense fallback={<div className="menu-fallback">Loading menu…</div>}>
+      <Suspense fallback={<div className="menu-fallback">Loading menuâ€¦</div>}>
         {selectedCountry && (
           <Menu
             setMenuOpen={setMenuOpen}
@@ -66,7 +57,6 @@ const MainMap = ({ isLogged }) => {
           />
         )}
       </Suspense>
-
       <div className="mapContainer">
         <ComposableMap className="map">
           <ZoomableGroup center={[0, 20]} zoom={1}>
@@ -112,5 +102,4 @@ const MainMap = ({ isLogged }) => {
     </div>
   );
 };
-
 export default React.memo(MainMap);

@@ -1,12 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+﻿import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import "../styles/ErrorPage.scss";
-
 const ErrorPage = () => {
   const { lang } = useLanguage();
   const navigate = useNavigate();
-
   return (
     <div className="errorPage">
       <b>
@@ -24,10 +22,9 @@ const ErrorPage = () => {
         className="back-btn"
         onClick={() => navigate('/')}
       >
-        ⬅ {translations[lang].back || "Back to Home"}
+        â¬… {translations[lang].back || "Back to Home"}
       </button>
     </div>
   );
 };
-
 export default ErrorPage;

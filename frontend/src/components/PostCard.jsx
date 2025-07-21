@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,7 +7,6 @@ import { countries } from '../utils/countries';
 import axios from 'axios';
 import { BACKEND_BASE_URL, STAMP_POST_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/postCard.scss';
-
 const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [passportStamps, setPassportStamps] = useState(post.passport_count || 0);
@@ -18,39 +17,26 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
   const [previewImageIndex, setPreviewImageIndex] = useState(0);
   const { lang } = useLanguage();
   const navigate = useNavigate();
-
-  // Funcție pentru traducerea numelor de țări
   const translateCountryName = (countryName) => {
     if (!countryName) return countryName;
-    
-    // Găsim indexul țării în lista română (care e limba salvată în backend)
     const roIndex = countries.ro.findIndex(country => 
       country.toLowerCase() === countryName.toLowerCase()
     );
-    
-    // Dacă găsim țara, returnăm numele în limba curentă
     if (roIndex !== -1 && countries[lang] && countries[lang][roIndex]) {
       return countries[lang][roIndex];
     }
-    
-    // Dacă nu găsim, returnăm numele original
     return countryName;
   };
-
-  // Previne scroll-ul când modal-ul fullscreen este deschis
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-    
-    // Cleanup la unmount
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isFullscreen]);
-
   useEffect(() => {
     if (isFullscreen) {
       document.addEventListener('keydown', handleKeyDown);
@@ -61,15 +47,11 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       };
     }
   }, [isFullscreen, currentImageIndex]);
-
   const handlePassportStamp = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (isStamping) return;
-    
-    // Salvăm poziția curentă de scroll
     const currentScrollPosition = window.scrollY;
-    
     try {
       setIsStamping(true);
       const response = await axios.post(
@@ -77,54 +59,61 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
         {},
         { withCredentials: true }
       );
-      
-      // Actualizăm imediat state-ul local
       setPassportStamps(response.data.count);
       setHasStamped(response.data.stamped);
-      
-      // Forțăm păstrarea poziției de scroll
       requestAnimationFrame(() => {
         window.scrollTo(0, currentScrollPosition);
       });
-      
       if (onStampUpdate) {
         onStampUpdate(post.id, response.data.count, response.data.stamped);
       }
     } catch (error) {
       console.error('Failed to toggle stamp:', error);
     } finally {
-      // Resetăm imediat flag-ul de loading
       setIsStamping(false);
     }
   };
-
+  const handleSharePost = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const shareData = {
+      title: post.title,
+      text: `Check out this post: ${post.title}`,
+      url: `${window.location.origin}/social/post/${post.id}`
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
   const handlePostClick = () => {
     navigate(`/social/post/${post.id}`);
   };
-
   const handleImageClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setCurrentImageIndex(previewImageIndex);
     setIsFullscreen(true);
   };
-
   const handleCloseFullscreen = () => {
     setIsFullscreen(false);
   };
-
   const handleNextImage = () => {
     if (post.images && post.images.length > 1) {
       setCurrentImageIndex((prev) => (prev + 1) % post.images.length);
     }
   };
-
   const handlePrevImage = () => {
     if (post.images && post.images.length > 1) {
       setCurrentImageIndex((prev) => (prev - 1 + post.images.length) % post.images.length);
     }
   };
-
   const handlePreviewNext = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -132,7 +121,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       setPreviewImageIndex((prev) => (prev + 1) % post.images.length);
     }
   };
-
   const handlePreviewPrev = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -140,7 +128,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       setPreviewImageIndex((prev) => (prev - 1 + post.images.length) % post.images.length);
     }
   };
-
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       handleCloseFullscreen();
@@ -150,7 +137,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       handlePrevImage();
     }
   };
-
   const getValidImages = () => {
     if (!post.images || !Array.isArray(post.images)) return [];
     return post.images.filter(img => 
@@ -161,25 +147,25 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
       img !== 'null'
     );
   };
-
   const validImages = getValidImages();
-
   const getImageUrl = (image) => {
     if (typeof image === 'string') {
       return image.startsWith('http') ? image : BACKEND_BASE_URL + image;
     }
     return '/anonymous.png';
   };
-
   const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown date';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Unknown date';
+    }
     return date.toLocaleDateString(lang === 'ro' ? 'ro-RO' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   };
-
   const getPostTypeLabel = (type) => {
     const types = {
       jurnal: lang === 'ro' ? 'Jurnal' : 'Journal',
@@ -190,7 +176,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
     };
     return types[type] || type;
   };
-
   return (
     <div 
       className="post-card"
@@ -220,10 +205,8 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
             {getPostTypeLabel(post.post_type)}
           </div>
         </div>
-
         <div className="post-content">
           <h3 className="post-title">{post.title}</h3>
-          
           {post.images && post.images.length > 0 && (
             <div className="post-image-container">
               <div className="post-image" onClick={handleImageClick}>
@@ -235,8 +218,7 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
                     e.target.style.display = 'none';
                   }}
                 />
-                
-                {/* Overlay cu informații și navigare */}
+                {}
                 <div className="image-overlay">
                   {post.images.length > 1 && (
                     <>
@@ -249,8 +231,7 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
                   )}
                 </div>
               </div>
-              
-              {/* Indicatori pentru imagini multiple */}
+              {}
               {post.images.length > 1 && (
                 <div className="preview-indicators">
                   {post.images.map((_, index) => (
@@ -268,12 +249,10 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
               )}
             </div>
           )}
-          
-          {/* Afișează descrierea doar dacă nu există imagini */}
+          {}
           {(!post.images || post.images.length === 0) && (
             <p className="post-excerpt">{post.content}</p>
           )}
-          
           <div className="post-tags">
             {post.countries_visited && post.countries_visited.map((country, index) => (
               <span key={index} className="country-tag">
@@ -283,7 +262,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           </div>
         </div>
       </div>
-
       <div className="post-actions">
         <button 
           type="button"
@@ -291,20 +269,27 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           onClick={handlePassportStamp}
           disabled={isStamping}
         >
-          <span className="passport-icon">📓</span>
+          <span className="passport-icon"></span>
           <span className="stamp-count">{passportStamps}</span>
         </button>
-        
-        <div className="comments-count">
-          💬 {post.comments_count}
+        <div className="action-buttons">
+          <button 
+            type="button"
+            className="share-btn"
+            onClick={handleSharePost}
+          >
+            <span className="share-icon">🔗</span>
+            Share
+          </button>
+          <div className="comments-count">
+            💬 {post.comments_count}
+          </div>
         </div>
       </div>
-
       {isHovered && (
         <div className="post-shimmer"></div>
       )}
-
-      {/* Fullscreen Modal cu Portal */}
+      {}
       {isFullscreen && createPortal(
         <div 
           className="fullscreen-modal"
@@ -314,23 +299,19 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
         >
           <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-btn" onClick={handleCloseFullscreen}>✕</button>
-            
             <div className="fullscreen-image-container">
               {post.images.length > 1 && (
                 <button className="nav-btn prev-btn" onClick={handlePrevImage}>‹</button>
               )}
-              
               <img 
                 src={getImageUrl(post.images[currentImageIndex])}
                 alt={`${post.title} ${currentImageIndex + 1}`}
                 className="fullscreen-image"
               />
-              
               {post.images.length > 1 && (
                 <button className="nav-btn next-btn" onClick={handleNextImage}>›</button>
               )}
             </div>
-            
             {post.images.length > 1 && (
               <div className="image-indicators">
                 {post.images.map((_, index) => (
@@ -342,7 +323,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
                 ))}
               </div>
             )}
-            
             <div className="image-info">
               <h4>{post.title}</h4>
               {post.images.length > 1 && (
@@ -356,5 +336,4 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
     </div>
   );
 };
-
 export default PostCard;

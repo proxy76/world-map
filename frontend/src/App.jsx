@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import './styles/main.scss';
 import LandingPage from './components/LandingPage';
 import React from "react";
@@ -12,23 +12,18 @@ import {CHECK_LOGIN_ENDPOINT_URL} from './utils/ApiHost'
 import axios from 'axios';
 import MapPage from './components/MapPage';
  import { getProfileInfo } from './utils/profileInfo';
-
 import {
   BrowserRouter,
   Route,
   Routes,
   Link
 } from "react-router-dom";
-
-
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
-
 function App() {
   const [isLogged, setIsLogged] = useState();
   const [profile, setProfile] = useState(null);
   const [profilePic, setProfilePic] = useState('')
-
   useEffect(() => {
     getProfileInfo()
       .then(data => setProfilePic(data.profilePic))
@@ -46,13 +41,10 @@ function App() {
             setIsLogged(false); 
         }
     };
-
     checkLoginStatus();
   }, []);
-
   return (
     <div className='container'>
-
       <BrowserRouter> 
         <Routes>
           <Route path="/" element={<LandingPage profilePic={profilePic} isLogged={isLogged} setIsLogged={setIsLogged} />} />
@@ -63,14 +55,11 @@ function App() {
           <Route path="/journal" element={<Journal isLogged={isLogged} />} />
           <Route path="/bucketlist" element={<Bucketlist isLogged={isLogged} />} />
           <Route path="/social" element={<SocialFeed isLogged={isLogged} />} />
-          <Route path="/post/:id" element={<PostDetails isLogged={isLogged} />} />
+          <Route path="/social/post/:id" element={<PostDetails isLogged={isLogged} />} />
           <Route path="/country/:countryCode" element={<CountryPage isLogged={isLogged} />} />
         </Routes>
       </BrowserRouter>
-
-
     </div>
   )
 }
-
 export default App

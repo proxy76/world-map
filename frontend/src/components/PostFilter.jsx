@@ -1,18 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../context/LanguageContext';
 import translations from '../utils/translations';
 import { searchCountries, countries } from '../utils/countries';
 import '../styles/postFilter.scss';
-
 const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
   const { lang } = useLanguage();
-  
-  // Initialize countryQuery with proper language conversion
   const getDisplayCountry = (backendCountry) => {
     if (!backendCountry) return '';
-    
-    // Backend stores in Romanian, convert to display language if needed
     if (lang === 'en') {
       const roIndex = countries.ro.indexOf(backendCountry);
       if (roIndex !== -1 && countries.en[roIndex]) {
@@ -21,14 +16,11 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     }
     return backendCountry;
   };
-  
   const [countryQuery, setCountryQuery] = useState(getDisplayCountry(filters.country || ''));
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [countryResults, setCountryResults] = useState([]);
   const countryInputRef = useRef(null);
-
   const countryList = countries[lang] || countries.ro;
-
   const postTypes = [
     { value: '', label: translations[lang].all },
     { value: 'jurnal', label: translations[lang].journal },
@@ -37,7 +29,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     { value: 'sfaturi', label: translations[lang].tips },
     { value: 'intrebari', label: translations[lang].questions }
   ];
-
   const travelTypes = [
     { value: '', label: translations[lang].all },
     { value: 'solo', label: translations[lang].solo },
@@ -49,7 +40,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     { value: 'couple', label: translations[lang].couple },
     { value: 'backpacking', label: translations[lang].backpacking }
   ];
-
   const themes = [
     { value: '', label: translations[lang].all },
     { value: 'natura', label: translations[lang].nature },
@@ -60,15 +50,12 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     { value: 'relaxare', label: translations[lang].relaxation },
     { value: 'sport', label: translations[lang].sport }
   ];
-
   const handleFilterChange = (filterType, value) => {
     const newFilters = { ...filters, [filterType]: value };
     setFilters(newFilters);
   };
-
   const getDropdownStyle = () => {
     if (!countryInputRef.current) return { display: 'none' };
-    
     const rect = countryInputRef.current.getBoundingClientRect();
     return {
       position: 'fixed',
@@ -85,15 +72,12 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
       overflowY: 'auto'
     };
   };
-
   const searchInCountries = (query) => {
     return searchCountries(query, lang);
   };
-
   const handleCountryInputChange = (e) => {
     const value = e.target.value;
     setCountryQuery(value);
-    
     if (value.length > 0) {
       const results = searchInCountries(value);
       setCountryResults(results);
@@ -104,38 +88,28 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
       handleFilterChange('country', '');
     }
   };
-
   const selectCountry = (country) => {
     setCountryQuery(country);
     setShowCountryDropdown(false);
     setCountryResults([]);
-    
-    // Find the country in the current language and get its equivalent in both languages
     let countryForBackend = country;
-    
-    // If we're in English mode and selected an English country name
     if (lang === 'en' && countries.en.includes(country)) {
       const index = countries.en.indexOf(country);
-      countryForBackend = countries.ro[index]; // Convert to Romanian for backend
+      countryForBackend = countries.ro[index]; 
     }
-    // If we're in Romanian mode and selected a Romanian country name
     else if (lang === 'ro' && countries.ro.includes(country)) {
-      countryForBackend = country; // Keep Romanian for backend
+      countryForBackend = country; 
     }
-    // If somehow we selected a country name from the opposite language
     else if (countries.en.includes(country)) {
       const index = countries.en.indexOf(country);
       countryForBackend = countries.ro[index];
     } else if (countries.ro.includes(country)) {
       countryForBackend = country;
     }
-    
     handleFilterChange('country', countryForBackend);
   };
-
   const handleCountryInputBlur = () => {
   };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (countryInputRef.current && !countryInputRef.current.contains(event.target)) {
@@ -145,29 +119,23 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
         }
       }
     };
-
     if (showCountryDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showCountryDropdown]);
-
   useEffect(() => {
-    // When filters.country changes, we need to update the display
     const newDisplayCountry = getDisplayCountry(filters.country || '');
     if (newDisplayCountry !== countryQuery) {
       setCountryQuery(newDisplayCountry);
     }
   }, [filters.country, lang]);
-
-  // Additional effect to handle language changes for existing country filter
   useEffect(() => {
     if (filters.country) {
       const newDisplayCountry = getDisplayCountry(filters.country);
       setCountryQuery(newDisplayCountry);
     }
   }, [lang]);
-
   const clearFilters = () => {
     const clearedFilters = {
       country: '',
@@ -180,7 +148,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     setCountryResults([]);
     setShowCountryDropdown(false);
   };
-
   return (
     <div 
       className="post-filter-container"
@@ -233,7 +200,7 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
                           e.target.style.color = '#333';
                         }}
                       >
-                        🌍 {country}
+                        ðŸŒ {country}
                       </div>
                     ))
                   ) : (
@@ -251,7 +218,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
             </div>
           </div>
         </div>
-
         <div className="filter-group">
           <label>{translations[lang].postType}:</label>
           <select
@@ -266,7 +232,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
             ))}
           </select>
         </div>
-
         <div className="filter-group">
           <label>{translations[lang].travelType}:</label>
           <select
@@ -281,7 +246,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
             ))}
           </select>
         </div>
-
         <div className="filter-group">
           <label>{translations[lang].theme}:</label>
           <select
@@ -297,7 +261,6 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
           </select>
         </div>
       </div>
-
       <div className="filter-actions">
         <button onClick={clearFilters} className="clear-filters">
           {translations[lang].clearFilters}
@@ -309,5 +272,4 @@ const PostFilter = ({ filters, setFilters, isVisible, onApplyFilters }) => {
     </div>
   );
 };
-
 export default PostFilter;

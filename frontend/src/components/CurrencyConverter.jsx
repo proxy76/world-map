@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import '../styles/CurrencyConverter.scss';
-
 const CurrencyConverter = ({ countryCurrency }) => {
     const { lang } = useLanguage();
     const [amount, setAmount] = useState('');
@@ -11,19 +10,13 @@ const CurrencyConverter = ({ countryCurrency }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [exchangeRates, setExchangeRates] = useState({});
-
-    // Extract the first currency code from the country
     const targetCurrency = countryCurrency 
         ? Object.keys(countryCurrency)[0]
         : 'USD';
-
-    // Common currencies for the dropdown
     const commonCurrencies = [
         'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
         'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW'
     ];
-
-    // Fetch exchange rates
     useEffect(() => {
         const fetchExchangeRates = async () => {
             try {
@@ -38,39 +31,29 @@ const CurrencyConverter = ({ countryCurrency }) => {
                 setIsLoading(false);
             }
         };
-
         fetchExchangeRates();
     }, [lang]);
-
     const handleConvert = () => {
         if (!amount || !exchangeRates[fromCurrency] || !exchangeRates[targetCurrency]) {
             setError(translations[lang]?.invalidAmount || 'Please enter a valid amount');
             return;
         }
-
         setError('');
-        
-        // Convert from source currency to USD, then to target currency
         const usdAmount = parseFloat(amount) / exchangeRates[fromCurrency];
         const converted = usdAmount * exchangeRates[targetCurrency];
-        
         setConvertedAmount(converted.toFixed(2));
     };
-
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        // Only allow numbers and decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             setAmount(value);
             setConvertedAmount(null);
             setError('');
         }
     };
-
     return (
         <div className="currency-converter">
             <h2>{translations[lang]?.currencyConverter || 'Currency Converter'}</h2>
-            
             <div className="converter-form">
                 <div className="input-group">
                     <label htmlFor="amount">
@@ -85,7 +68,6 @@ const CurrencyConverter = ({ countryCurrency }) => {
                         className="amount-input"
                     />
                 </div>
-
                 <div className="input-group">
                     <label htmlFor="fromCurrency">
                         {translations[lang]?.fromCurrency || 'From Currency'}:
@@ -106,7 +88,6 @@ const CurrencyConverter = ({ countryCurrency }) => {
                         ))}
                     </select>
                 </div>
-
                 <div className="convert-button-container">
                     <button
                         onClick={handleConvert}
@@ -119,13 +100,11 @@ const CurrencyConverter = ({ countryCurrency }) => {
                         }
                     </button>
                 </div>
-
                 {error && (
                     <div className="error-message">
                         {error}
                     </div>
                 )}
-
                 {convertedAmount && !error && (
                     <div className="conversion-result">
                         <div className="result-text">
@@ -149,5 +128,4 @@ const CurrencyConverter = ({ countryCurrency }) => {
         </div>
     );
 };
-
 export default CurrencyConverter;

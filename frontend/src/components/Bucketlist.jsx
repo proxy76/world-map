@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import GlobalHeader from './GlobalHeader';
 import CardWithReview from './CardWithReview.jsx';
 import axios from 'axios';
@@ -12,17 +12,13 @@ const Bucketlist = ({ isLogged }) => {
   const [profileInfo, setProfileInfo] = useState(null);
   const { lang } = useLanguage();
   const location = useLocation();
-  
   useEffect(() => {
     if (!location.search.includes("reloaded=1")) {
       window.location.replace(location.pathname + "?reloaded=1");
     } else {
-      // Ascunde parametru după reload
       window.history.replaceState({}, "", location.pathname);
     }
   }, [location]);
-
-  // Mouse tracking effect for interactive background
   useEffect(() => {
     const handleMouseMove = (e) => {
       const container = document.querySelector('.journal-bucketlist-container');
@@ -30,32 +26,27 @@ const Bucketlist = ({ isLogged }) => {
         const rect = container.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
-        
         container.style.setProperty('--mouse-x', `${x}%`);
         container.style.setProperty('--mouse-y', `${y}%`);
         container.classList.add('mouse-active');
       }
     };
-
     const handleMouseLeave = () => {
       const container = document.querySelector('.journal-bucketlist-container');
       if (container) {
         container.classList.remove('mouse-active');
       }
     };
-
     const container = document.querySelector('.journal-bucketlist-container');
     if (container) {
       container.addEventListener('mousemove', handleMouseMove);
       container.addEventListener('mouseleave', handleMouseLeave);
-      
       return () => {
         container.removeEventListener('mousemove', handleMouseMove);
         container.removeEventListener('mouseleave', handleMouseLeave);
       };
     }
   }, []);
-  
   useEffect(() => {
     const getInfo = async () => {
       try {
@@ -67,24 +58,20 @@ const Bucketlist = ({ isLogged }) => {
     };
     getInfo();
   }, []);
-
   if (!profileInfo) return <ErrorPage />;
-
   const handleRemoveFromWishlist = (name) => {
     setProfileInfo({
       ...profileInfo,
       countriesWishlist: profileInfo.countriesWishlist.filter((country) => country !== name),
     });
   };
-
   return (
     <div className="journal-bucketlist-container">
-      {/* Floating decorative elements */}
+      {}
       <div className="floating-decoration-extra"></div>
       <div className="floating-decoration"></div>
       <div className="floating-decoration"></div>
       <div className="floating-decoration"></div>
-      
       <GlobalHeader isLogged={isLogged} />
       <h1>{translations[lang].bucketlist}</h1>
       <div className="content">
@@ -95,5 +82,4 @@ const Bucketlist = ({ isLogged }) => {
     </div>
   );
 };
-
 export default Bucketlist;

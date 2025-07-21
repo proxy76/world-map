@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import axios from 'axios';  
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import '../styles/Card.scss'; 
-
 const Card = ({ name }) => {
     const { lang } = useLanguage();
     const [info, setInfo] = useState(null);
-
     useEffect(() => {
         let countryName = name;
         if (countryName === "United States") countryName = 'usa';
@@ -15,7 +13,7 @@ const Card = ({ name }) => {
         if (countryName === "China") countryName = 'Zhonghua';
         const getInfo = async () => {
             try {
-                const response = await axios.get(`https://restcountries.com/v3.1/name/${countryName}`);
+                const response = await axios.get(`https://restcountries.com/v3.1/name/${country}`);
                 setInfo(response.data[0]);
             } catch (error) {
                 console.error('Failed to fetch country info:', error);
@@ -23,9 +21,7 @@ const Card = ({ name }) => {
         };
         if (countryName) getInfo();
     }, [name]);
-
     if (!info) return <p>{translations[lang].loading}</p>;
-
     return (
         <div className='card'>
             <img src={info.flags.png} alt="" />
@@ -56,5 +52,4 @@ const Card = ({ name }) => {
         </div>
     );
 };
-
 export default Card;

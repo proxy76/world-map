@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PROFILE_INFO_ENDPOINT_URL, PFP_UPDATE_ENDPOINT_URL } from '../utils/ApiHost';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -9,7 +9,6 @@ import GlobalHeader from './GlobalHeader';
 import { FaWindows } from 'react-icons/fa';
 import ErrorPage from './ErrorPage';
 import '../styles/ProfilePage.scss';
-
 const ProfilePage = ({ isLogged }) => {
   const { lang, setLang } = useLanguage();
   const [profileInfo, setProfileInfo] = useState({});
@@ -19,7 +18,6 @@ const ProfilePage = ({ isLogged }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const BACKEND_BASE_URL = 'http://localhost:8000';
-
   useEffect(() => {
     if (!location.search.includes("reloaded=1")) {
       window.location.replace(location.pathname + "?reloaded=1");
@@ -27,7 +25,6 @@ const ProfilePage = ({ isLogged }) => {
       window.history.replaceState({}, "", location.pathname);
     }
   }, [location]);
-
   const getInfo = () => {
     axios
       .get(PROFILE_INFO_ENDPOINT_URL, { withCredentials: true })
@@ -39,16 +36,13 @@ const ProfilePage = ({ isLogged }) => {
       })
       .catch((error) => console.error('Failed to fetch profile info:', error));
   };
-
   const animateNumbers = (data) => {
     const visitedTarget = data.countriesVisited?.length || 0;
     const wishlistTarget = data.countriesWishlist?.length || 0;
-    
     const duration = 1000;
     const steps = 30;
     const visitedStep = visitedTarget / steps;
     const wishlistStep = wishlistTarget / steps;
-    
     let currentStep = 0;
     const interval = setInterval(() => {
       currentStep++;
@@ -56,26 +50,21 @@ const ProfilePage = ({ isLogged }) => {
         visited: Math.min(Math.floor(visitedStep * currentStep), visitedTarget),
         wishlist: Math.min(Math.floor(wishlistStep * currentStep), wishlistTarget)
       });
-      
       if (currentStep >= steps) {
         clearInterval(interval);
         setAnimatedStats({ visited: visitedTarget, wishlist: wishlistTarget });
       }
     }, duration / steps);
   };
-
   useEffect(() => {
     getInfo();
     setTimeout(() => setIsVisible(true), 100);
   }, []);
-
   if (isLogged === false) return <ErrorPage />;
   else if (isLogged === undefined || isLogged === null) return null;
-
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
   };
-
   const uploadImage = () => {
     if (!selectedImage) return;
     const formData = new FormData();
@@ -84,9 +73,7 @@ const ProfilePage = ({ isLogged }) => {
       .post(PFP_UPDATE_ENDPOINT_URL, formData, { withCredentials: true })
       .then(() => {getInfo(); window.location.reload()});
   };
-
   const toggleLang = () => setLang(lang === "ro" ? "en" : "ro");
-
   return (
     <div 
       className="profile-container"
@@ -95,7 +82,6 @@ const ProfilePage = ({ isLogged }) => {
         const rect = container.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
-        
         container.style.setProperty('--mouse-x', `${x}%`);
         container.style.setProperty('--mouse-y', `${y}%`);
         container.classList.add('mouse-active');
@@ -109,9 +95,7 @@ const ProfilePage = ({ isLogged }) => {
       <div className="floating-decoration-2"></div>
       <div className="floating-decoration-3"></div>
       <div className="floating-decoration-after"></div>
-      
       <GlobalHeader isLogged={isLogged} />
-      
       <div 
         className="profile-card"
         style={{
@@ -121,7 +105,6 @@ const ProfilePage = ({ isLogged }) => {
         }}
       >
         <div className="profile-card-overlay"></div>
-        
         <div className="profile-lang-toggle">
           <button
             onClick={toggleLang}
@@ -165,7 +148,6 @@ const ProfilePage = ({ isLogged }) => {
             }}>EN</span>
           </button>
         </div>
-        
         <div className="profile-picture-container">
           <div 
             className="profile-picture-wrapper"
@@ -206,7 +188,6 @@ const ProfilePage = ({ isLogged }) => {
             ></div>
           </div>
         </div>
-        
         <h2 
           className="profile-name"
           style={{
@@ -217,7 +198,6 @@ const ProfilePage = ({ isLogged }) => {
         >
           {profileInfo.username}
         </h2>
-        
         <p 
           className="profile-email"
           style={{
@@ -228,7 +208,6 @@ const ProfilePage = ({ isLogged }) => {
         >
           {profileInfo.email}
         </p>
-        
         <div 
           className="profile-stats"
           style={{
@@ -250,7 +229,6 @@ const ProfilePage = ({ isLogged }) => {
             color="#f093fb"
           />
         </div>
-        
         <div 
           className="profile-upload-container"
           style={{
@@ -268,7 +246,7 @@ const ProfilePage = ({ isLogged }) => {
               id="fileInput"
             />
             <label htmlFor="fileInput" className="profile-file-input-label">
-              <span className="profile-file-input-icon">📁</span>
+              <span className="profile-file-input-icon">ðŸ“</span>
               <span>{selectedImage ? selectedImage.name : 'Choose Image'}</span>
             </label>
           </div>
@@ -280,7 +258,6 @@ const ProfilePage = ({ isLogged }) => {
             variant="primary"
           />
         </div>
-        
         <div 
           className="profile-buttons"
           style={{
@@ -294,24 +271,22 @@ const ProfilePage = ({ isLogged }) => {
             onClick={() => navigate('/journal')}
             isVisible={isVisible}
             variant="secondary"
-            icon="📖"
+            icon="ðŸ“–"
           />
           <EnhancedButton
             label={translations[lang]?.bucketlist || 'Bucket List'}
             onClick={() => navigate('/bucketlist')}
             isVisible={isVisible}
             variant="accent"
-            icon="🎯"
+            icon="ðŸŽ¯"
           />
         </div>
       </div>
     </div>
   );
 };
-
 const AnimatedStatItem = ({ number, label, isVisible, color }) => {
   const [isHovered, setIsHovered] = useState(false);
-  
   return (
     <div 
       className="profile-stat-item"
@@ -357,11 +332,9 @@ const AnimatedStatItem = ({ number, label, isVisible, color }) => {
     </div>
   );
 };
-
 const EnhancedButton = ({ label, onClick, disabled = false, isVisible, variant = 'primary', icon }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-
   return (
     <button
       className={`profile-enhanced-button ${variant}`}
@@ -387,5 +360,4 @@ const EnhancedButton = ({ label, onClick, disabled = false, isVisible, variant =
     </button>
   );
 };
-
 export default ProfilePage;

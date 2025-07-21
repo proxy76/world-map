@@ -1,28 +1,19 @@
-import React from 'react';
-
+﻿import React from 'react';
 import { useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
-
 import "../styles/header.scss";
-
 import axios from 'axios';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
 import { getProfileInfo } from '../utils/profileInfo.js';
-
 import pfp from '../assets/anonymous.png';
-
 const Header = ({isLogged}) => {
-
     const headerRef = useRef(null);
     const [isOpened, setIsOpened] = useState(false);
     const [profilePic, setProfilePic] = useState('')
-    
       useEffect(() => {
         getProfileInfo()
           .then(data => setProfilePic(data.profilePic))
       }, []);
-
-    // Close dropdown when clicking outside
     const dropdownRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -35,24 +26,19 @@ const Header = ({isLogged}) => {
             document.removeEventListener("onclick", handleClickOutside);
         };
     }, []);
-
     const handleLogout = async (e) => {
         e.preventDefault();
-
         axios.post(LOGOUT_ENDPOINT_URL, {}, { withCredentials: true })
             .then((response) => {
-                setIsLogged(false); // Update state to indicate user is logged out
+                setIsLogged(false); 
             })
             .catch((error) => {
-                console.log(error); // Log any errors that occur
+                console.log(error); 
             })
             .finally(() => {
-                // Optional: Any final cleanup or actions can be placed here
             });
-        window.location.pathname = '/'; // Redirect to home page after logout
-
+        window.location.pathname = '/'; 
     };
-
     return (
         <>
             <div className="headerWrapper">
@@ -68,7 +54,7 @@ const Header = ({isLogged}) => {
                         </div>
                         <div
                             onClick={() => {
-                                console.log("Profile picture clicked!"); // Debugging
+                                console.log("Profile picture clicked!"); 
                                 setIsOpened(!isOpened);
                             }}
                             ref={dropdownRef} className="dropdownWrapper" >
@@ -92,11 +78,9 @@ const Header = ({isLogged}) => {
                                                             Profile
                                                         </div>
                                                     </Link>
-
                                                     <div onClick={(e) => handleLogout(e)} className="dropdownItem">
                                                         Logout
                                                     </div>
-
                                                 </div>
                                             ) : (
                                                 <div className="dropdown">
@@ -105,13 +89,11 @@ const Header = ({isLogged}) => {
                                                             Login
                                                         </div>
                                                     </Link>
-
                                                     <Link to='/register'>
                                                         <div className="dropdownItem">
                                                             Register
                                                         </div>
                                                     </Link>
-
                                                 </div>
                                             )
                                         }
@@ -129,8 +111,6 @@ const Header = ({isLogged}) => {
                 </div>
             </div>
         </>
-
     );
 };
-
 export default Header;

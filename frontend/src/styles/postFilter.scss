@@ -1,12 +1,12 @@
-.post-filter-container {
+﻿.post-filter-container {
   background: white;
   border-radius: 20px;
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
-  overflow: visible !important; // FORȚEZ overflow visible
-  position: relative; // Ensure proper stacking context
+  overflow: visible !important; 
+  position: relative; 
 }
 
 .filter-row {
@@ -15,15 +15,15 @@
   gap: 20px;
   align-items: end;
   margin-bottom: 20px;
-  overflow: visible !important; // FORȚEZ overflow visible
-  position: relative; // Ensure proper stacking context
+  overflow: visible !important; 
+  position: relative; 
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: visible !important; // FORȚEZ overflow visible
+  overflow: visible !important; 
 
   label {
     font-weight: 600;
@@ -32,10 +32,9 @@
   }
 }
 
-// Styling specific pentru autocomplete țări
 .country-filter-group {
   position: relative;
-  overflow: visible !important; // FORȚEZ overflow visible
+  overflow: visible !important; 
 }
 
 .country-autocomplete-container {
@@ -45,13 +44,13 @@
 
 .country-autocomplete {
   position: relative;
-  overflow: visible !important; // FORȚEZ overflow visible
-  z-index: 1000; // Ensure container has proper z-index
+  overflow: visible !important; 
+  z-index: 1000; 
 }
 
 .country-dropdown {
   position: absolute;
-  top: calc(100% - 2px); // Lipesc exact de input
+  top: calc(100% - 2px); 
   left: 0;
   right: 0;
   background: white;
@@ -63,12 +62,10 @@
   max-height: 200px;
   overflow-y: auto;
   
-  // Adjust height based on content
   &:has(.country-option:only-child) {
     max-height: fit-content;
   }
   
-  // For browsers that don't support :has, use JavaScript alternative
   &.single-result {
     max-height: fit-content;
   }

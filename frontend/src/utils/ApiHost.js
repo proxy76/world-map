@@ -1,4 +1,4 @@
-export const BASE_API_HOST = 'http://127.0.0.1:8000';
+﻿export const BASE_API_HOST = 'http://127.0.0.1:8000';
 export const BACKEND_BASE_URL = BASE_API_HOST; // Alias for consistency
 
 export const USER_INFO_ENDPOINT_URL = `${BASE_API_HOST}/user_info`

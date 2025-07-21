@@ -1,6 +1,4 @@
-@import './variables.scss';
-
-// Animated background gradient
+﻿@import './variables.scss';
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -12,8 +10,6 @@
     background-position: 0% 50%;
   }
 }
-
-// Floating animation for decorative elements
 @keyframes float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
@@ -25,8 +21,6 @@
     transform: translateY(-5px) rotate(-1deg);
   }
 }
-
-// Pulse animation for accent elements
 @keyframes pulse {
   0%, 100% {
     opacity: 0.7;
@@ -37,8 +31,6 @@
     transform: scale(1.05);
   }
 }
-
-// Shimmer effect for title
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -47,7 +39,6 @@
     background-position: 1000px 0;
   }
 }
-
 .journal-bucketlist-container {
   min-height: 100vh;
   position: relative;
@@ -55,8 +46,6 @@
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   overflow: hidden;
-  
-  // Interactive cursor spotlight effect
   &::before {
     content: '';
     position: fixed;
@@ -77,12 +66,9 @@
     transition: opacity 0.2s ease;
     opacity: 0;
   }
-  
   &.mouse-active::before {
     opacity: 1;
   }
-  
-  // Original decorative floating elements
   &::after {
     content: '';
     position: absolute;
@@ -95,15 +81,12 @@
     animation: float 8s ease-in-out infinite reverse;
     z-index: 2;
   }
-
-  // Additional floating decorations
   .floating-decoration {
     position: absolute;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 50%;
     z-index: 2;
     animation: float 7s ease-in-out infinite;
-
     &:nth-child(1) {
       top: 30%;
       right: 20%;
@@ -111,7 +94,6 @@
       height: 80px;
       animation-delay: -2s;
     }
-
     &:nth-child(2) {
       top: 60%;
       left: 5%;
@@ -119,7 +101,6 @@
       height: 50px;
       animation-delay: -4s;
     }
-
     &:nth-child(3) {
       top: 20%;
       left: 60%;
@@ -128,8 +109,6 @@
       animation-delay: -6s;
     }
   }
-
-  // Additional decorative element to replace the removed ::before
   .floating-decoration-extra {
     position: absolute;
     top: 10%;
@@ -141,10 +120,9 @@
     animation: float 6s ease-in-out infinite;
     z-index: 2;
   }
-
   h1 {
     position: absolute;
-    top: 120px; // Fixed position from top of container
+    top: 120px; 
     left: 0;
     right: 0;
     z-index: 10;
@@ -166,7 +144,6 @@
     background-clip: text;
     -webkit-background-clip: text;
     animation: shimmer 3s infinite;
-    
     &::after {
       content: '';
       position: absolute;
@@ -180,7 +157,6 @@
       animation: pulse 2s ease-in-out infinite;
     }
   }
-
   .content {
     position: relative;
     z-index: 2;
@@ -190,24 +166,19 @@
     gap: 2rem;
     margin: 0 2rem;
     padding: 2rem;
-    padding-top: 240px; // Space for the title above
+    padding-top: 240px; 
     justify-content: center;
     align-items: flex-start;
     margin-bottom: 3rem;
   }
-
-  // Enhanced card hover effects
   .content > * {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
     &:hover {
       transform: translateY(-8px) scale(1.02);
       filter: brightness(1.1);
     }
   }
 }
-
-// Responsive design
 @media (max-width: 768px) {
   .journal-bucketlist-container {
     h1 {
@@ -215,20 +186,17 @@
       top: 100px;
       padding: 1.5rem 0;
     }
-
     .content {
       margin: 0 1rem;
       padding: 1.5rem;
       padding-top: 200px;
       gap: 1.5rem;
     }
-
     .floating-decoration {
-      display: none; // Hide decorative elements on mobile
+      display: none; 
     }
   }
 }
-
 @media (max-width: 500px) {
   .journal-bucketlist-container {
     h1 {
@@ -236,7 +204,6 @@
       top: 80px;
       padding: 1rem 0;
     }
-
     .content {
       margin: 0 0.5rem;
       padding: 1rem;
@@ -245,5 +212,3 @@
     }
   }
 }
-
-
