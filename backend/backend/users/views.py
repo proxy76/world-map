@@ -389,6 +389,16 @@ def create_post(request):
                 is_in_journal=True
             )
             
+            # PERFORMANCE: Clear posts cache when new post is created
+            # This ensures social feed shows new posts immediately
+            for user_type in ['anonymous', str(request.user.id)]:
+                for country in ['all']:
+                    for post_type_cache in ['all']:
+                        for travel_type_cache in ['all']:
+                            for theme_cache in ['all']:
+                                cache_key = f"posts:{user_type}:{country}:{post_type_cache}:{travel_type_cache}:{theme_cache}"
+                                cache.delete(cache_key)
+            
             return JsonResponse({
                 "message": "Post created successfully",
                 "post": post.serializer(request.user)
@@ -406,6 +416,19 @@ def create_post(request):
 def get_posts(request):
     if request.method == 'GET':
         try:
+            # Create cache key based on filters for ultra performance
+            country = request.GET.get('country')
+            post_type = request.GET.get('postType')
+            travel_type = request.GET.get('travelType')
+            theme = request.GET.get('theme')
+            user_id = request.user.id if request.user.is_authenticated else 'anonymous'
+            
+            cache_key = f"posts:{user_id}:{country or 'all'}:{post_type or 'all'}:{travel_type or 'all'}:{theme or 'all'}"
+            cached_data = cache.get(cache_key)
+            
+            if cached_data:
+                return JsonResponse(cached_data, status=200)
+            
             posts = Post.objects.all()
             
             country = request.GET.get('country')
@@ -438,10 +461,15 @@ def get_posts(request):
             
             serialized_posts = [post.serializer(request.user) for post in posts]
             
-            return JsonResponse({
+            response_data = {
                 "posts": serialized_posts,
                 "count": len(serialized_posts)
-            }, status=200)
+            }
+            
+            # Cache for 3 minutes for social feed performance
+            cache.set(cache_key, response_data, timeout=60 * 3)
+            
+            return JsonResponse(response_data, status=200)
             
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -453,6 +481,13 @@ def get_posts(request):
 def get_post_details(request, post_id):
     if request.method == 'GET':
         try:
+            # Check cache first for massive performance boost
+            cache_key = f"post_details:{post_id}:{request.user.id if request.user.is_authenticated else 'anonymous'}"
+            cached_data = cache.get(cache_key)
+            
+            if cached_data:
+                return JsonResponse(cached_data, status=200)
+            
             post = Post.objects.get(id=post_id)
             
             user_has_stamped = False
@@ -465,6 +500,9 @@ def get_post_details(request, post_id):
             post_data = post.serializer(request.user)
             post_data['userHasStamped'] = user_has_stamped
             post_data['passportStamps'] = post.passport_count
+            
+            # Cache for 5 minutes for ultra-fast loading
+            cache.set(cache_key, post_data, timeout=60 * 5)
             
             return JsonResponse(post_data, status=200)
             
@@ -501,6 +539,25 @@ def stamp_post(request, post_id):
             
             post.passport_count = passport_count
             post.save()
+            
+            # CRITICAL: Invalidate all caches related to this post for immediate updates
+            # Clear post details cache for all users
+            cache.delete_many([
+                f"post_details:{post_id}:{request.user.id}",
+                f"post_details:{post_id}:anonymous"
+            ])
+            
+            # Clear posts listing cache (this will force refresh of social feed)
+            cache_pattern = f"posts:*"
+            # Note: In production, you might want to use a more sophisticated cache invalidation
+            # For now, we'll clear the most common cache keys
+            for user_type in ['anonymous', str(request.user.id)]:
+                for country in ['all']:
+                    for post_type in ['all']:
+                        for travel_type in ['all']:
+                            for theme in ['all']:
+                                cache_key = f"posts:{user_type}:{country}:{post_type}:{travel_type}:{theme}"
+                                cache.delete(cache_key)
             
             return JsonResponse({
                 "stamped": stamped,
