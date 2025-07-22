@@ -1,5 +1,5 @@
 ﻿﻿import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../context/LanguageContext';
 import translations from '../utils/translations';
@@ -21,7 +21,15 @@ const PostDetails = ({ isLogged }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [previewImageIndex, setPreviewImageIndex] = useState(0);
+  const location = useLocation();
 
+  useEffect(() => {
+    if (!location.search.includes("reloaded=1")) {
+      window.location.replace(location.pathname + "?reloaded=1");
+    } else {
+      window.history.replaceState({}, "", location.pathname);
+    }
+  }, [location]);
   useEffect(() => {
     fetchPost();
     setTimeout(() => setIsVisible(true), 100);

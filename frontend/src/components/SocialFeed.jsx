@@ -1,5 +1,5 @@
 ﻿﻿import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import translations from '../utils/translations';
 import GlobalHeader from './GlobalHeader';
@@ -23,6 +23,15 @@ const SocialFeed = ({ isLogged }) => {
   const [loading, setLoading] = useState(true);
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.search.includes("reloaded=1")) {
+      window.location.replace(location.pathname + "?reloaded=1");
+    } else {
+      window.history.replaceState({}, "", location.pathname);
+    }
+  }, [location]);
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
     fetchPosts();
