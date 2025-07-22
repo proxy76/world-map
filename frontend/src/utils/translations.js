@@ -1,4 +1,4 @@
-﻿﻿const translations = {
+﻿const translations = {
   ro: {
     // General
     save: "Salvează",
@@ -81,6 +81,10 @@
     chooseWhereDesc: "Cu noi, fiecare călătorie devine mai mult decât o amintire. Îți oferim un spațiu special unde poți să îți setezi obiective de călătorie, să notezi destinațiile deja explorate și să îți planifici următoarele aventuri. E ca un jurnal personalizat, dedicat pasiunii tale pentru descoperirea lumii – un loc unde fiecare țară vizitată capătă un sens mai profund și fiecare experiență se transformă într-o poveste de păstrat și rememorat.",
     useWhatWeOffer: "Folosește-te de ce îți oferim",
     useWhatWeOfferDesc: "Pornește într-o aventură fără sfârșit cu harta noastră interactivă! La fiecare pas, vei descoperi informații fascinante despre țările în care ajungi, povești mai puțin știute și curiozități care îți vor îmbogăți călătoria. Marchează-ți destinațiile, scrie-ți amintirile și lasă fiecare loc vizitat să spună o parte din povestea ta.",
+    connectWithTravelers: "Conectează-te cu călători din toată lumea",
+    connectWithTravelersDesc: "Descoperă comunitatea noastră vibrantă de călători! Platforma de socializare îți permite să îți împărtășești experiențele, să postezi fotografii din călătorii și să te inspiri din aventurile altora. Interacționează prin comentarii, găsește companii de călătorie și creează-ți propria rețea de exploratori pasionați.",
+    exploreCountries: "Explorează țările în detaliu",
+    exploreCountriesDesc: "Fiecare țară are propria ei poveste de spus! Paginile dedicate țărilor îți oferă informații complete: de la date geografice și culturale, la convertorul de valută integrat pentru planificarea bugetului. Descoperă limba oficială, populația, clima și multe altele pentru a-ți pregăti perfect următoarea aventură.",
     // Footer
     followUs: "Urmărește-ne",
     allRights: "Toate drepturile rezervate.",
@@ -264,6 +268,10 @@
     chooseWhereDesc: "With us, every journey becomes more than a memory. We offer you a special space where you can set travel goals, note destinations already explored, and plan your next adventures. It's like a personalized journal dedicated to your passion for discovering the world – a place where every country visited gains deeper meaning and every experience becomes a story to keep and remember.",
     useWhatWeOffer: "Use what we offer",
     useWhatWeOfferDesc: "Start an endless adventure with our interactive map! At every step, you'll discover fascinating information about the countries you reach, lesser-known stories, and curiosities that will enrich your journey. Mark your destinations, write your memories, and let every place you visit tell a part of your story.",
+    connectWithTravelers: "Connect with travelers from around the world",
+    connectWithTravelersDesc: "Discover our vibrant community of travelers! Our social platform allows you to share your experiences, post travel photos, and get inspired by others' adventures. Interact through comments, find travel companions, and build your own network of passionate explorers.",
+    exploreCountries: "Explore countries in detail",
+    exploreCountriesDesc: "Every country has its own story to tell! Dedicated country pages provide complete information: from geographical and cultural data to integrated currency converter for budget planning. Discover the official language, population, climate, and much more to perfectly prepare your next adventure.",
     // Footer
     followUs: "Follow Us",
     allRights: "All rights reserved.",
