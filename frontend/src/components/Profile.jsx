@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PROFILE_INFO_ENDPOINT_URL, PFP_UPDATE_ENDPOINT_URL } from '../utils/ApiHost';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import pfp from '../assets/anonymous.png';
 import GlobalHeader from './GlobalHeader';
+import TravelJournal from './TravelJournal';
 import { FaWindows } from 'react-icons/fa';
 import ErrorPage from './ErrorPage';
 import '../styles/ProfilePage.scss';
@@ -16,6 +17,7 @@ const ProfilePage = ({ isLogged }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({ visited: 0, wishlist: 0 });
+  const [showJournal, setShowJournal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const BACKEND_BASE_URL = 'http://localhost:8000';
@@ -290,6 +292,13 @@ const ProfilePage = ({ isLogged }) => {
           }}
         >
           <EnhancedButton
+            label={translations[lang]?.openJournal || 'Open Travel Journal'}
+            onClick={() => setShowJournal(true)}
+            isVisible={isVisible}
+            variant="primary"
+            icon="📖"
+          />
+          <EnhancedButton
             label={translations[lang]?.travelJournal || 'Travel Journal'}
             onClick={() => navigate('/journal')}
             isVisible={isVisible}
@@ -305,6 +314,12 @@ const ProfilePage = ({ isLogged }) => {
           />
         </div>
       </div>
+      
+      {/* Travel Journal Modal */}
+      <TravelJournal 
+        isOpen={showJournal}
+        onClose={() => setShowJournal(false)}
+      />
     </div>
   );
 };

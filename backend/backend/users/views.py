@@ -675,3 +675,101 @@ def create_reply(request, comment_id):
             return JsonResponse({"error": str(e)}, status=500)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_user_posts(request):
+    """Get all posts by the current user"""
+    if request.method == 'GET':
+        try:
+            posts = Post.objects.filter(author=request.user).order_by('-created_at')
+            serialized_posts = [post.serializer(request.user) for post in posts]
+            
+            return JsonResponse({
+                "posts": serialized_posts,
+                "count": len(serialized_posts)
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def toggle_post_in_journal(request, post_id):
+    """Toggle whether a post is included in the user's journal"""
+    if request.method == 'POST':
+        try:
+            post = Post.objects.get(id=post_id, author=request.user)
+            post.is_in_journal = not post.is_in_journal
+            post.save()
+            
+            return JsonResponse({
+                "message": "Post journal status updated",
+                "is_in_journal": post.is_in_journal
+            }, status=200)
+            
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found or you don't have permission"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_journal_posts(request):
+    """Get all posts that are included in the user's journal, grouped by country"""
+    if request.method == 'GET':
+        try:
+            posts = Post.objects.filter(
+                author=request.user, 
+                is_in_journal=True
+            ).order_by('-created_at')
+            
+            # Group posts by country
+            journal_data = {}
+            for post in posts:
+                if post.countries_visited:
+                    for country in post.countries_visited:
+                        if country not in journal_data:
+                            journal_data[country] = []
+                        journal_data[country].append(post.serializer(request.user))
+            
+            return JsonResponse({
+                "journal": journal_data,
+                "total_posts": len(posts)
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_removed_journal_posts(request):
+    """Get all posts that have been removed from the user's journal"""
+    if request.method == 'GET':
+        try:
+            posts = Post.objects.filter(
+                author=request.user, 
+                is_in_journal=False
+            ).order_by('-created_at')
+            
+            serialized_posts = [post.serializer(request.user) for post in posts]
+            
+            return JsonResponse({
+                "posts": serialized_posts,
+                "count": len(serialized_posts)
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)

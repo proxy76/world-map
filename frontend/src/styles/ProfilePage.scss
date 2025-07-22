@@ -1,13 +1,13 @@
 .profile-container {
   display: flex;
-  flex-direction: column; // Add this to stack elements vertically
-  justify-content: flex-start; // Change from center to flex-start
-  align-items: center; // Keep centered horizontally
+  flex-direction: column; 
+  justify-content: flex-start; 
+  align-items: center; 
   min-height: 100vh;
   background: linear-gradient(-45deg, #66ea9b, #208291, #4facfe, #66ea9b, #208291, #4facfe);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
-  padding-top: 0; // Remove top padding since header will provide spacing
+  padding-top: 0;
   position: relative;
   overflow: hidden;
 
@@ -55,7 +55,6 @@
   top: 30%;
   right: 20%;
   width: 80px;
-  height: 80px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   animation: float 7s ease-in-out infinite;
@@ -120,7 +119,6 @@
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
-  margin-top: 40px; // Add spacing between header and card
 }
 
 .profile-card-overlay {
@@ -401,7 +399,7 @@
 
 .profile-buttons {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 15px;
   width: 100%;
   margin-top: 10px;
@@ -479,7 +477,6 @@
   z-index: 1;
 }
 
-// Keyframe animations
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }

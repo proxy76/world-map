@@ -24,6 +24,10 @@ urlpatterns = [
     path("posts/<int:post_id>/comments/", views.get_post_comments, name="get_post_comments"),
     path("posts/<int:post_id>/comments/create/", views.create_comment, name="create_comment"),
     path("comments/<int:comment_id>/reply/", views.create_reply, name="create_reply"),
+    path("user_posts/", views.get_user_posts, name="get_user_posts"),
+    path("posts/<int:post_id>/toggle_journal/", views.toggle_post_in_journal, name="toggle_post_in_journal"),
+    path("journal_posts/", views.get_journal_posts, name="get_journal_posts"),
+    path("removed_journal_posts/", views.get_removed_journal_posts, name="get_removed_journal_posts"),
 ]
 
 

@@ -182,7 +182,33 @@
     // Others
     profilePictureUpdated: "Poza de profil a fost actualizată",
     noImageUploaded: "Nu a fost încărcată nicio imagine",
-    // etc.
+    
+    // Travel Journal
+    openJournal: "Deschide jurnalul de călătorie",
+    myTravelJournal: "Jurnalul meu de călătorie",
+    tableOfContents: "Cuprins",
+    countries: "țări",
+    stories: "povești",
+    posts: "postări",
+    journalStats: "Statistici jurnal",
+    countriesVisited: "Țări vizitate",
+    totalStories: "Total povești",
+    removedPosts: "Postări șterge",
+    addRemovedPosts: "Adaugă postări șterse",
+    backToContents: "Înapoi la cuprins",
+    removeFromJournal: "Șterge din jurnal",
+    restore: "Restaurează",
+    emptyJournal: "Jurnalul tău este gol. Începe să călătorești și să postezi pentru a-ți crea povestea de călătorie!",
+    noRemovedPosts: "Nu există postări șterse de restaurat.",
+    printJournal: "Tipărește jurnalul",
+    personalTravelMemories: "Amintiri și povești de călătorie personale",
+    travelQuote: "Lumea este o carte și cei care nu călătoresc citesc doar o singură pagină.",
+    journeyStatistics: "Statistici călătorie",
+    totalCountries: "Total țări",
+    averageStoriesPerCountry: "Povești pe țară",
+    journalCreated: "Jurnal creat",
+    discoverExploreShare: "Descoperă • Explorează • Împărtășește",
+    noContentToPrint: "Jurnalul tău este gol! Adaugă întâi niște povești de călătorie."
   },
   en: {
     // General
@@ -351,6 +377,33 @@
     // Others
     profilePictureUpdated: "Profile picture updated",
     noImageUploaded: "No image uploaded",
+    
+    // Travel Journal
+    openJournal: "Open Travel Journal",
+    myTravelJournal: "My Travel Journal",
+    tableOfContents: "Table of Contents",
+    countries: "countries",
+    stories: "stories",
+    posts: "posts",
+    journalStats: "Journal Statistics",
+    countriesVisited: "Countries Visited",
+    totalStories: "Total Stories",
+    removedPosts: "Removed Posts",
+    addRemovedPosts: "Add Removed Posts",
+    backToContents: "Back to Contents",
+    removeFromJournal: "Remove from journal",
+    restore: "Restore",
+    emptyJournal: "Your journal is empty. Start traveling and posting to create your travel story!",
+    noRemovedPosts: "No removed posts to restore.",
+    printJournal: "Print Journal",
+    personalTravelMemories: "Personal Travel Memories & Stories",
+    travelQuote: "The world is a book and those who do not travel read only one page.",
+    journeyStatistics: "Journey Statistics",
+    totalCountries: "Total Countries",
+    averageStoriesPerCountry: "Stories per Country",
+    journalCreated: "Journal Created",
+    discoverExploreShare: "Discover • Explore • Share",
+    noContentToPrint: "Your journal is empty! Add some travel stories first.",
     
     // Comments
     comments: "Comments",
