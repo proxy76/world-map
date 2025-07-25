@@ -33,7 +33,6 @@
   height: 150px;
 }
 
-// Suitcase Styles
 .suitcase {
   position: relative;
   width: 120px;
@@ -126,7 +125,6 @@
   }
 }
 
-// Packing Items
 .packing-items {
   position: absolute;
   width: 200px;
@@ -169,7 +167,6 @@
   }
 }
 
-// Camera
 .camera {
   .camera-body {
     width: 30px;
@@ -231,7 +228,6 @@
   }
 }
 
-// Journal
 .journal {
   .journal-cover {
     width: 24px;
@@ -279,7 +275,6 @@
   }
 }
 
-// Passport
 .passport {
   .passport-cover {
     width: 21px;
@@ -315,7 +310,6 @@
   }
 }
 
-// Floating Icons
 .floating-icons {
   position: absolute;
   width: 200px;
@@ -351,7 +345,6 @@
   }
 }
 
-// Loading Text
 .loading-text {
   text-align: center;
   margin-top: 20px;
@@ -386,7 +379,6 @@
   }
 }
 
-// Animations
 @keyframes backgroundFloat {
   0%, 100% { transform: scale(1) rotate(0deg); }
   50% { transform: scale(1.05) rotate(1deg); }
@@ -472,7 +464,6 @@
   }
 }
 
-// Responsive Design
 @media (max-width: 768px) {
   .packing-animation {
     transform: scale(0.5);

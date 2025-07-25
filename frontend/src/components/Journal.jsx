@@ -60,12 +60,10 @@ const Journal = ({ isLogged }) => {
       }, []);
 
   
-  // Show loading animation while checking authentication
   if (isLoading) {
     return <PackingLoader />;
   }
 
-  // Show error page only if user is definitely not authenticated
   if (!isAuthenticated || !profileInfo) {
     return <ErrorPage />;
   }

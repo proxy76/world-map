@@ -20,7 +20,25 @@ const CountryPage = ({ isLogged }) => {
     const [translatedData, setTranslatedData] = useState({});
     const [isTranslating, setIsTranslating] = useState(false);
 
+    const CACHE_KEY = 'country_translation_cache';
     const translationCache = useRef(new Map());
+
+    useEffect(() => {
+        const cacheRaw = localStorage.getItem(CACHE_KEY);
+        if (cacheRaw) {
+            try {
+                const cacheObj = JSON.parse(cacheRaw);
+                Object.entries(cacheObj).forEach(([key, value]) => {
+                    translationCache.current.set(key, value);
+                });
+            } catch {}
+        }
+    }, []);
+
+    const saveCache = () => {
+        const obj = Object.fromEntries(translationCache.current.entries());
+        localStorage.setItem(CACHE_KEY, JSON.stringify(obj));
+    };
 
     const translateBatch = async (texts) => {
         if (!texts || texts.length === 0) return [];
@@ -57,87 +75,59 @@ const CountryPage = ({ isLogged }) => {
         if (lang !== 'ro') return;
 
         setIsTranslating(true);
-
         try {
-            const textsToTranslate = [];
-            const textKeys = [];
-
-            if (countryData.name?.common) {
-                textsToTranslate.push(countryData.name.common);
-                textKeys.push('commonName');
-            }
-            if (countryData.name?.official) {
-                textsToTranslate.push(countryData.name.official);
-                textKeys.push('officialName');
-            }
-            if (countryData.capital?.[0]) {
-                textsToTranslate.push(countryData.capital[0]);
-                textKeys.push('capital');
-            }
-            if (countryData.continents?.[0]) {
-                textsToTranslate.push(countryData.continents[0]);
-                textKeys.push('continent');
-            }
-            if (countryData.region) {
-                textsToTranslate.push(countryData.region);
-                textKeys.push('region');
-            }
-            if (countryData.subregion) {
-                textsToTranslate.push(countryData.subregion);
-                textKeys.push('subregion');
-            }
-
-            if (countryData.languages) {
-                const languageValues = Object.values(countryData.languages);
-                languageValues.forEach(lang => {
-                    textsToTranslate.push(lang);
-                    textKeys.push('language_' + lang);
-                });
-            }
-
-            if (countryData.currencies) {
-                const currencyNames = Object.values(countryData.currencies).map(curr => curr.name);
-                currencyNames.forEach(curr => {
-                    textsToTranslate.push(curr);
-                    textKeys.push('currency_' + curr);
-                });
-            }
-
-            const batchSize = 10;
-            const translatedResults = {};
-
-            for (let i = 0; i < textsToTranslate.length; i += batchSize) {
-                const batch = textsToTranslate.slice(i, i + batchSize);
-                const batchKeys = textKeys.slice(i, i + batchSize);
-                const translatedBatch = await translateBatch(batch);
-
-                batchKeys.forEach((key, index) => {
-                    translatedResults[key] = translatedBatch[index];
-                });
-            }
-
-            const translations = {
-                commonName: translatedResults.commonName,
-                officialName: translatedResults.officialName,
-                capital: translatedResults.capital,
-                continent: translatedResults.continent,
-                region: translatedResults.region,
-                subregion: translatedResults.subregion,
+            const translations = {};
+            const translateSingle = async (text) => {
+                if (!text) return '';
+                if (translationCache.current.has(text)) return translationCache.current.get(text);
+                try {
+                    const res = await axios.get(
+                        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ro`
+                    );
+                    const translated = res.data.responseData.translatedText;
+                    translationCache.current.set(text, translated);
+                    saveCache();
+                    return translated;
+                } catch (err) {
+                    console.error('Single translation error:', err);
+                    return text;
+                }
             };
 
+            if (countryData.name?.common) {
+                translations.commonName = await translateSingle(countryData.name.common);
+            }
+            if (countryData.name?.official) {
+                translations.officialName = await translateSingle(countryData.name.official);
+            }
+            if (countryData.capital?.[0]) {
+                translations.capital = await translateSingle(countryData.capital[0]);
+            }
+            if (countryData.continents?.[0]) {
+                translations.continent = await translateSingle(countryData.continents[0]);
+            }
+            if (countryData.region) {
+                translations.region = await translateSingle(countryData.region);
+            }
+            if (countryData.subregion) {
+                translations.subregion = await translateSingle(countryData.subregion);
+            }
+
             if (countryData.languages) {
                 const languageValues = Object.values(countryData.languages);
-                const translatedLanguages = languageValues.map(lang =>
-                    translatedResults['language_' + lang] || lang
-                );
+                const translatedLanguages = [];
+                for (const langValue of languageValues) {
+                    translatedLanguages.push(await translateSingle(langValue));
+                }
                 translations.languages = translatedLanguages.join(', ');
             }
 
             if (countryData.currencies) {
                 const currencyNames = Object.values(countryData.currencies).map(curr => curr.name);
-                const translatedCurrencies = currencyNames.map(curr =>
-                    translatedResults['currency_' + curr] || curr
-                );
+                const translatedCurrencies = [];
+                for (const currName of currencyNames) {
+                    translatedCurrencies.push(await translateSingle(currName));
+                }
                 translations.currencies = translatedCurrencies.join(', ');
             }
 
@@ -253,7 +243,7 @@ const CountryPage = ({ isLogged }) => {
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.region || 'Region'}:</strong>
-                             kj   <span>{getDisplayValue(countryInfo.region, 'region')}</span>
+                                <span>{getDisplayValue(countryInfo.region, 'region')}</span>
                             </div>
                             <div className="detail-item">
                                 <strong>{translations[lang]?.subregion || 'Subregion'}:</strong>
