@@ -135,6 +135,10 @@
   }
 }
 .post-meta {
+  overflow: visible;
+  width: auto;
+  min-width: max-content;
+  
   .post-type-badge {
     background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
     color: white;
@@ -148,6 +152,9 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     white-space: nowrap;
+    overflow: visible;
+    display: inline-block;
+    min-width: max-content;
   }
 }
 .post-title {

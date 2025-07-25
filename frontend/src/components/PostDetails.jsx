@@ -248,7 +248,7 @@ const PostDetails = ({ isLogged }) => {
             
             <div className="post-meta">
               <span className="post-type-badge">
-                {getPostTypeLabel(post.postType)}
+                {getPostTypeLabel(post.post_type)}
               </span>
             </div>
           </header>
