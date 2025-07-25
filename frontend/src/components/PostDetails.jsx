@@ -126,10 +126,12 @@ const PostDetails = ({ isLogged }) => {
     }
   };
 
-  const handleSharePost = async () => {
+  const handleSharePost = async (e) => {
+     e.preventDefault();
+    e.stopPropagation();
     const shareData = {
-      title: `${post.user.username}'s Travel Story`,
-      text: post.description,
+      title: post.title,
+      text: `Check out this post: ${post.title}`,
       url: window.location.href
     };
 
@@ -329,7 +331,7 @@ const PostDetails = ({ isLogged }) => {
                 className="share-btn"
                 onClick={handleSharePost}
               >
-                <span className="share-icon">📤</span>
+                <span className="share-icon">🔗</span>
                 <span>Share</span>
               </button>
             </div>
