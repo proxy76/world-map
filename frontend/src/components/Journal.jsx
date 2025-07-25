@@ -5,16 +5,18 @@ import axios from 'axios';
 import { PROFILE_INFO_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/journalBucketlistShared.scss';
 import ErrorPage from './ErrorPage.jsx';
+import PackingLoader from './PackingLoader.jsx';
+import useAuthenticatedData from '../hooks/useAuthenticatedData.jsx';
 import ReviewModal from './ReviewModal.jsx';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import { useLocation } from 'react-router-dom';
-
 const Journal = ({ isLogged }) => {
-  const [profileInfo, setProfileInfo] = useState(null);
+  const { profileInfo, isLoading, isAuthenticated, setProfileInfo } = useAuthenticatedData();
   const [reviewsOpened, setReviewsOpened] = useState('');
   const { lang } = useLanguage();
   const location = useLocation();
+
   useEffect(() => {
     if (!location.search.includes("reloaded=1")) {
       window.location.replace(location.pathname + "?reloaded=1");
@@ -52,23 +54,21 @@ const Journal = ({ isLogged }) => {
       return () => {
         container.removeEventListener('mousemove', handleMouseMove);
         container.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    }
-  }, []);
-  
-  useEffect(() => {
-    const getInfo = async () => {
-      try {
-        const response = await axios.get(PROFILE_INFO_ENDPOINT_URL, { withCredentials: true });
-        setProfileInfo(response.data);
-      } catch (error) {
-        console.error('Failed to fetch profile info:', error);
+      
       }
-    };
-    getInfo();
-  }, []);
+    }
+      }, []);
 
-  if (!profileInfo) return <ErrorPage />;
+  
+  // Show loading animation while checking authentication
+  if (isLoading) {
+    return <PackingLoader />;
+  }
+
+  // Show error page only if user is definitely not authenticated
+  if (!isAuthenticated || !profileInfo) {
+    return <ErrorPage />;
+  }
 
   const handleRemoveFromJournal = (name) => {
     setProfileInfo({

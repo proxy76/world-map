@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import GlobalHeader from './GlobalHeader';
 import CardWithReview from './CardWithReview.jsx';
-import axios from 'axios';
-import { PROFILE_INFO_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/journalBucketlistShared.scss';
 import ErrorPage from './ErrorPage.jsx';
+import PackingLoader from './PackingLoader.jsx';
+import useAuthenticatedData from '../hooks/useAuthenticatedData.jsx';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import { useLocation } from 'react-router-dom';
 const Bucketlist = ({ isLogged }) => {
-  const [profileInfo, setProfileInfo] = useState(null);
+  const { profileInfo, isLoading, isAuthenticated, setProfileInfo } = useAuthenticatedData();
   const { lang } = useLanguage();
   const location = useLocation();
+
   
   useEffect(() => {
     if (!location.search.includes("reloaded=1")) {
@@ -50,21 +51,19 @@ const Bucketlist = ({ isLogged }) => {
       return () => {
         container.removeEventListener('mousemove', handleMouseMove);
         container.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    }
-  }, []);
-  
-  useEffect(() => {
-    const getInfo = async () => {
-      try {
-        const response = await axios.get(PROFILE_INFO_ENDPOINT_URL, { withCredentials: true });
-        setProfileInfo(response.data);
-      } catch (error) {
-        console.error('Failed to fetch profile info:', error);
       }
-    };
-    getInfo();
-  }, []);
+    }
+      }, []);
+  
+  // Show loading animation while checking authentication
+  if (isLoading) {
+    return <PackingLoader />;
+  }
+
+  // Show error page only if user is definitely not authenticated
+  if (!isAuthenticated || !profileInfo) {
+    return <ErrorPage />;
+  }
 
   if (!profileInfo) return <ErrorPage />;
 
