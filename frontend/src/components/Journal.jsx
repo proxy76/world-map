@@ -19,12 +19,10 @@ const Journal = ({ isLogged }) => {
     if (!location.search.includes("reloaded=1")) {
       window.location.replace(location.pathname + "?reloaded=1");
     } else {
-      // Ascunde parametru după reload
       window.history.replaceState({}, "", location.pathname);
     }
   }, [location]);
 
-  // Mouse tracking effect for interactive background
   useEffect(() => {
     const handleMouseMove = (e) => {
       const container = document.querySelector('.journal-bucketlist-container');

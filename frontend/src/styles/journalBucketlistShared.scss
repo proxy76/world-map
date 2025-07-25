@@ -1,6 +1,5 @@
 @import './variables.scss';
 
-// Animated background gradient
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -13,7 +12,6 @@
   }
 }
 
-// Floating animation for decorative elements
 @keyframes float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
@@ -26,7 +24,6 @@
   }
 }
 
-// Pulse animation for accent elements
 @keyframes pulse {
   0%, 100% {
     opacity: 0.7;
@@ -38,7 +35,6 @@
   }
 }
 
-// Shimmer effect for title
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -56,7 +52,6 @@
   animation: gradientShift 15s ease infinite;
   overflow: hidden;
   
-  // Interactive cursor spotlight effect
   &::before {
     content: '';
     position: fixed;
@@ -82,7 +77,6 @@
     opacity: 1;
   }
   
-  // Original decorative floating elements
   &::after {
     content: '';
     position: absolute;
@@ -96,7 +90,6 @@
     z-index: 2;
   }
 
-  // Additional floating decorations
   .floating-decoration {
     position: absolute;
     background: rgba(255, 255, 255, 0.08);
@@ -129,7 +122,6 @@
     }
   }
 
-  // Additional decorative element to replace the removed ::before
   .floating-decoration-extra {
     position: absolute;
     top: 10%;
@@ -144,7 +136,7 @@
 
   h1 {
     position: absolute;
-    top: 120px; // Fixed position from top of container
+    top: 120px; 
     left: 0;
     right: 0;
     z-index: 10;
@@ -190,13 +182,12 @@
     gap: 2rem;
     margin: 0 2rem;
     padding: 2rem;
-    padding-top: 240px; // Space for the title above
+    padding-top: 240px; 
     justify-content: center;
     align-items: flex-start;
     margin-bottom: 3rem;
   }
 
-  // Enhanced card hover effects
   .content > * {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
@@ -207,7 +198,6 @@
   }
 }
 
-// Responsive design
 @media (max-width: 768px) {
   .journal-bucketlist-container {
     h1 {
@@ -224,7 +214,7 @@
     }
 
     .floating-decoration {
-      display: none; // Hide decorative elements on mobile
+      display: none; 
     }
   }
 }

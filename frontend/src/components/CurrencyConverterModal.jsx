@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import '../styles/CurrencyConverterModal.scss';
@@ -14,18 +14,15 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
     const [isClosing, setIsClosing] = useState(false);
     const [animatedAmount, setAnimatedAmount] = useState(null);
 
-    // Extract the first currency code from the country
     const targetCurrency = countryCurrency 
         ? Object.keys(countryCurrency)[0]
         : 'USD';
 
-    // Common currencies for the dropdown
     const commonCurrencies = [
         'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
         'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW'
     ];
 
-    // Fetch exchange rates when modal opens
     useEffect(() => {
         if (isOpen) {
             const fetchExchangeRates = async () => {
@@ -47,11 +44,10 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
         }
     }, [isOpen, lang]);
 
-    // Animate the result value
     useEffect(() => {
         if (convertedAmount && !isNaN(convertedAmount)) {
             const targetValue = parseFloat(convertedAmount);
-            const duration = 800; // ms
+            const duration = 800;
             const steps = 60;
             const stepValue = targetValue / steps;
             const stepTime = duration / steps;
@@ -77,7 +73,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
         }
     }, [convertedAmount]);
 
-    // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
             setAmount('');
@@ -93,7 +88,7 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
         setIsClosing(true);
         setTimeout(() => {
             onClose();
-        }, 300); // Match the animation duration
+        }, 300); 
     };
 
     if (!isOpen && !isClosing) return null;
@@ -106,7 +101,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
 
         setError('');
         
-        // Convert from source currency to USD, then to target currency
         const usdAmount = parseFloat(amount) / exchangeRates[fromCurrency];
         const converted = usdAmount * exchangeRates[targetCurrency];
         
@@ -115,7 +109,6 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
 
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        // Only allow numbers and decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             setAmount(value);
             setConvertedAmount(null);

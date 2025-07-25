@@ -272,7 +272,6 @@
   transition: none !important;
   animation: none !important;
   
-  // Override ALL possible button interactions to prevent stretching
   &:hover,
   &:focus,
   &:active,
@@ -314,7 +313,6 @@
     width: auto !important;
     height: auto !important;
     
-    // Prevent any stretching/animation on press
     &:hover,
     &:focus,
     &:active,

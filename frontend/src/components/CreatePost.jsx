@@ -25,13 +25,12 @@ const CreatePost = ({ onClose, onSubmit }) => {
   const { lang } = useLanguage();
   const countryInputRef = useRef(null);
 
-  // Funcție pentru traducerea numelor de țări
   const translateCountryName = (countryName) => {
     if (lang === 'en') {
       const index = countries.ro.indexOf(countryName);
       return index !== -1 ? countries.en[index] : countryName;
     }
-    return countryName; // Returnează numele original pentru română
+    return countryName; 
   };
 
   const postTypes = [
@@ -67,7 +66,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Handler pentru input-ul de țară cu autocomplete
   const handleCountryInputChange = (e) => {
     const value = e.target.value;
     setNewCountry(value);
@@ -82,7 +80,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
     }
   };
 
-  // Calculează poziția dropdown-ului
   const getDropdownStyle = () => {
     if (!countryInputRef.current) return {};
     
@@ -94,14 +91,12 @@ const CreatePost = ({ onClose, onSubmit }) => {
     };
   };
 
-  // Selectează țara din dropdown
   const selectCountry = (country) => {
     setNewCountry(country);
     setShowCountryDropdown(false);
     setCountryResults([]);
   };
 
-  // Ascunde dropdown-ul la blur
   const handleCountryInputBlur = () => {
     setTimeout(() => {
       setShowCountryDropdown(false);
@@ -111,15 +106,14 @@ const CreatePost = ({ onClose, onSubmit }) => {
   const addCountry = () => {
     const countryToAdd = newCountry.trim();
     
-    // Validez dacă țara este în lista validă - verifică în ambele limbi
-    // Găsesc țara în ambele limbi și o normalizez la română
+
     let countryToStore = null;
     
     if (countries.ro.includes(countryToAdd)) {
-      countryToStore = countryToAdd; // Deja în română
+      countryToStore = countryToAdd; 
     } else if (countries.en.includes(countryToAdd)) {
       const index = countries.en.indexOf(countryToAdd);
-      countryToStore = countries.ro[index]; // Convertesc la română
+      countryToStore = countries.ro[index]; 
     }
     
     if (!countryToStore) {
@@ -193,7 +187,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
     setIsSubmitting(true);
 
     try {
-      // Creez FormData pentru a trimite imaginile
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
       formDataToSend.append('content', formData.content);
@@ -203,7 +196,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
       formDataToSend.append('theme', formData.theme);
       formDataToSend.append('travel_duration', formData.travel_duration || '');
       
-      // Adaug imaginile în FormData
       formData.images.forEach((image, index) => {
         formDataToSend.append(`images[${index}]`, image);
       });

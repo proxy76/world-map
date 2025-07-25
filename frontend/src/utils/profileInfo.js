@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 import { USER_INFO_ENDPOINT_URL } from './ApiHost';
 
@@ -8,11 +8,10 @@ export async function getProfileInfo() {
     const BACKEND_BASE_URL = 'http://localhost:8000';
 
     const response = await axios.get(USER_INFO_ENDPOINT_URL, {
-      withCredentials: true, // send cookies/session
+      withCredentials: true, 
     });
 
-    // Backend sends profile_picture like "/media/user_images/xyz.png"
-    // prepend backend URL so frontend img src works
+
     const data = response.data;
 
     return {

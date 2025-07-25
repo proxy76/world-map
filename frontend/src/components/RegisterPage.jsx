@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { REGISTER_ENDPOINT_URL } from '../utils/ApiHost';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 
@@ -16,7 +16,6 @@ const RegisterPage = ({ setIsLogged }) => {
     if (!location.search.includes("reloaded=1")) {
       window.location.replace(location.pathname + "?reloaded=1");
     } else {
-      // Ascunde parametru după reload
       window.history.replaceState({}, "", location.pathname);
     }
   }, [location]);
@@ -25,6 +24,8 @@ const RegisterPage = ({ setIsLogged }) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
@@ -34,12 +35,77 @@ const RegisterPage = ({ setIsLogged }) => {
     usernameRef.current && usernameRef.current.focus();
   }, []);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const getPasswordErrorMessage = (password) => {
+    if (password.length < 8) {
+      return translations[lang].passwordTooShort;
+    }
+    if (!/[A-Z]/.test(password)) {
+      return translations[lang].passwordNoUppercase;
+    }
+    if (!/[a-z]/.test(password)) {
+      return translations[lang].passwordNoLowercase;
+    }
+    if (!/\d/.test(password)) {
+      return translations[lang].passwordNoNumber;
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+      return translations[lang].passwordNoSpecialChar;
+    }
+    return '';
+  };
+
+  const handleEmailChange = (e) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    
+    if (emailValue && !validateEmail(emailValue)) {
+      setEmailError(translations[lang].invalidEmailFormat);
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const pwd = e.target.value;
+    setPassword(pwd);
+    
+    if (pwd && !validatePassword(pwd)) {
+      setPasswordError(getPasswordErrorMessage(pwd));
+    } else {
+      setPasswordError('');
+    }
+  };
+
   const register = (e) => {
     setError('');
+    
     if (
       (e.target.className === 'button') ||
       (e.type === "keydown" && (e.code === "Enter" || e.key === "Enter"))
     ) {
+      if (!validateEmail(email)) {
+        setEmailError(translations[lang].invalidEmailFormat);
+        return;
+      }
+      
+      if (!validatePassword(password)) {
+        setPasswordError(getPasswordErrorMessage(password));
+        return;
+      }
+      
+      setEmailError('');
+      setPasswordError('');
+      
       axios
         .post(
           REGISTER_ENDPOINT_URL,
@@ -91,7 +157,7 @@ const RegisterPage = ({ setIsLogged }) => {
             ref={usernameRef}
             onChange={(e) => setUsername(e.target.value)}
             value={username}
-            placeholder="Introduceți numele dvs."
+            placeholder={lang === 'ro' ? "Introduceți numele dvs." : "Enter your username"}
             style={styles.input}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
@@ -109,10 +175,10 @@ const RegisterPage = ({ setIsLogged }) => {
           <input
             type="email"
             ref={emailRef}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             value={email}
-            placeholder="exemplu@email.com"
-            style={styles.input}
+            placeholder={lang === 'ro' ? "exemplu@email.com" : "example@email.com"}
+            style={{...styles.input, ...(emailError ? styles.inputError : {})}}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
                 e.preventDefault();
@@ -122,6 +188,7 @@ const RegisterPage = ({ setIsLogged }) => {
             onFocus={(e) => e.target.style.transform = 'translateY(-1px)'}
             onBlur={(e) => e.target.style.transform = 'translateY(0)'}
           />
+          {emailError && <div style={styles.validationError}>{emailError}</div>}
         </div>
 
         <div style={styles.formGroup}>
@@ -129,10 +196,10 @@ const RegisterPage = ({ setIsLogged }) => {
           <input
             type="password"
             ref={passwordRef}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             value={password}
-            placeholder="Introduceți parola"
-            style={styles.input}
+            placeholder={lang === 'ro' ? "Introduceți parola" : "Enter your password"}
+            style={{...styles.input, ...(passwordError ? styles.inputError : {})}}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
                 register(e);
@@ -141,6 +208,7 @@ const RegisterPage = ({ setIsLogged }) => {
             onFocus={(e) => e.target.style.transform = 'translateY(-1px)'}
             onBlur={(e) => e.target.style.transform = 'translateY(0)'}
           />
+          {passwordError && <div style={styles.validationError}>{passwordError}</div>}
         </div>
 
         <div style={styles.buttonContainer}>
@@ -165,33 +233,34 @@ const RegisterPage = ({ setIsLogged }) => {
         </div>
         
         {error && <div style={styles.error}>{error}</div>}
+        
+        <div style={styles.loginLink}>
+          <span style={styles.loginText}>{translations[lang].haveAccount} </span>
+          <Link to="/login" style={styles.loginLinkButton}>
+            {translations[lang].loginHere}
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// Color Variables
 const colors = {
-  // Primary Colors
   primary: '#66ea9b',
   primaryDark: '#118515',
   
-  // Background Colors
   backgroundGradientStart: '#66ea9b',
   backgroundGradientEnd: '#208291',
   
-  // Card Colors
   cardBackground: 'rgba(255, 255, 255, 0.95)',
   cardBorder: 'rgba(255, 255, 255, 0.2)',
   
-  // Text Colors
   titleGradientStart: '#66ea9b',
   titleGradientEnd: '#208291',
   subtitleText: '#64748b',
   labelText: '#374151',
   inputText: '#374151',
   
-  // Input Colors
   inputBackground: '#fafafa',
   inputBackgroundHover: 'white',
   inputBackgroundFocus: 'white',
@@ -199,22 +268,18 @@ const colors = {
   inputBorderHover: '#66ea9b',
   inputBorderFocus: '#66ea9b',
   
-  // Button Colors
   buttonGradientStart: '#66ea9b',
   buttonGradientEnd: '#208291',
   buttonText: 'white',
   buttonShadow: 'rgba(102, 126, 234, 0)',
   buttonShadowHover: 'rgba(102, 126, 234, 0)',
   
-  // Error Colors
   errorText: '#ef4444',
   errorBackground: 'rgba(239, 68, 68, 0.1)',
   errorBorder: 'rgba(239, 68, 68, 0.2)',
   
-  // Floating Elements
   floatingCircle: 'rgba(255, 255, 255, 0.1)',
   
-  // Shadow Colors
   cardShadow: 'rgba(0, 0, 0, 0.15)',
   inputFocusShadow: 'rgba(102, 126, 234, 0)',
 };
@@ -353,9 +418,36 @@ const styles = {
     border: `1px solid ${colors.errorBorder}`,
     animation: 'shake 0.5s ease-in-out',
   },
+  validationError: {
+    color: '#dc2626',
+    fontSize: '0.875rem',
+    marginTop: '6px',
+    fontWeight: '500',
+  },
+  inputError: {
+    borderColor: '#dc2626',
+    backgroundColor: '#fef2f2',
+  },
+  loginLink: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '16px 0',
+    borderTop: `1px solid ${colors.inputBorder}`,
+  },
+  loginText: {
+    color: colors.subtitleText,
+    fontSize: '0.95rem',
+  },
+  loginLinkButton: {
+    color: colors.primary,
+    textDecoration: 'none',
+    fontWeight: '600',
+    fontSize: '0.95rem',
+    transition: 'color 0.3s ease',
+    cursor: 'pointer',
+  },
 };
 
-// Add CSS animations via a style tag
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
   @keyframes slideUp {

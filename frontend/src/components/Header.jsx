@@ -22,7 +22,6 @@ const Header = ({isLogged}) => {
           .then(data => setProfilePic(data.profilePic))
       }, []);
 
-    // Close dropdown when clicking outside
     const dropdownRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -41,15 +40,14 @@ const Header = ({isLogged}) => {
 
         axios.post(LOGOUT_ENDPOINT_URL, {}, { withCredentials: true })
             .then((response) => {
-                setIsLogged(false); // Update state to indicate user is logged out
+                setIsLogged(false); 
             })
             .catch((error) => {
-                console.log(error); // Log any errors that occur
+                console.log(error); 
             })
             .finally(() => {
-                // Optional: Any final cleanup or actions can be placed here
             });
-        window.location.pathname = '/'; // Redirect to home page after logout
+        window.location.pathname = '/';
 
     };
 
@@ -68,7 +66,7 @@ const Header = ({isLogged}) => {
                         </div>
                         <div
                             onClick={() => {
-                                console.log("Profile picture clicked!"); // Debugging
+                                console.log("Profile picture clicked!"); 
                                 setIsOpened(!isOpened);
                             }}
                             ref={dropdownRef} className="dropdownWrapper" >

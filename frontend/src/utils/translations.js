@@ -40,6 +40,20 @@
     invalidEmail: "Email invalid!",
     registrationFailed: "Înregistrarea a eșuat!",
     unloggedMessage: "Autentificați-vă pentru a adăuga țara în jurnal sau în lista de dorințe",
+    
+    // Validation messages
+    passwordTooShort: "Parola trebuie să aibă cel puțin 8 caractere",
+    passwordNoUppercase: "Parola trebuie să conțină cel puțin o literă mare",
+    passwordNoLowercase: "Parola trebuie să conțină cel puțin o literă mică", 
+    passwordNoNumber: "Parola trebuie să conțină cel puțin o cifră",
+    passwordNoSpecialChar: "Parola trebuie să conțină cel puțin un caracter special (!@#$%^&*)",
+    invalidEmailFormat: "Vă rugăm să introduceți o adresă de email validă",
+    
+    // Auth links
+    noAccountYet: "Nu ai cont?",
+    registerHere: "Înregistrează-te",
+    haveAccount: "Ai deja cont?",
+    loginHere: "Autentifică-te",
     // Profile
     profile: "Profilul meu",
     changePic: "Schimbă poza de profil",
@@ -251,6 +265,20 @@
     invalidEmail: "Invalid email!",
     registrationFailed: "Registration failed!",
     unloggedMessage: "Log in to add country to journal or bucketlist",
+    
+    // Validation messages
+    passwordTooShort: "Password must be at least 8 characters long",
+    passwordNoUppercase: "Password must contain at least one uppercase letter",
+    passwordNoLowercase: "Password must contain at least one lowercase letter",
+    passwordNoNumber: "Password must contain at least one number",
+    passwordNoSpecialChar: "Password must contain at least one special character (!@#$%^&*)",
+    invalidEmailFormat: "Please enter a valid email address",
+    
+    // Auth links
+    noAccountYet: "Don't have an account?",
+    registerHere: "Register",
+    haveAccount: "Already have an account?",
+    loginHere: "Login",
     backToCommunity: "← Back to community",
 
     // Profile

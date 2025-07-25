@@ -20,7 +20,6 @@ const CountryPage = ({ isLogged }) => {
     const [translatedData, setTranslatedData] = useState({});
     const [isTranslating, setIsTranslating] = useState(false);
 
-    // Persist cache across renders
     const translationCache = useRef(new Map());
 
     const translateBatch = async (texts) => {
@@ -159,8 +158,8 @@ const CountryPage = ({ isLogged }) => {
                 const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
                 const countryData = response.data[0];
                 setCountryInfo(countryData);
-                setLoading(false); // ✅ allow immediate render
-                translateCountryData(countryData); // ✅ async translate after render
+                setLoading(false); 
+                translateCountryData(countryData); 
             } catch (error) {
                 console.error('Failed to fetch country info:', error);
                 setError(true);

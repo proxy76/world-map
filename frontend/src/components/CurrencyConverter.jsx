@@ -12,18 +12,15 @@ const CurrencyConverter = ({ countryCurrency }) => {
     const [error, setError] = useState('');
     const [exchangeRates, setExchangeRates] = useState({});
 
-    // Extract the first currency code from the country
     const targetCurrency = countryCurrency 
         ? Object.keys(countryCurrency)[0]
         : 'USD';
 
-    // Common currencies for the dropdown
     const commonCurrencies = [
         'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
         'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW'
     ];
 
-    // Fetch exchange rates
     useEffect(() => {
         const fetchExchangeRates = async () => {
             try {
@@ -50,7 +47,6 @@ const CurrencyConverter = ({ countryCurrency }) => {
 
         setError('');
         
-        // Convert from source currency to USD, then to target currency
         const usdAmount = parseFloat(amount) / exchangeRates[fromCurrency];
         const converted = usdAmount * exchangeRates[targetCurrency];
         
@@ -59,7 +55,6 @@ const CurrencyConverter = ({ countryCurrency }) => {
 
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        // Only allow numbers and decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             setAmount(value);
             setConvertedAmount(null);

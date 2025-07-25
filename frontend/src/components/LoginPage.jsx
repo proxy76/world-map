@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 import { LOGIN_ENDPOINT_URL } from '../utils/ApiHost';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -28,6 +28,7 @@ const LoginPage = ({ setIsLogged }) => {
 
   const login = (e) => {
     setError('');
+    
     if (
       (e.target.className && e.target.className.includes('login-button')) ||
       (e.type === "keydown" && (e.code === "Enter" || e.key === "Enter"))
@@ -69,7 +70,7 @@ const LoginPage = ({ setIsLogged }) => {
             ref={usernameRef}
             onChange={(e) => setUsername(e.target.value)}
             value={username}
-            placeholder="Introduceți numele dvs."
+            placeholder={lang === 'ro' ? "Introduceți numele de utilizator" : "Enter your username"}
             style={styles.input}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
@@ -89,7 +90,7 @@ const LoginPage = ({ setIsLogged }) => {
             ref={passwordRef}
             onChange={(e) => setPassword(e.target.value)}
             value={password}
-            placeholder="Introduceți parola"
+            placeholder={lang === 'ro' ? "Introduceți parola" : "Enter your password"}
             style={styles.input}
             onKeyDown={(e) => {
               if (e.code === "Enter" || e.key === "Enter") {
@@ -123,33 +124,34 @@ const LoginPage = ({ setIsLogged }) => {
         </div>
         
         {error && <div style={styles.error}>{error}</div>}
+        
+        <div style={styles.registerLink}>
+          <span style={styles.registerText}>{translations[lang].noAccountYet} </span>
+          <Link to="/register" style={styles.registerLinkButton}>
+            {translations[lang].registerHere}
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// Color Variables
 const colors = {
-  // Primary Colors
   primary: '#66ea9b',
   primaryDark: '#118515',
   
-  // Background Colors
   backgroundGradientStart: '#66ea9b',
   backgroundGradientEnd: '#208291',
   
-  // Card Colors
   cardBackground: 'rgba(255, 255, 255, 0.95)',
   cardBorder: 'rgba(255, 255, 255, 0.2)',
   
-  // Text Colors
   titleGradientStart: '#66ea9b',
   titleGradientEnd: '#208291',
   subtitleText: '#64748b',
   labelText: '#374151',
   inputText: '#374151',
   
-  // Input Colors
   inputBackground: '#fafafa',
   inputBackgroundHover: 'white',
   inputBackgroundFocus: 'white',
@@ -157,22 +159,18 @@ const colors = {
   inputBorderHover: '#66ea9b',
   inputBorderFocus: '#66ea9b',
   
-  // Button Colors
   buttonGradientStart: '#66ea9b',
   buttonGradientEnd: '#208291',
   buttonText: 'white',
   buttonShadow: 'rgba(102, 126, 234, 0)',
   buttonShadowHover: 'rgba(102, 126, 234, 0)',
   
-  // Error Colors
   errorText: '#ef4444',
   errorBackground: 'rgba(239, 68, 68, 0.1)',
   errorBorder: 'rgba(239, 68, 68, 0.2)',
   
-  // Floating Elements
   floatingCircle: 'rgba(255, 255, 255, 0.1)',
   
-  // Shadow Colors
   cardShadow: 'rgba(0, 0, 0, 0.15)',
   inputFocusShadow: 'rgba(102, 126, 234, 0)',
 };
@@ -311,9 +309,26 @@ const styles = {
     border: `1px solid ${colors.errorBorder}`,
     animation: 'shake 0.5s ease-in-out',
   },
+  registerLink: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '16px 0',
+    borderTop: `1px solid ${colors.inputBorder}`,
+  },
+  registerText: {
+    color: colors.subtitleText,
+    fontSize: '0.95rem',
+  },
+  registerLinkButton: {
+    color: colors.primary,
+    textDecoration: 'none',
+    fontWeight: '600',
+    fontSize: '0.95rem',
+    transition: 'color 0.3s ease',
+    cursor: 'pointer',
+  },
 };
 
-// Add CSS animations via a style tag
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
   @keyframes slideUp {

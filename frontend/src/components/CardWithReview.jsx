@@ -13,7 +13,6 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page })
   const [info, setInfo] = useState(null);
   const { lang } = useLanguage();
 
-  // Helper function to get the correct name for RESTCountries API
   const getApiName = (name) => {
     const overrides = {
       'United States': 'usa',

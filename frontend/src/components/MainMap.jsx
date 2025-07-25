@@ -14,7 +14,6 @@ import "../styles/map.scss";
 const Menu = lazy(() => import("./Menu"));
 const GEO_URL = "/features.json";
 
-// ISO A3 codes for the 10 largest countries by area
 const largestCountries = [
   "RUS", // Russia
   "CAN", // Canada
@@ -32,7 +31,7 @@ const LIGHT_GREEN = "#b6f5c6";
 const LIGHTER_GREEN = "#e3fbe9";
 const HOVER_LIGHT = "#f8fff9";
 const DARKER_GREEN = "#3eb262"; 
-const SEARCH_HIGHLIGHT = "#ff4444"; // Red color for search highlights
+const SEARCH_HIGHLIGHT = "#ff4444"; 
 
 
 
@@ -43,7 +42,6 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [position, setPosition] = useState({ coordinates: [0, 20], zoom: 1 });
 
-  // Function to check if a country matches the search term
   const isCountryMatching = useCallback((countryName) => {
     if (!searchTerm) return false;
     return countryName.toLowerCase().startsWith(searchTerm.toLowerCase());
@@ -63,7 +61,6 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
     setPosition({ coordinates: [0, 20], zoom: 1 });
   }, []);
 
-  // Movement controls for when zoomed in
   const handleMoveUp = useCallback(() => {
     setPosition(pos => ({
       ...pos,
@@ -92,10 +89,8 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
     }));
   }, []);
 
-  // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Only allow movement when zoomed in
       if (position.zoom <= 1) return;
       
       switch (event.key) {
@@ -134,7 +129,6 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
     };
   }, [position.zoom, handleMoveUp, handleMoveDown, handleMoveLeft, handleMoveRight]);
 
-  // Expose methods to parent component
   useImperativeHandle(ref, () => ({
     zoomIn: handleZoomIn,
     zoomOut: handleZoomOut,
@@ -148,7 +142,7 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
   const handleClick = useCallback((geo) => {
     setSelectedCountry(() => geo.id);
     setCountryName(() => geo.properties.name);
-    setCountryCode(() => geo.id); // geo.id is typically the ISO country code
+    setCountryCode(() => geo.id); 
     setMenuOpen(() => true);
   }, []);
   
@@ -193,7 +187,6 @@ const MainMap = forwardRef(({ isLogged, searchTerm = "" }, ref) => {
             maxZoom={8}
             onMoveEnd={handleMoveEnd}
             filterZoomEvent={(evt) => {
-              // Disable zoom on scroll wheel
               return evt.type !== 'wheel';
             }}
           >

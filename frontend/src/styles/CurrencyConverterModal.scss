@@ -253,7 +253,6 @@
     font-weight: 500;
 }
 
-// Animations
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -305,7 +304,6 @@
     }
 }
 
-// Responsive design
 @media (max-width: 768px) {
     .currency-modal-overlay {
         padding: 10px;

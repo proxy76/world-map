@@ -46,27 +46,23 @@ const TravelJournal = ({ isOpen, onClose }) => {
   };
 
   const handleBookClick = () => {
-    // Start pop animation
     setIsPopping(true);
     
-    // If book is already open, close it first with animation
     if (isBookOpen) {
       setTimeout(() => {
         setIsBookOpen(false);
         setIsPopping(false);
-        // Wait for close animation, then reopen
         setTimeout(() => {
           setIsBookOpen(true);
           setTimeout(() => setCurrentPage('table-of-contents'), 600);
         }, 300);
-      }, 400); // Pop duration
+      }, 400); 
     } else {
-      // First time opening - pop then open
       setTimeout(() => {
         setIsPopping(false);
         setIsBookOpen(true);
         setTimeout(() => setCurrentPage('table-of-contents'), 600);
-      }, 400); // Pop duration
+      }, 400); 
     }
   };
 
@@ -83,7 +79,7 @@ const TravelJournal = ({ isOpen, onClose }) => {
       await axios.post(`${TOGGLE_POST_JOURNAL_ENDPOINT_URL}/${postId}/toggle_journal/`, {}, {
         withCredentials: true
       });
-      fetchJournalData(); // Refresh data
+      fetchJournalData(); 
     } catch (error) {
       console.error('Failed to remove post from journal:', error);
     }
@@ -94,7 +90,7 @@ const TravelJournal = ({ isOpen, onClose }) => {
       await axios.post(`${TOGGLE_POST_JOURNAL_ENDPOINT_URL}/${postId}/toggle_journal/`, {}, {
         withCredentials: true
       });
-      fetchJournalData(); // Refresh data
+      fetchJournalData(); 
     } catch (error) {
       console.error('Failed to restore post to journal:', error);
     }
@@ -121,26 +117,21 @@ const TravelJournal = ({ isOpen, onClose }) => {
   const totalPosts = countries.reduce((sum, country) => sum + journalData[country].length, 0);
 
   const printJournal = () => {
-    // Check if there's content to print
     if (countries.length === 0) {
       alert(translations[lang]?.noContentToPrint || 'Your journal is empty! Add some travel stories first.');
       return;
     }
     
-    // Create and show the printable version
     const printContent = createPrintableJournal();
     
-    // Create a temporary container for the print content
     const printContainer = document.createElement('div');
     printContainer.innerHTML = printContent;
     printContainer.className = 'printable-journal show-print-view';
     document.body.appendChild(printContainer);
     
-    // Trigger print dialog
     setTimeout(() => {
       window.print();
       
-      // Clean up after printing
       setTimeout(() => {
         document.body.removeChild(printContainer);
       }, 100);
@@ -195,7 +186,6 @@ const TravelJournal = ({ isOpen, onClose }) => {
       </div>
     `;
 
-    // Add country sections
     countries.forEach((country, countryIndex) => {
       const posts = journalData[country];
       
@@ -240,7 +230,6 @@ const TravelJournal = ({ isOpen, onClose }) => {
       `;
     });
 
-    // Add back cover with statistics
     printHTML += `
       <div class="print-page print-back-cover">
         <div class="back-cover-content">

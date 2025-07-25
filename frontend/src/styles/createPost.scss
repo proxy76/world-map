@@ -330,7 +330,6 @@
   }
 }
 
-// Stiluri pentru autocomplete țări în CreatePost
 .country-autocomplete-container {
   position: relative;
   overflow: visible !important;
@@ -353,12 +352,10 @@
   min-width: 200px;
   width: fit-content;
   
-  // Adjust height based on content
   &:has(.country-option:only-child) {
     max-height: fit-content;
   }
   
-  // For browsers that don't support :has, use JavaScript alternative
   &.single-result {
     max-height: fit-content;
   }

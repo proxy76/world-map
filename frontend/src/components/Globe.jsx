@@ -5,7 +5,6 @@ import translations from "../utils/translations";
 
 const preloadTexture = new THREE.TextureLoader().load('/earth3.png');
 
-// Optional: force early decoding to reduce first interaction delay
 preloadTexture.encoding = THREE.sRGBEncoding;
 preloadTexture.anisotropy = 8;
 
@@ -32,14 +31,12 @@ const Globe = () => {
         container.appendChild(renderer.domElement);
         rendererRef.current = renderer;
 
-        // Low-poly sphere for perf, preloaded texture
         const geometry = new THREE.SphereGeometry(1.5, 24, 24);
         const material = new THREE.MeshBasicMaterial({ map: preloadTexture });
         const globe = new THREE.Mesh(geometry, material);
         globeRef.current = globe;
         scene.add(globe);
 
-        // GPU-optimal animation loop
         renderer.setAnimationLoop((time) => {
             if (globeRef.current) {
                 globeRef.current.rotation.y = time * 0.0001;
@@ -90,5 +87,4 @@ const Globe = () => {
     );
 };
 
-// Prevents unnecessary re-renders
 export default React.memo(Globe);
