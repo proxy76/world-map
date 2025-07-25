@@ -6,7 +6,7 @@ import '../styles/CurrencyConverterModal.scss';
 const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName }) => {
     const { lang } = useLanguage();
     const [amount, setAmount] = useState('');
-    const [fromCurrency, setFromCurrency] = useState('USD');
+    const [fromCurrency, setFromCurrency] = useState('RON');
     const [convertedAmount, setConvertedAmount] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -16,11 +16,11 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
 
     const targetCurrency = countryCurrency 
         ? Object.keys(countryCurrency)[0]
-        : 'USD';
+        : 'RON';
 
     const commonCurrencies = [
-        'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
-        'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW'
+        'RON', 'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD',
+        'MXN', 'SGD', 'HKD', 'NOK', 'TRY', 'RUB', 'INR', 'BRL', 'ZAR', 'KRW', 
     ];
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
                 try {
                     setIsLoading(true);
                     setError('');
-                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/RON');
                     const data = await response.json();
                     setExchangeRates(data.rates);
                 } catch (error) {
@@ -79,7 +79,7 @@ const CurrencyConverterModal = ({ isOpen, onClose, countryCurrency, countryName 
             setConvertedAmount(null);
             setAnimatedAmount(null);
             setError('');
-            setFromCurrency('USD');
+            setFromCurrency('RON');
             setIsClosing(false);
         }
     }, [isOpen]);
