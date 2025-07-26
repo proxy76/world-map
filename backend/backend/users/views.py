@@ -885,68 +885,69 @@ def create_itinerary(request):
                         order=i
                     )
             
-            # If sharing to social, create a post with detailed itinerary
-            if data.get('shareToSocial', False):
-                # Create detailed content with itinerary information
-                detailed_content = f"🗺️ **{itinerary.title}**\n\n"
-                if itinerary.description:
-                    detailed_content += f"{itinerary.description}\n\n"
+            # Always create a post for the itinerary (for bucketlist)
+            # Create detailed content with itinerary information
+            detailed_content = f"🗺️ **{itinerary.title}**\n\n"
+            if itinerary.description:
+                detailed_content += f"{itinerary.description}\n\n"
+            
+            detailed_content += f"📍 **Destination:** {itinerary.country}\n"
+            detailed_content += f"📅 **Duration:** {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
+            
+            # Add day-by-day breakdown
+            for day_data in data.get('days', []):
+                date_str = day_data.get('date', '')
+                if date_str:
+                    try:
+                        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                        formatted_date = date_obj.strftime('%B %d')
+                    except ValueError:
+                        formatted_date = date_str
+                else:
+                    formatted_date = "TBD"
                 
-                detailed_content += f"📍 **Destination:** {itinerary.country}\n"
-                detailed_content += f"📅 **Duration:** {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
+                day_title = day_data.get('title', '')
+                if day_title:
+                    detailed_content += f"**{formatted_date}:** {day_title}\n"
+                else:
+                    detailed_content += f"**{formatted_date}:**\n"
                 
-                # Add day-by-day breakdown
-                for day_data in data.get('days', []):
-                    date_str = day_data.get('date', '')
-                    if date_str:
-                        try:
-                            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-                            formatted_date = date_obj.strftime('%B %d')
-                        except ValueError:
-                            formatted_date = date_str
-                    else:
-                        formatted_date = "TBD"
-                    
-                    day_title = day_data.get('title', '')
-                    if day_title:
-                        detailed_content += f"**{formatted_date}:** {day_title}\n"
-                    else:
-                        detailed_content += f"**{formatted_date}:**\n"
-                    
-                    activities = day_data.get('activities', [])
-                    if activities:
-                        for activity in activities[:3]:  # Show first 3 activities
-                            time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
-                            detailed_content += f"• {activity.get('name', 'Activity')}{time_str}\n"
-                        if len(activities) > 3:
-                            detailed_content += f"• ...and {len(activities) - 3} more activities\n"
-                    detailed_content += "\n"
-                
-                detailed_content += "🎯 Ready to explore? Check out my detailed itinerary!"
-                
-                # Store the full itinerary data
-                itinerary_data = {
-                    "itinerary_id": itinerary.id,
-                    "title": itinerary.title,
-                    "description": itinerary.description,
-                    "country": itinerary.country,
-                    "days": data.get('days', []),
-                    "total_days": len(data.get('days', [])),
-                    "total_activities": sum(len(day.get('activities', [])) for day in data.get('days', []))
-                }
-                
-                Post.objects.create(
-                    author=request.user,
-                    title=f"🗺️ {itinerary.title}",
-                    content=detailed_content,
-                    countries_visited=[itinerary.country],
-                    post_type='itinerariu',
-                    travel_type='solo',  # Default value
-                    theme='cultura',  # Default value
-                    is_in_journal=True,
-                    is_private=not data.get('shareToSocial', False),  # Private if not sharing to social
-                    itinerary_data=itinerary_data
-                )
+                activities = day_data.get('activities', [])
+                if activities:
+                    for activity in activities[:3]:  # Show first 3 activities
+                        time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
+                        detailed_content += f"• {activity.get('name', 'Activity')}{time_str}\n"
+                    if len(activities) > 3:
+                        detailed_content += f"• ...and {len(activities) - 3} more activities\n"
+                detailed_content += "\n"
+            
+            detailed_content += "🎯 Ready to explore? Check out my detailed itinerary!"
+            
+            # Store the full itinerary data
+            itinerary_data = {
+                "itinerary_id": itinerary.id,
+                "title": itinerary.title,
+                "description": itinerary.description,
+                "country": itinerary.country,
+                "days": data.get('days', []),
+                "total_days": len(data.get('days', [])),
+                "total_activities": sum(len(day.get('activities', [])) for day in data.get('days', []))
+            }
+            
+            # Always create a post - if not sharing to social, make it private
+            # but always include in journal (bucketlist)
+            Post.objects.create(
+                author=request.user,
+                title=f"🗺️ {itinerary.title}",
+                content=detailed_content,
+                countries_visited=[itinerary.country],
+                post_type='itinerariu',
+                travel_type='solo',  # Default value
+                theme='cultura',  # Default value
+                is_in_journal=True,  # Always include in journal/bucketlist
+                is_private=not data.get('shareToSocial', False),  # Private if not sharing to social
+                itinerary_data=itinerary_data
+            )
             
             return JsonResponse({
                 "message": "Itinerary created successfully",

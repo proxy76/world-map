@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GlobalHeader from './GlobalHeader';
 import CardWithReview from './CardWithReview.jsx';
+import ItineraryViewModal from './ItineraryViewModal.jsx';
 import axios from 'axios';
 import { PROFILE_INFO_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/journalBucketlistShared.scss';
@@ -14,6 +15,9 @@ import { useLocation } from 'react-router-dom';
 const Journal = ({ isLogged }) => {
   const { profileInfo, isLoading, isAuthenticated, setProfileInfo } = useAuthenticatedData();
   const [reviewsOpened, setReviewsOpened] = useState('');
+  const [itineraryViewModalOpen, setItineraryViewModalOpen] = useState(false);
+  const [selectedItineraries, setSelectedItineraries] = useState([]);
+  const [selectedCountryForView, setSelectedCountryForView] = useState('');
   const { lang } = useLanguage();
   const location = useLocation();
 
@@ -75,6 +79,12 @@ const Journal = ({ isLogged }) => {
     });
   };
 
+  const handleViewItineraries = (countryName, itineraries) => {
+    setSelectedCountryForView(countryName);
+    setSelectedItineraries(itineraries);
+    setItineraryViewModalOpen(true);
+  };
+
   return (
     <div className="journal-bucketlist-container">
       {/* Floating decorative elements */}
@@ -90,9 +100,24 @@ const Journal = ({ isLogged }) => {
           <ReviewModal reviewsOpened={reviewsOpened} setReviewsOpened={setReviewsOpened} isLogged={isLogged} />
         }
         {Array.from(new Set(profileInfo.countriesVisited)).map((name, index) => (
-          <CardWithReview key={index} name={name} setReviewsOpened={setReviewsOpened} page={"journal"} onRemove={handleRemoveFromJournal} />
+          <CardWithReview 
+            key={index} 
+            name={name} 
+            setReviewsOpened={setReviewsOpened} 
+            page={"journal"} 
+            onRemove={handleRemoveFromJournal}
+            onViewItineraries={handleViewItineraries}
+          />
         ))}
       </div>
+      
+      {/* Itinerary View Modal - Now properly overlays the entire page */}
+      <ItineraryViewModal
+        isOpen={itineraryViewModalOpen}
+        onClose={() => setItineraryViewModalOpen(false)}
+        itineraries={selectedItineraries}
+        countryName={selectedCountryForView}
+      />
     </div>
   );
 };

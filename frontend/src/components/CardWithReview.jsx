@@ -5,12 +5,14 @@ import {
   REMOVE_JOURNAL_ENDPOINT_URL,
   REMOVE_BUCKETLIST_ENDPOINT_URL,
   ADD_JOURNAL_ENDPOINT_URL,
+  GET_JOURNAL_POSTS_ENDPOINT_URL,
 } from '../utils/ApiHost';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 
-const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, onCreateItinerary }) => {
+const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, onCreateItinerary, onViewItineraries }) => {
   const [info, setInfo] = useState(null);
+  const [countryItineraries, setCountryItineraries] = useState([]);
   const { lang } = useLanguage();
 
   const getApiName = (name) => {
@@ -33,7 +35,23 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
       }
     };
 
-    if (name) fetchCountryInfo();
+    const fetchCountryItineraries = async () => {
+      try {
+        const response = await axios.get(GET_JOURNAL_POSTS_ENDPOINT_URL, { withCredentials: true });
+        const journalData = response.data.journal;
+        
+        // Filter itineraries for this specific country
+        const itineraries = journalData[name]?.filter(post => post.post_type === 'itinerariu') || [];
+        setCountryItineraries(itineraries);
+      } catch (error) {
+        console.error('Failed to fetch itineraries:', error);
+      }
+    };
+
+    if (name) {
+      fetchCountryInfo();
+      fetchCountryItineraries();
+    }
   }, [name]);
 
   if (!info) return <p>{translations[lang].loading}</p>;
@@ -117,6 +135,7 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
           <p><b>{translations[lang].continent}</b></p>
           <p>{info.continents[0]}</p>
         </div>
+        
         <div className="btns">
           {page === 'bucketlist' ? (
             <>
@@ -135,6 +154,11 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
               <div className="create-itinerary" onClick={() => onCreateItinerary?.(name)}>
                 📋 {translations[lang].createItinerary || 'Create Itinerary'}
               </div>
+              {countryItineraries.length > 0 && (
+                <div className="view-itineraries" onClick={() => onViewItineraries?.(name, countryItineraries)}>
+                  👀 {translations[lang].viewItineraries || 'View Itineraries'} ({countryItineraries.length})
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -142,6 +166,11 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
                 <div className="remove" onClick={handleRemoveFromJournal}>{translations[lang].removeBtn}</div>
                 <div className="review" onClick={openReviews}>{translations[lang].reviewBtn}</div>
               </div>
+              {countryItineraries.length > 0 && (
+                <div className="view-itineraries" onClick={() => onViewItineraries?.(name, countryItineraries)}>
+                  👀 {translations[lang].viewItineraries || 'View Itineraries'} ({countryItineraries.length})
+                </div>
+              )}
             </>
           )}
         </div>

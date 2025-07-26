@@ -3,6 +3,7 @@ import axios from 'axios';
 import GlobalHeader from './GlobalHeader';
 import CardWithReview from './CardWithReview.jsx';
 import ItineraryModal from './ItineraryModal.jsx';
+import ItineraryViewModal from './ItineraryViewModal.jsx';
 import '../styles/journalBucketlistShared.scss';
 import ErrorPage from './ErrorPage.jsx';
 import PackingLoader from './PackingLoader.jsx';
@@ -17,6 +18,10 @@ const Bucketlist = ({ isLogged }) => {
   const location = useLocation();
   const [itineraryModalOpen, setItineraryModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [itineraryViewModalOpen, setItineraryViewModalOpen] = useState(false);
+  const [selectedItineraries, setSelectedItineraries] = useState([]);
+  const [selectedCountryForView, setSelectedCountryForView] = useState('');
 
   
   useEffect(() => {
@@ -82,6 +87,12 @@ const Bucketlist = ({ isLogged }) => {
     setItineraryModalOpen(true);
   };
 
+  const handleViewItineraries = (countryName, itineraries) => {
+    setSelectedCountryForView(countryName);
+    setSelectedItineraries(itineraries);
+    setItineraryViewModalOpen(true);
+  };
+
   const handleSaveItinerary = async (itineraryData) => {
     try {
       const response = await axios.post(
@@ -92,6 +103,10 @@ const Bucketlist = ({ isLogged }) => {
       
       if (response.status === 201) {
         alert(`${translations[lang]?.itinerary || 'Itinerary'} "${itineraryData.title}" ${translations[lang]?.saved || 'saved'} ${itineraryData.shareToSocial ? translations[lang]?.andShared || 'and shared' : translations[lang]?.privately || 'privately'}!`);
+        
+        // Trigger a refresh of the cards to show the new itinerary
+        setRefreshKey(prev => prev + 1);
+        setItineraryModalOpen(false);
       }
     } catch (error) {
       console.error('Error saving itinerary:', error);
@@ -112,11 +127,12 @@ const Bucketlist = ({ isLogged }) => {
       <div className="content">
         {Array.from(new Set(profileInfo.countriesWishlist)).map((name, index) => (
           <CardWithReview 
-            key={index} 
+            key={`${index}-${refreshKey}`} 
             name={name} 
             page={"bucketlist"} 
             onRemove={handleRemoveFromWishlist}
             onCreateItinerary={handleCreateItinerary}
+            onViewItineraries={handleViewItineraries}
           />
         ))}
       </div>
@@ -127,6 +143,14 @@ const Bucketlist = ({ isLogged }) => {
         onClose={() => setItineraryModalOpen(false)}
         countryName={selectedCountry}
         onSaveItinerary={handleSaveItinerary}
+      />
+      
+      {/* Itinerary View Modal - Now properly overlays the entire page */}
+      <ItineraryViewModal
+        isOpen={itineraryViewModalOpen}
+        onClose={() => setItineraryViewModalOpen(false)}
+        itineraries={selectedItineraries}
+        countryName={selectedCountryForView}
       />
     </div>
   );

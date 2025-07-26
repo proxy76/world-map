@@ -276,6 +276,15 @@
     saved: "salvat",
     andShared: "și împărtășit",
     privately: "privat",
+    private: "Privat",
+    days: "zile",
+    itineraries: "Itinerarii",
+    viewItineraries: "Vezi itinerariile",
+    viewDetails: "Vezi detaliile",
+    backToList: "Înapoi la listă",
+    created: "Creat",
+    noItinerariesYet: "Nu ai creat încă itinerarii pentru această țară.",
+    website: "Site web",
     errorSavingItinerary: "Eroare la salvarea itinerariului. Te rugăm să încerci din nou."
   },
   en: {
@@ -538,6 +547,15 @@
     saved: "saved",
     andShared: "and shared",
     privately: "privately",
+    private: "Private",
+    days: "days",
+    itineraries: "Itineraries",
+    viewItineraries: "View Itineraries",
+    viewDetails: "View Details",
+    backToList: "Back to List",
+    created: "Created",
+    noItinerariesYet: "No itineraries created yet for this country.",
+    website: "Website",
     errorSavingItinerary: "Error saving itinerary. Please try again.",
     
     // Comments
