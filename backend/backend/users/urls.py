@@ -28,6 +28,7 @@ urlpatterns = [
     path("posts/<int:post_id>/toggle_journal/", views.toggle_post_in_journal, name="toggle_post_in_journal"),
     path("journal_posts/", views.get_journal_posts, name="get_journal_posts"),
     path("removed_journal_posts/", views.get_removed_journal_posts, name="get_removed_journal_posts"),
+    path("delete_account", views.delete_account, name="delete_account"),
 ]
 
 
