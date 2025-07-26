@@ -12,7 +12,7 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
     days: [
       {
         id: '1',
-        dayNumber: 1,
+        date: '',
         title: '',
         activities: []
       }
@@ -23,9 +23,20 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
 
   useEffect(() => {
     if (isOpen && countryName) {
+      // Set default date to tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const defaultDate = tomorrow.toISOString().split('T')[0];
+      
       setItinerary(prev => ({
         ...prev,
-        title: `${countryName} ${translations[lang]?.itinerary || 'Itinerary'}`
+        title: `${countryName} ${translations[lang]?.itinerary || 'Itinerary'}`,
+        days: [{
+          id: '1',
+          date: defaultDate,
+          title: '',
+          activities: []
+        }]
       }));
     }
   }, [isOpen, countryName, lang]);
@@ -33,9 +44,15 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
   if (!isOpen) return null;
 
   const addNewDay = () => {
+    // Calculate next date based on the last day's date
+    const lastDay = itinerary.days[itinerary.days.length - 1];
+    const lastDate = new Date(lastDay.date || new Date());
+    lastDate.setDate(lastDate.getDate() + 1);
+    const nextDate = lastDate.toISOString().split('T')[0];
+    
     const newDay = {
       id: String(Date.now()),
-      dayNumber: itinerary.days.length + 1,
+      date: nextDate,
       title: '',
       activities: []
     };
@@ -49,15 +66,10 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
     if (itinerary.days.length <= 1) return;
     
     const newDays = itinerary.days.filter((_, index) => index !== dayIndex);
-    // Renumber the days
-    const renumberedDays = newDays.map((day, index) => ({
-      ...day,
-      dayNumber: index + 1
-    }));
     
     setItinerary(prev => ({
       ...prev,
-      days: renumberedDays
+      days: newDays
     }));
     
     if (currentDay >= newDays.length) {
@@ -74,12 +86,20 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
     }));
   };
 
+  const updateDayDate = (dayIndex, date) => {
+    const newDays = [...itinerary.days];
+    newDays[dayIndex].date = date;
+    setItinerary(prev => ({
+      ...prev,
+      days: newDays
+    }));
+  };
+
   const addActivity = () => {
     const newActivity = {
       id: String(Date.now()),
-      title: '',
-      description: '',
-      time: '',
+      name: '',
+      time: null, // Optional time (can be null or a time string)
       location: '',
       notes: '',
       website: '',
@@ -156,13 +176,17 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
     onClose();
     
     // Reset the form
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const defaultDate = tomorrow.toISOString().split('T')[0];
+    
     setItinerary({
       title: '',
       description: '',
       days: [
         {
           id: '1',
-          dayNumber: 1,
+          date: defaultDate,
           title: '',
           activities: []
         }
@@ -221,7 +245,10 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
                   className={`day-tab ${currentDay === index ? 'active' : ''}`}
                   onClick={() => setCurrentDay(index)}
                 >
-                  {translations[lang]?.day || 'Day'} {day.dayNumber}
+                  {day.date ? new Date(day.date).toLocaleDateString(lang === 'ro' ? 'ro-RO' : 'en-US', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                  }) : `${translations[lang]?.day || 'Day'} ${index + 1}`}
                   {itinerary.days.length > 1 && (
                     <button
                       className="remove-day-btn"
@@ -245,13 +272,25 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
           {itinerary.days[currentDay] && (
             <div className="day-content">
               <div className="day-header">
-                <input
-                  type="text"
-                  value={itinerary.days[currentDay].title}
-                  onChange={(e) => updateDayTitle(currentDay, e.target.value)}
-                  placeholder={`${translations[lang]?.day || 'Day'} ${itinerary.days[currentDay].dayNumber} - ${translations[lang]?.dayTitlePlaceholder || 'Enter day title (e.g., Exploring Downtown)'}`}
-                  className="day-title-input"
-                />
+                <div className="day-date-section">
+                  <label>{translations[lang]?.date || 'Date'}</label>
+                  <input
+                    type="date"
+                    value={itinerary.days[currentDay].date}
+                    onChange={(e) => updateDayDate(currentDay, e.target.value)}
+                    className="day-date-input"
+                  />
+                </div>
+                <div className="day-title-section">
+                  <label>{translations[lang]?.dayTitle || 'Day Title'} ({translations[lang]?.optional || 'optional'})</label>
+                  <input
+                    type="text"
+                    value={itinerary.days[currentDay].title}
+                    onChange={(e) => updateDayTitle(currentDay, e.target.value)}
+                    placeholder={translations[lang]?.dayTitlePlaceholder || 'e.g., Exploring Downtown, Museums & Culture'}
+                    className="day-title-input"
+                  />
+                </div>
               </div>
 
               {/* Activities */}
@@ -307,16 +346,17 @@ const ItineraryModal = ({ isOpen, onClose, countryName, onSaveItinerary }) => {
                                     <div className="input-group">
                                       <input
                                         type="text"
-                                        value={activity.title}
-                                        onChange={(e) => updateActivity(index, 'title', e.target.value)}
-                                        placeholder={translations[lang]?.activityTitle || 'Activity title'}
+                                        value={activity.name}
+                                        onChange={(e) => updateActivity(index, 'name', e.target.value)}
+                                        placeholder={translations[lang]?.activityName || 'Activity name'}
                                       />
                                     </div>
                                     <div className="input-group time-input">
                                       <input
                                         type="time"
-                                        value={activity.time}
-                                        onChange={(e) => updateActivity(index, 'time', e.target.value)}
+                                        value={activity.time || ''}
+                                        onChange={(e) => updateActivity(index, 'time', e.target.value || null)}
+                                        placeholder={translations[lang]?.optionalTime || 'Optional time'}
                                       />
                                     </div>
                                   </div>

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+from datetime import date
 
 class User(AbstractUser):
     user_address = models.CharField(max_length=255, null=True)
@@ -176,14 +178,13 @@ class Itinerary(models.Model):
 
     def serializer(self, user=None):
         days_data = []
-        for day in self.days.all().order_by('day_number'):
+        for day in self.days.all().order_by('date'):
             activities_data = []
             for activity in day.activities.all().order_by('order'):
                 activities_data.append({
                     "id": activity.id,
-                    "title": activity.title,
-                    "description": activity.description,
-                    "time": activity.time.strftime('%H:%M') if activity.time else '',
+                    "name": activity.name,
+                    "time": activity.time.strftime('%H:%M') if activity.time else None,
                     "location": activity.location,
                     "notes": activity.notes,
                     "website": activity.website,
@@ -194,7 +195,7 @@ class Itinerary(models.Model):
             
             days_data.append({
                 "id": day.id,
-                "day_number": day.day_number,
+                "date": day.date.isoformat(),
                 "title": day.title,
                 "activities": activities_data
             })
@@ -218,12 +219,12 @@ class Itinerary(models.Model):
 
 class ItineraryDay(models.Model):
     itinerary = models.ForeignKey(Itinerary, related_name='days', on_delete=models.CASCADE)
-    day_number = models.PositiveIntegerField()
+    date = models.DateField(default=date.today)
     title = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        ordering = ['day_number']
-        unique_together = ['itinerary', 'day_number']
+        ordering = ['date']
+        unique_together = ['itinerary', 'date']
 
 
 class ItineraryActivity(models.Model):
@@ -238,8 +239,7 @@ class ItineraryActivity(models.Model):
     ]
 
     day = models.ForeignKey(ItineraryDay, related_name='activities', on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=255)
     time = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)

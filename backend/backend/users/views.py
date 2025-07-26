@@ -860,12 +860,12 @@ def create_itinerary(request):
             for day_data in data.get('days', []):
                 day = ItineraryDay.objects.create(
                     itinerary=itinerary,
-                    day_number=day_data.get('dayNumber'),
+                    date=day_data.get('date'),
                     title=day_data.get('title', '')
                 )
                 
                 for i, activity_data in enumerate(day_data.get('activities', [])):
-                    # Parse time if provided
+                    # Parse time if provided (can be null)
                     time_obj = None
                     if activity_data.get('time'):
                         try:
@@ -875,8 +875,7 @@ def create_itinerary(request):
                     
                     ItineraryActivity.objects.create(
                         day=day,
-                        title=activity_data.get('title', ''),
-                        description=activity_data.get('description', ''),
+                        name=activity_data.get('name', ''),
                         time=time_obj,
                         location=activity_data.get('location', ''),
                         notes=activity_data.get('notes', ''),
@@ -897,13 +896,28 @@ def create_itinerary(request):
                 detailed_content += f"📅 **Duration:** {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
                 
                 # Add day-by-day breakdown
-                for i, day_data in enumerate(data.get('days', []), 1):
-                    detailed_content += f"**Day {i}:** {day_data.get('title', f'Day {i}')}\n"
+                for day_data in data.get('days', []):
+                    date_str = day_data.get('date', '')
+                    if date_str:
+                        try:
+                            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                            formatted_date = date_obj.strftime('%B %d')
+                        except ValueError:
+                            formatted_date = date_str
+                    else:
+                        formatted_date = "TBD"
+                    
+                    day_title = day_data.get('title', '')
+                    if day_title:
+                        detailed_content += f"**{formatted_date}:** {day_title}\n"
+                    else:
+                        detailed_content += f"**{formatted_date}:**\n"
+                    
                     activities = day_data.get('activities', [])
                     if activities:
                         for activity in activities[:3]:  # Show first 3 activities
                             time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
-                            detailed_content += f"• {activity.get('title', 'Activity')}{time_str}\n"
+                            detailed_content += f"• {activity.get('name', 'Activity')}{time_str}\n"
                         if len(activities) > 3:
                             detailed_content += f"• ...and {len(activities) - 3} more activities\n"
                     detailed_content += "\n"
