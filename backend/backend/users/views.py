@@ -888,12 +888,12 @@ def create_itinerary(request):
             # If sharing to social, create a post with detailed itinerary
             if data.get('shareToSocial', False):
                 # Create detailed content with itinerary information
-                detailed_content = f"🗺️ **{itinerary.title}**\n\n"
+                detailed_content = f"🗺️ <b>{itinerary.title}</b>\n\n "
                 if itinerary.description:
                     detailed_content += f"{itinerary.description}\n\n"
                 
-                detailed_content += f"📍 **Destination:** {itinerary.country}\n"
-                detailed_content += f"📅 **Duration:** {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
+                detailed_content += f"📍 <b>Destination:</b> {itinerary.country}\n"
+                detailed_content += f"📅 <b>Duration:</b> {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
                 
                 # Add day-by-day breakdown
                 for day_data in data.get('days', []):
@@ -909,9 +909,9 @@ def create_itinerary(request):
                     
                     day_title = day_data.get('title', '')
                     if day_title:
-                        detailed_content += f"**{formatted_date}:** {day_title}\n"
+                        detailed_content += f"<b>{formatted_date}:</b> {day_title}"
                     else:
-                        detailed_content += f"**{formatted_date}:**\n"
+                        detailed_content += f"<b>{formatted_date}:</b>"
                     
                     activities = day_data.get('activities', [])
                     if activities:
