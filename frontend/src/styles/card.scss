@@ -12,7 +12,9 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: 'Poppins', sans-serif;
+    width: 100%;
     max-width: 320px;
+    min-width: 280px;
     min-height: 450px;
     text-align: center;
     position: relative;
@@ -20,6 +22,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
+    box-sizing: border-box;
     
     &::before {
         content: '';
@@ -390,5 +393,33 @@
 @media (min-width: 800px) {
     .card img {
         width: 100%;
+    }
+}
+
+// Responsive card width adjustments to prevent cards from getting too wide
+@media (max-width: 768px) {
+    .card {
+        max-width: 280px !important;
+        min-width: 260px !important;
+        margin: 0.75rem;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        max-width: 260px !important;
+        min-width: 240px !important;
+        margin: 0.5rem;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        max-width: 240px !important;
+        min-width: 220px !important;
+        margin: 0.5rem;
+        padding: 12px;
     }
 }
