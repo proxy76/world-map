@@ -94,7 +94,7 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
         alert('Link copied to clipboard!');
       }
     } catch (error) {
-      console.error('Error sharing:', error);
+      console.error('Error sha8ring:', error);
     }
   };
   const handlePostClick = () => {

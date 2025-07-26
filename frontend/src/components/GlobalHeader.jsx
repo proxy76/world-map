@@ -52,12 +52,13 @@ const GlobalHeader = ({ isLogged }) => {
               <a href='/'>GlobeTales.</a>
             </div>
           </div>
-          {/* NU mai afișați selectorul de limbă aici pe pagina de profil */}
-          {location.pathname !== "/profile" && (
-            <div style={{ marginLeft: "auto", marginRight: "1rem" }}>
-              {/* Dacă vrei selector global pe alte pagini, îl poți lăsa aici */}
-            </div>
-          )}
+
+            <div className="middleSection middleSectionFull">
+  <Link to="/map" className="middleItem">WorldMap</Link>
+  <Link to="/journal" className="middleItem">Journal</Link>
+  <Link to="/bucketlist" className="middleItem">Bucketlist</Link>
+  <Link to="/social-media" className="middleItemLarge">Socialize</Link> {/* Moved here */}
+</div>
           <div
             onClick={() => setIsOpened(!isOpened)}
             ref={dropdownRef}
