@@ -1,43 +1,50 @@
+@media print {
+  body, html {
+    background: none !important;
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+  .printable-journal {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    background: linear-gradient(135deg, #66ea9b 0%, #207e91 100%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+    overflow: auto !important;
+  }
+  #root, .journal-overlay, .journal-container, .open-book, .closed-book, .restore-modal-overlay {
+    display: none !important;
+  }
+}
+/* Print journal images - original smaller sizes */
 .print-image-row {
   display: flex;
   justify-content: center;
-  gap: 18px;
-  margin: 16px 0;
+  gap: 12px;
+  margin: 8px 0;
   flex-wrap: wrap;
 }
 .print-post-image-row {
-  max-width: 600px;
+  max-width: 320px;
   width: 100%;
   height: auto;
-  max-height: 400px;
+  max-height: 220px;
   object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
   background: #fff;
   display: block;
+  margin: 16px 0;
 }
-.print-image-single {
-  display: flex;
-  justify-content: center;
-  margin: 12px 0;
-}
-.print-post-image-single {
-  width: 100%;
-  max-width: 900px;
-  height: auto;
-  max-height: 500px;
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
-  background: #fff;
-  display: block;
-}
-.print-image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
-  gap: 16px;
-  margin: 12px 0;
-}
+
 .print-post-image-grid {
   width: 100%;
   max-width: 440px;
