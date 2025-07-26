@@ -67,7 +67,7 @@ const ItineraryViewModal = ({ isOpen, onClose, itineraries, countryName }) => {
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
-        <div className="modal-content">
+        <div className="itinerary-modal-content">
           {!selectedItinerary ? (
             // Itineraries List View
             <div className="itineraries-list-view">

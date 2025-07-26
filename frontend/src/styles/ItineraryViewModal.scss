@@ -165,13 +165,13 @@
   }
 }
 
-.modal-content {
-  padding: 2rem;
+.itinerary-modal-content {
   overflow-y: auto;
   max-height: calc(90vh - 100px);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
   backdrop-filter: blur(20px);
   text-align: center;
+  padding: 1rem;
 }
 
 // Enhanced List View
@@ -642,9 +642,7 @@
     }
   }
 
-  .modal-content {
-    padding: 1rem;
-  }
+
 
   .itineraries-grid {
     display: flex;
