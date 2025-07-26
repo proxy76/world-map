@@ -1640,13 +1640,14 @@
     }
     
     .toc-country {
+      /* Country name in TOC item */
       font-weight: 700;
       color: #2C1810;
       margin-left: 20px;
       font-family: 'Georgia', serif;
       font-size: 16pt;
     }
-    
+    /* Dotted line between country and page number in TOC */
     .toc-dots {
       flex: 1;
       height: 2px;
@@ -1660,7 +1661,7 @@
       margin: 0 20px;
       opacity: 0.6;
     }
-    
+    /* Page number in TOC item */
     .toc-pages {
       color: #8B4513;
       font-size: 14pt;
