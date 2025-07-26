@@ -13,9 +13,13 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: 'Poppins', sans-serif;
     max-width: 320px;
+    min-height: 450px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
     
     &::before {
         content: '';
@@ -63,11 +67,9 @@
         align-items: center;
         gap: 8px;
         font-size: 14px;
-        position: absolute;
-        bottom: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 40px);
+        width: 100%;
+        margin-top: auto;
+        padding-top: 20px;
 
         .main-actions {
             display: flex;
@@ -298,7 +300,7 @@
     }
     
     .continent {
-        margin-bottom: 4rem; 
+        margin-bottom: 1.5rem; 
     }
 }
 
@@ -324,18 +326,16 @@
         margin: 0.8rem auto !important;
         max-width: 96vw !important;
         min-width: 0 !important;
+        min-height: 400px !important;
         font-size: 13px !important;
         box-sizing: border-box !important;
         position: static !important;
         
         .btns {
-            position: relative !important;
-            bottom: auto !important;
-            left: auto !important;
-            transform: none !important;
             width: 100% !important;
-            margin-top: 1rem !important;
+            margin-top: auto !important;
             gap: 8px !important;
+            padding-top: 15px !important;
             
             .main-actions {
                 width: 100% !important;
