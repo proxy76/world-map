@@ -72,7 +72,7 @@
 
 /* Hamburger Menu Styles */
 .hamburger-btn {
-  display: none !important;
+  display: none;
   flex-direction: column;
   justify-content: space-around;
   width: 30px;
@@ -222,8 +222,20 @@
   }
 }
 
+/* Show hamburger menu at larger screens */
+@media (min-width: 1001px) and (max-width: 1340px) {
+  .hamburger-btn {
+    display: flex !important;
+    order: 2;
+  }
+
+  .middleSectionFull {
+    display: none !important;
+  }
+}
+
 /* Responsive Design */
-@media (max-width: 1000px) {
+@media (max-width: 1340px) {
   .sections {
     position: relative;
   }
@@ -247,15 +259,6 @@
   }
 }
 
-@media (min-width: 1001px) {
-  .hamburger-btn {
-    display: none !important;
-  }
-
-  .mobile-nav-overlay {
-    display: none !important;
-  }
-}
 
 @media (max-width: 768px) {
   .mobile-nav-menu {
