@@ -40,6 +40,7 @@ const GlobalHeader = ({ isLogged }) => {
       .then(() => window.location.reload());
   };
 
+  const isGradientPage = location.pathname === '/social' || location.pathname === '/map';
   return (
     <div className="headerWrapper">
       <div className="headerText">
@@ -54,13 +55,14 @@ const GlobalHeader = ({ isLogged }) => {
           </div>
 
             <div className="middleSection middleSectionFull">
-  <Link to="/map" className="middleItem">WorldMap</Link>
-  <Link to="/journal" className="middleItem">Journal</Link>
-  <Link to="/bucketlist" className="middleItem">Bucketlist</Link>
-  <Link to="/social-media" className="middleItemLarge">Socialize</Link> {/* Moved here */}
-</div>
+              <Link to="/map" className={`middleItem`}>WorldMap</Link>
+              <Link to="/journal" className="middleItem">Journal</Link>
+              <Link to="/bucketlist" className="middleItem">Bucketlist</Link>
+              <Link to="/social" className={`middleItemLarge ${isGradientPage ? 'socialize-gradient' : ''}`}>Socialize</Link> 
+            </div>
           <div
             onClick={() => setIsOpened(!isOpened)}
+
             ref={dropdownRef}
             className="dropdownWrapper"
           >
