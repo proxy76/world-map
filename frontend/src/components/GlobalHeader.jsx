@@ -40,7 +40,7 @@ const GlobalHeader = ({ isLogged }) => {
       .then(() => window.location.reload());
   };
 
-  const isGradientPage = location.pathname === '/social' || location.pathname === '/map';
+  const isGradientPage = location.pathname.startsWith('/social') || location.pathname === '/map';
   return (
     <div className="headerWrapper">
       <div className="headerText">
