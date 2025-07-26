@@ -8,6 +8,8 @@ import axios from 'axios';
 import { BACKEND_BASE_URL, STAMP_POST_ENDPOINT_URL } from '../utils/ApiHost';
 import '../styles/postCard.scss';
 const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
+  const [isPrivate, setIsPrivate] = useState(post.is_private);
+  const [privacyLoading, setPrivacyLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [passportStamps, setPassportStamps] = useState(post.passport_count || 0);
   const [hasStamped, setHasStamped] = useState(post.user_has_stamped || false);
@@ -99,6 +101,24 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
   };
   const handlePostClick = () => {
     navigate(`/social/post/${post.id}`);
+  };
+
+  const handlePrivacyToggle = async (e) => {
+    e.stopPropagation();
+    if (privacyLoading) return;
+    setPrivacyLoading(true);
+    try {
+      const response = await axios.post(
+        `${BACKEND_BASE_URL}/posts/${post.id}/edit_privacy/`,
+        { isPrivate: !isPrivate },
+        { withCredentials: true }
+      );
+      setIsPrivate(response.data.is_private);
+    } catch (error) {
+      alert('Failed to update privacy');
+    } finally {
+      setPrivacyLoading(false);
+    }
   };
   const handleImageClick = (e) => {
     e.preventDefault();
@@ -209,11 +229,60 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           <div className="post-type-badge">
             {getPostTypeLabel(post.post_type)}
           </div>
+        {/* Privacy toggle for user's own posts */}
+        {post.is_own_post && (
+          <button
+            className={`privacy-toggle-btn${privacyLoading ? ' loading' : ''}`}
+            onClick={handlePrivacyToggle}
+            disabled={privacyLoading}
+            title={isPrivate ? 'Make Public' : 'Make Private'}
+            style={{
+              marginLeft: '10px',
+              background: isPrivate
+                ? 'linear-gradient(90deg, #ff6a6a 0%, #ffb86c 100%)'
+                : 'linear-gradient(90deg, #66eaa0 0%, #4facfe 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 600,
+              fontSize: '0.85rem',
+              padding: '0.28rem 0.7rem',
+              minWidth: '80px',
+              maxWidth: '120px',
+              boxShadow: isPrivate
+                ? '0 2px 8px rgba(255, 106, 106, 0.10)'
+                : '0 2px 8px rgba(102, 234, 160, 0.10)',
+              cursor: privacyLoading ? 'not-allowed' : 'pointer',
+              transition: 'background 0.2s, color 0.2s, opacity 0.2s',
+              opacity: privacyLoading ? 0.7 : 1,
+              letterSpacing: '0.08em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4em',
+              height: '32px',
+              lineHeight: '1',
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+            }}
+          >
+            <span style={{fontSize: '1em'}}>{isPrivate ? '🔒' : '🌍'}</span>
+            {isPrivate ? 'Private' : 'Public'}
+            {privacyLoading && (
+              <span className="privacy-spinner" style={{marginLeft: '6px'}}>
+                <svg width="14" height="14" viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#fff" strokeWidth="5" strokeDasharray="31.4 31.4" strokeLinecap="round">
+                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite"/>
+                  </circle>
+                </svg>
+              </span>
+            )}
+          </button>
+        )}
         </div>
         <div className="post-content">
           <div className="post-header">
             <h3 className="post-title">{post.title}</h3>
-            {post.is_private && (
+            {isPrivate && (
               <span className="privacy-indicator" title={translations[lang]?.privatePost || 'Private Post'}>
                 🔒
               </span>

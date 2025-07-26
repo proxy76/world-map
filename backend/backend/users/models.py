@@ -97,14 +97,37 @@ class Post(models.Model):
         ordering = ['-created_at']
     
     def serializer(self, user=None):
+        # Always include is_own_post as True/False
+        is_own_post = False
+        if user and hasattr(user, 'id') and self.author.id == user.id:
+            is_own_post = True
+        return {
+            "id": self.id,
+            "author": self.author.id,
+            "title": self.title,
+            "content": self.content,
+            "countries_visited": self.countries_visited,
+            "post_type": self.post_type,
+            "travel_type": self.travel_type,
+            "theme": self.theme,
+            "travel_duration": self.travel_duration,
+            "images": self.images,
+            "passport_count": self.passport_count,
+            "is_in_journal": self.is_in_journal,
+            "is_private": self.is_private,
+            "itinerary_data": self.itinerary_data,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "is_own_post": is_own_post
+        }
         # Calculăm numărul real de comentarii
         comments_count = self.comments.count()
-        
         # Verificăm dacă user-ul curent a dat stamp (dacă user este furnizat)
         user_has_stamped = False
+        is_own_post = False
         if user and user.is_authenticated:
             user_has_stamped = PostPassport.objects.filter(user=user, post=self).exists()
-        
+            is_own_post = (self.author == user)
         return {
             "id": self.id,
             "author": {
@@ -123,6 +146,7 @@ class Post(models.Model):
             "passport_count": self.passport_count,
             "comments_count": comments_count,
             "user_has_stamped": user_has_stamped,
+            "is_own_post": is_own_post,
             "is_in_journal": self.is_in_journal,
             "is_private": self.is_private,
             "itinerary_data": self.itinerary_data,
