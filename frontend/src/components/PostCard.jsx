@@ -211,7 +211,14 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           </div>
         </div>
         <div className="post-content">
-          <h3 className="post-title">{post.title}</h3>
+          <div className="post-header">
+            <h3 className="post-title">{post.title}</h3>
+            {post.is_private && (
+              <span className="privacy-indicator" title={translations[lang]?.privatePost || 'Private Post'}>
+                🔒
+              </span>
+            )}
+          </div>
           {post.images && post.images.length > 0 && (
             <div className="post-image-container">
               <div className="post-image" onClick={handleImageClick}>

@@ -19,6 +19,7 @@ urlpatterns = [
     path("update_pfp", views.update_profile_picture, name="update_pfp"),
     path("create_post", views.create_post, name="create_post"),
     path("posts/", views.get_posts, name="get_posts"),
+    path("posts/private/", views.get_private_posts, name="get_private_posts"),
     path("posts/<int:post_id>/", views.get_post_details, name="get_post_details"),
     path("posts/<int:post_id>/stamp/", views.stamp_post, name="stamp_post"),
     path("posts/<int:post_id>/comments/", views.get_post_comments, name="get_post_comments"),

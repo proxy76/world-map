@@ -173,6 +173,12 @@
     publishing: "Se publică...",
     publishPost: "Publică postarea",
     
+    // Privacy
+    privatePost: "Postare privată",
+    privatePostDesc: "Vizibilă doar pentru tine și în jurnalul de călătorie",
+    publicPost: "Postare publică",
+    publicPostDesc: "Vizibilă pentru toți utilizatorii în feed-ul social",
+    
     // Post Types
     journal: "Jurnal",
     review: "Recenzie", 
@@ -426,6 +432,12 @@
     createPost: "Create Post",
     publishing: "Publishing...",
     publishPost: "Publish Post",
+    
+    // Privacy
+    privatePost: "Private Post",
+    privatePostDesc: "Visible only to you and in your travel journal",
+    publicPost: "Public Post", 
+    publicPostDesc: "Visible to all users in the social feed",
     
     // Post Types
     journal: "Journal",

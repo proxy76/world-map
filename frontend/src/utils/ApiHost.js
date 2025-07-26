@@ -18,6 +18,7 @@ export const MY_REVIEWS_ENDPOINT_URL = `${BASE_API_HOST}/view_self_reviews`
 export const ADD_REVIEW_ENDPOINT_URL = `${BASE_API_HOST}/add_review`
 export const PFP_UPDATE_ENDPOINT_URL = `${BASE_API_HOST}/update_pfp`
 export const GET_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/posts`
+export const GET_PRIVATE_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/posts/private`
 export const CREATE_POST_ENDPOINT_URL = `${BASE_API_HOST}/create_post`
 export const GET_POST_DETAILS_ENDPOINT_URL = `${BASE_API_HOST}/posts`
 export const STAMP_POST_ENDPOINT_URL = `${BASE_API_HOST}/posts`

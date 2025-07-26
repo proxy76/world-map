@@ -86,6 +86,7 @@ class Post(models.Model):
     images = models.JSONField(default=list, blank=True)  # URL-uri către imagini
     passport_count = models.IntegerField(default=0)  # Count pentru "passport likes"
     is_in_journal = models.BooleanField(default=True)  # Dacă e inclus în jurnalul autorului
+    is_private = models.BooleanField(default=False)  # Dacă postarea este privată (doar autorul o vede)
     itinerary_data = models.JSONField(default=dict, blank=True)  # Store full itinerary details
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -121,6 +122,7 @@ class Post(models.Model):
             "comments_count": comments_count,
             "user_has_stamped": user_has_stamped,
             "is_in_journal": self.is_in_journal,
+            "is_private": self.is_private,
             "itinerary_data": self.itinerary_data,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

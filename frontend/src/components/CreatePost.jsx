@@ -15,7 +15,8 @@ const CreatePost = ({ onClose, onSubmit }) => {
     travelType: 'solo',
     theme: 'natura',
     images: [],
-    tags: []
+    tags: [],
+    isPrivate: false
   });
   const [newCountry, setNewCountry] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
@@ -195,6 +196,7 @@ const CreatePost = ({ onClose, onSubmit }) => {
       formDataToSend.append('travelType', formData.travelType);
       formDataToSend.append('theme', formData.theme);
       formDataToSend.append('travel_duration', formData.travel_duration || '');
+      formDataToSend.append('isPrivate', formData.isPrivate);
       
       formData.images.forEach((image, index) => {
         formDataToSend.append(`images[${index}]`, image);
@@ -410,6 +412,22 @@ const CreatePost = ({ onClose, onSubmit }) => {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="form-group privacy-toggle">
+            <label className="privacy-label">
+              <input
+                type="checkbox"
+                checked={formData.isPrivate}
+                onChange={(e) => handleInputChange('isPrivate', e.target.checked)}
+                className="privacy-checkbox"
+              />
+              <span className="checkmark"></span>
+              <span className="privacy-text">
+                🔒 {translations[lang]?.privatePost || 'Postare privată'} 
+                <small>({translations[lang]?.privatePostDesc || 'Vizibilă doar pentru tine și în jurnalul de călătorie'})</small>
+              </span>
+            </label>
           </div>
 
           <div className="form-actions">

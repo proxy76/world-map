@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from django.db.models import Q
 from .models import User, Review, Post, Comment, PostPassport, Itinerary, ItineraryDay, ItineraryActivity
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -318,6 +319,7 @@ def create_post(request):
                 post_type = request.POST.get('postType', '')
                 travel_type = request.POST.get('travelType', '')
                 theme = request.POST.get('theme', '')
+                is_private = request.POST.get('isPrivate', 'false').lower() == 'true'
                 
                 uploaded_images = []
                 
@@ -353,6 +355,7 @@ def create_post(request):
                 post_type = data.get('postType', '')
                 travel_type = data.get('travelType', '')
                 theme = data.get('theme', '')
+                is_private = data.get('isPrivate', False)
                 uploaded_images = []
             
             if not title:
@@ -387,7 +390,8 @@ def create_post(request):
                 theme=theme,
                 travel_duration=request.POST.get('travel_duration', '') if 'multipart/form-data' in str(request.content_type) else data.get('travel_duration', ''),
                 images=uploaded_images,
-                is_in_journal=True
+                is_in_journal=True,
+                is_private=is_private
             )
             
             # PERFORMANCE: Clear posts cache when new post is created
@@ -432,6 +436,14 @@ def get_posts(request):
             
             posts = Post.objects.all()
             
+            # Filter out private posts unless they belong to the current user
+            if request.user.is_authenticated:
+                posts = posts.filter(
+                    Q(is_private=False) | Q(author=request.user)
+                )
+            else:
+                posts = posts.filter(is_private=False)
+            
             country = request.GET.get('country')
             post_type = request.GET.get('postType')
             travel_type = request.GET.get('travelType')
@@ -469,6 +481,33 @@ def get_posts(request):
             
             # Cache for 3 minutes for social feed performance
             cache.set(cache_key, response_data, timeout=60 * 3)
+            
+            return JsonResponse(response_data, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_private_posts(request):
+    """Get user's private posts"""
+    if request.method == 'GET':
+        try:
+            # Get only the current user's private posts
+            posts = Post.objects.filter(
+                author=request.user,
+                is_private=True
+            ).order_by('-created_at')
+            
+            serialized_posts = [post.serializer(request.user) for post in posts]
+            
+            response_data = {
+                "posts": serialized_posts,
+                "count": len(serialized_posts)
+            }
             
             return JsonResponse(response_data, status=200)
             
@@ -891,6 +930,7 @@ def create_itinerary(request):
                     travel_type='solo',  # Default value
                     theme='cultura',  # Default value
                     is_in_journal=True,
+                    is_private=not data.get('shareToSocial', False),  # Private if not sharing to social
                     itinerary_data=itinerary_data
                 )
             

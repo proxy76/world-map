@@ -120,24 +120,28 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
         <div className="btns">
           {page === 'bucketlist' ? (
             <>
-              <div className="create-itinerary" onClick={() => onCreateItinerary?.(name)}>
-                {translations[lang].createItinerary}
+              <div className="main-actions">
+                <div className="remove" onClick={handleRemoveFromBucketlist}>{translations[lang].removeBtn}</div>
+                <div
+                  className="remove"
+                  onClick={async () => {
+                    await handleAddToJournal();
+                    await handleRemoveFromBucketlist();
+                  }}
+                >
+                  {translations[lang].visitedBtn}
+                </div>
               </div>
-              <div className="remove" onClick={handleRemoveFromBucketlist}>{translations[lang].removeBtn}</div>
-              <div
-                className="remove"
-                onClick={async () => {
-                  await handleAddToJournal();
-                  await handleRemoveFromBucketlist();
-                }}
-              >
-                {translations[lang].visitedBtn}
+              <div className="create-itinerary" onClick={() => onCreateItinerary?.(name)}>
+                📋 {translations[lang].createItinerary || 'Create Itinerary'}
               </div>
             </>
           ) : (
             <>
-              <div className="remove" onClick={handleRemoveFromJournal}>{translations[lang].removeBtn}</div>
-              <div className="review" onClick={openReviews}>{translations[lang].reviewBtn}</div>
+              <div className="main-actions">
+                <div className="remove" onClick={handleRemoveFromJournal}>{translations[lang].removeBtn}</div>
+                <div className="review" onClick={openReviews}>{translations[lang].reviewBtn}</div>
+              </div>
             </>
           )}
         </div>
