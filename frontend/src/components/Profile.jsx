@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { PROFILE_INFO_ENDPOINT_URL, PFP_UPDATE_ENDPOINT_URL } from '../utils/ApiHost';
+import { PROFILE_INFO_ENDPOINT_URL, PFP_UPDATE_ENDPOINT_URL, DELETE_ACCOUNT_ENDPOINT_URL } from '../utils/ApiHost';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
@@ -8,6 +8,7 @@ import pfp from '../assets/anonymous.png';
 import GlobalHeader from './GlobalHeader';
 import TravelJournal from './TravelJournal';
 import Achievements from './Achievements';
+import DeleteAccountModal from './DeleteAccountModal';
 import { FaWindows } from 'react-icons/fa';
 import ErrorPage from './ErrorPage';
 import '../styles/ProfilePage.scss';
@@ -19,6 +20,7 @@ const ProfilePage = ({ isLogged }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({ visited: 0, wishlist: 0 });
   const [showJournal, setShowJournal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const BACKEND_BASE_URL = 'http://localhost:8000';
@@ -86,6 +88,17 @@ const ProfilePage = ({ isLogged }) => {
     axios
       .post(PFP_UPDATE_ENDPOINT_URL, formData, { withCredentials: true })
       .then(() => {getInfo(); window.location.reload()});
+  };
+
+  const handleDeleteAccount = () => {
+    return axios.delete(DELETE_ACCOUNT_ENDPOINT_URL, { withCredentials: true })
+      .then(() => {
+        // Clear any stored user data and redirect to landing page
+        localStorage.removeItem('userToken');
+        sessionStorage.clear();
+        navigate('/');
+        window.location.reload();
+      });
   };
 
   const toggleLang = () => setLang(lang === "ro" ? "en" : "ro");
@@ -313,6 +326,13 @@ const ProfilePage = ({ isLogged }) => {
             variant="accent"
             icon="🎯"
           />
+          <EnhancedButton
+            label={translations[lang]?.deleteAccount || 'Delete Account'}
+            onClick={() => setShowDeleteModal(true)}
+            isVisible={isVisible}
+            variant="danger"
+            icon="🗑️"
+          />
         </div>
       </div>
       
@@ -326,6 +346,14 @@ const ProfilePage = ({ isLogged }) => {
       <TravelJournal 
         isOpen={showJournal}
         onClose={() => setShowJournal(false)}
+      />
+      
+      {/* Delete Account Modal */}
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteAccount}
+        lang={lang}
       />
     </div>
   );

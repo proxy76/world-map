@@ -773,3 +773,27 @@ def get_removed_journal_posts(request):
             return JsonResponse({"error": str(e)}, status=500)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def delete_account(request):
+    """Permanently delete the user's account and all associated data"""
+    if request.method == 'DELETE':
+        try:
+            user = request.user
+            
+            # Log out the user first
+            logout(request)
+            
+            # Delete the user account (this will cascade delete all related data)
+            user.delete()
+            
+            return JsonResponse({
+                "message": "Account successfully deleted"
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)

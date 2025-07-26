@@ -28,3 +28,4 @@ export const GET_USER_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/user_posts`
 export const TOGGLE_POST_JOURNAL_ENDPOINT_URL = `${BASE_API_HOST}/posts`
 export const GET_JOURNAL_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/journal_posts`
 export const GET_REMOVED_JOURNAL_POSTS_ENDPOINT_URL = `${BASE_API_HOST}/removed_journal_posts`
+export const DELETE_ACCOUNT_ENDPOINT_URL = `${BASE_API_HOST}/delete_account`
