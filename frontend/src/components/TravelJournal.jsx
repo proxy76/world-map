@@ -188,7 +188,19 @@ const TravelJournal = ({ isOpen, onClose }) => {
 
     countries.forEach((country, countryIndex) => {
       const posts = journalData[country];
-      
+      let itineraryPost = null;
+      // Find itinerary post (post_type === 'itinerariu')
+      const itineraryIndex = posts.findIndex(p => p.post_type === 'itinerariu');
+      if (itineraryIndex !== -1) {
+        itineraryPost = posts[itineraryIndex];
+      }
+      // Filter out itinerary from normal posts
+      const normalPosts = posts.filter((p, idx) => idx !== itineraryIndex);
+      let numberedPosts = [];
+      if (itineraryPost) {
+        numberedPosts.push({ ...itineraryPost, _isItinerary: true });
+      }
+      numberedPosts = numberedPosts.concat(normalPosts.map(p => ({ ...p, _isItinerary: false })));
       printHTML += `
         <div class="print-page print-country-section">
           <div class="print-country-header">
@@ -199,32 +211,27 @@ const TravelJournal = ({ isOpen, onClose }) => {
             <div class="country-divider"></div>
           </div>
           <div class="print-posts">
-            ${posts.map((post, postIndex) => `
-              <div class="print-post">
-                <div class="print-post-header">
-                  <h3 class="print-post-title">${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</h3>
-                </div>
-                <div class="print-post-meta">
-                  <span class="print-date">${formatDate(post.created_at)}</span>
-                  <span class="print-type">${post.post_type}</span>
-                  <span class="print-travel-type">${post.travel_type}</span>
-                </div>
-                ${post.images && post.images.length > 0 ? `
-                  <div class="print-image-container">
-                    <img src="${getImageUrl(post.images[0])}" alt="${post.title.replace(/"/g, '&quot;')}" class="print-post-image" />
+            ${numberedPosts.map((post, postIndex) => {
+              let imagesHTML = '';
+              if (post.images && post.images.length > 0) {
+                if (post.images.length === 1) {
+                  imagesHTML = `<div class=\"print-image-row\"><img src=\"${getImageUrl(post.images[0])}\" alt=\"${post.title.replace(/\"/g, '&quot;')}\" class=\"print-post-image-row\" /></div>`;
+                } else {
+                  imagesHTML = `<div class=\"print-image-row\">${post.images.map(img => `<img src=\"${getImageUrl(img)}\" alt=\"${post.title.replace(/\"/g, '&quot;')}\" class=\"print-post-image-row\" />`).join('')}</div>`;
+                }
+              }
+              return `
+                <div>
+                  <span class=\"print-post-number\">${postIndex + 1}.</span>
+                  <span class=\"print-post-title\">${post._isItinerary ? (translations[lang]?.itinerary || 'Itinerary') + ': ' : ''}${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                  ${imagesHTML}
+                  <div class=\"print-post-content\">
+                    ${post.content.replace(/\n/g, '<br>').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                   </div>
-                ` : ''}
-                <div class="print-post-content">
-                  ${post.content.replace(/\n/g, '<br>').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                  ${postIndex < numberedPosts.length - 1 ? '<div class=\"print-post-separator\"></div>' : ''}
                 </div>
-                ${post.tags && post.tags.length > 0 ? `
-                  <div class="print-tags">
-                    <strong>${translations[lang]?.tags || 'Tags'}:</strong> ${post.tags.join(', ').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                  </div>
-                ` : ''}
-                ${postIndex < posts.length - 1 ? '<div class="print-post-separator"></div>' : ''}
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;

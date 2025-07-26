@@ -14,7 +14,6 @@ from datetime import datetime
 @csrf_exempt
 @login_required
 def edit_post_privacy(request, post_id):
-    """Allow user to edit privacy of their own post (public/private)"""
     if request.method == 'POST':
         try:
             post = Post.objects.get(id=post_id, author=request.user)

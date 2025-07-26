@@ -1,3 +1,181 @@
+.print-image-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.print-post-image-row {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
+  background: #fff;
+  display: block;
+}
+.print-image-single {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+.print-post-image-single {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
+  background: #fff;
+  display: block;
+}
+.print-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+  gap: 16px;
+  margin: 12px 0;
+}
+.print-post-image-grid {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
+  background: #fff;
+  display: block;
+}
+/* PRINT JOURNAL STYLES */
+/* Print Journal Styles - Minimal, No Post-Like Cards */
+.printable-journal {
+  /* ...existing code... */
+}
+.print-page {
+  /* ...existing code... */
+}
+.print-post {
+  page-break-inside: avoid;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0 0 16px 0;
+  padding: 0;
+  position: static;
+}
+.print-post-header {
+  display: block;
+  margin-bottom: 4px;
+}
+.print-post-number {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-right: 8px;
+  color: #222;
+}
+.print-post-title {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #222;
+  display: inline;
+}
+/* Print image grid for post images */
+.print-image-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+.print-post-image {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  display: block;
+}
+.print-post-content {
+  font-size: 1em;
+  color: #222;
+  margin-top: 4px;
+  white-space: pre-line;
+}
+.print-post-separator {
+  border-bottom: 1px solid #e0e0e0;
+  margin: 12px 0 0 0;
+}
+/* Itinerary highlight - minimal */
+.print-post._isItinerary {
+  background: none;
+  border-left: 2px solid #2d6a4f;
+  padding-left: 8px;
+}
+.print-post-header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 18px;
+}
+.print-post-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #667eea;
+  background: #e9ecef;
+  border-radius: 8px;
+  padding: 4px 16px;
+  margin-right: 0.5rem;
+}
+.print-post-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+.print-post-header .print-post-title {
+  font-weight: 700;
+}
+.print-post-header .print-post-title:before {
+  content: '';
+}
+.print-post-header .print-post-title.itinerary {
+  color: #207e91;
+  background: linear-gradient(90deg, #66ea9b, #207e91, #4facee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-style: italic;
+}
+.print-image-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.print-post-image {
+  max-width: 320px;
+  max-height: 220px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(32, 130, 145, 0.08);
+  object-fit: cover;
+  background: #fff;
+}
+.print-post-content {
+  font-size: 1.15rem;
+  color: #333;
+  margin-top: 10px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.print-post-separator {
+  height: 2px;
+  background: linear-gradient(90deg, #66ea9b, #207e91, #4facee);
+  border-radius: 2px;
+  margin: 32px 0 0 0;
+}
 @import './variables.scss';
 
 .journal-overlay {
