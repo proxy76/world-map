@@ -7,6 +7,7 @@ import translations from "../utils/translations";
 import pfp from '../assets/anonymous.png';
 import GlobalHeader from './GlobalHeader';
 import TravelJournal from './TravelJournal';
+import Achievements from './Achievements';
 import { FaWindows } from 'react-icons/fa';
 import ErrorPage from './ErrorPage';
 import '../styles/ProfilePage.scss';
@@ -314,6 +315,12 @@ const ProfilePage = ({ isLogged }) => {
           />
         </div>
       </div>
+      
+      {/* Achievements Section */}
+      <Achievements 
+        profileInfo={profileInfo}
+        isVisible={isVisible}
+      />
       
       {/* Travel Journal Modal */}
       <TravelJournal 
