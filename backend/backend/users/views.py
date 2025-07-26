@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from .models import User, Review, Post, Comment, PostPassport
+from .models import User, Review, Post, Comment, PostPassport, Itinerary, ItineraryDay, ItineraryActivity
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import json
@@ -8,6 +8,7 @@ import logging
 import re
 import time
 from django.core.cache import cache
+from datetime import datetime
 
 @csrf_exempt
 def register(request):
@@ -793,6 +794,175 @@ def delete_account(request):
                 "message": "Account successfully deleted"
             }, status=200)
             
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def create_itinerary(request):
+    """Create a new itinerary"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Create the itinerary
+            itinerary = Itinerary.objects.create(
+                author=request.user,
+                title=data.get('title'),
+                description=data.get('description', ''),
+                country=data.get('country'),
+                share_to_social=data.get('shareToSocial', False)
+            )
+            
+            # Create days and activities
+            for day_data in data.get('days', []):
+                day = ItineraryDay.objects.create(
+                    itinerary=itinerary,
+                    day_number=day_data.get('dayNumber'),
+                    title=day_data.get('title', '')
+                )
+                
+                for i, activity_data in enumerate(day_data.get('activities', [])):
+                    # Parse time if provided
+                    time_obj = None
+                    if activity_data.get('time'):
+                        try:
+                            time_obj = datetime.strptime(activity_data['time'], '%H:%M').time()
+                        except ValueError:
+                            pass
+                    
+                    ItineraryActivity.objects.create(
+                        day=day,
+                        title=activity_data.get('title', ''),
+                        description=activity_data.get('description', ''),
+                        time=time_obj,
+                        location=activity_data.get('location', ''),
+                        notes=activity_data.get('notes', ''),
+                        website=activity_data.get('website', ''),
+                        estimated_cost=activity_data.get('estimatedCost', ''),
+                        category=activity_data.get('category', 'attraction'),
+                        order=i
+                    )
+            
+            # If sharing to social, create a post with detailed itinerary
+            if data.get('shareToSocial', False):
+                # Create detailed content with itinerary information
+                detailed_content = f"🗺️ **{itinerary.title}**\n\n"
+                if itinerary.description:
+                    detailed_content += f"{itinerary.description}\n\n"
+                
+                detailed_content += f"📍 **Destination:** {itinerary.country}\n"
+                detailed_content += f"📅 **Duration:** {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
+                
+                # Add day-by-day breakdown
+                for i, day_data in enumerate(data.get('days', []), 1):
+                    detailed_content += f"**Day {i}:** {day_data.get('title', f'Day {i}')}\n"
+                    activities = day_data.get('activities', [])
+                    if activities:
+                        for activity in activities[:3]:  # Show first 3 activities
+                            time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
+                            detailed_content += f"• {activity.get('title', 'Activity')}{time_str}\n"
+                        if len(activities) > 3:
+                            detailed_content += f"• ...and {len(activities) - 3} more activities\n"
+                    detailed_content += "\n"
+                
+                detailed_content += "🎯 Ready to explore? Check out my detailed itinerary!"
+                
+                # Store the full itinerary data
+                itinerary_data = {
+                    "itinerary_id": itinerary.id,
+                    "title": itinerary.title,
+                    "description": itinerary.description,
+                    "country": itinerary.country,
+                    "days": data.get('days', []),
+                    "total_days": len(data.get('days', [])),
+                    "total_activities": sum(len(day.get('activities', [])) for day in data.get('days', []))
+                }
+                
+                Post.objects.create(
+                    author=request.user,
+                    title=f"🗺️ {itinerary.title}",
+                    content=detailed_content,
+                    countries_visited=[itinerary.country],
+                    post_type='itinerariu',
+                    travel_type='solo',  # Default value
+                    theme='cultura',  # Default value
+                    is_in_journal=True,
+                    itinerary_data=itinerary_data
+                )
+            
+            return JsonResponse({
+                "message": "Itinerary created successfully",
+                "itinerary": itinerary.serializer()
+            }, status=201)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_user_itineraries(request):
+    """Get all itineraries for the current user"""
+    if request.method == 'GET':
+        try:
+            itineraries = Itinerary.objects.filter(author=request.user).order_by('-created_at')
+            serialized_itineraries = [itinerary.serializer() for itinerary in itineraries]
+            
+            return JsonResponse({
+                "itineraries": serialized_itineraries
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_itinerary_details(request, itinerary_id):
+    """Get details of a specific itinerary"""
+    if request.method == 'GET':
+        try:
+            itinerary = Itinerary.objects.get(id=itinerary_id)
+            
+            # Check if user has permission to view this itinerary
+            if itinerary.author != request.user and not itinerary.share_to_social:
+                return JsonResponse({"error": "Permission denied"}, status=403)
+            
+            return JsonResponse({
+                "itinerary": itinerary.serializer()
+            }, status=200)
+            
+        except Itinerary.DoesNotExist:
+            return JsonResponse({"error": "Itinerary not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@csrf_exempt
+@login_required
+def delete_itinerary(request, itinerary_id):
+    """Delete an itinerary"""
+    if request.method == 'DELETE':
+        try:
+            itinerary = Itinerary.objects.get(id=itinerary_id, author=request.user)
+            itinerary.delete()
+            
+            return JsonResponse({
+                "message": "Itinerary deleted successfully"
+            }, status=200)
+            
+        except Itinerary.DoesNotExist:
+            return JsonResponse({"error": "Itinerary not found"}, status=404)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     else:

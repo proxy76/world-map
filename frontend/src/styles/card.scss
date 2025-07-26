@@ -129,6 +129,22 @@
                 transform: translateY(0);
             }
         }
+        
+        .create-itinerary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            }
+            
+            &:active {
+                transform: translateY(0);
+            }
+        }
     }
 
     .name, .currencies, .capital, .languages, .population, .continent {

@@ -256,7 +256,71 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           )}
           {}
           {(!post.images || post.images.length === 0) && (
-            <p className="post-excerpt">{post.content}</p>
+            <>
+              {post.post_type === 'itinerariu' && post.itinerary_data ? (
+                <div className="itinerary-content">
+                  <p className="post-excerpt">{post.content}</p>
+                  <div className="itinerary-details">
+                    <div className="itinerary-summary">
+                      <div className="summary-stats">
+                        <span className="stat">
+                          <strong>{post.itinerary_data.total_days || 0}</strong> 
+                          {lang === 'ro' ? ' zile' : ' days'}
+                        </span>
+                        <span className="stat">
+                          <strong>{post.itinerary_data.total_activities || 0}</strong> 
+                          {lang === 'ro' ? ' activități' : ' activities'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {post.itinerary_data.days && post.itinerary_data.days.length > 0 && (
+                      <div className="itinerary-preview">
+                        <h4>{lang === 'ro' ? 'Planul zilnic:' : 'Daily Plan:'}</h4>
+                        {post.itinerary_data.days.slice(0, 3).map((day, index) => (
+                          <div key={index} className="day-preview">
+                            <div className="day-header">
+                              <span className="day-number">{lang === 'ro' ? 'Ziua' : 'Day'} {day.dayNumber || index + 1}</span>
+                              {day.title && <span className="day-title">{day.title}</span>}
+                            </div>
+                            {day.activities && day.activities.length > 0 && (
+                              <div className="activities-preview">
+                                {day.activities.slice(0, 2).map((activity, actIndex) => (
+                                  <div key={actIndex} className="activity-preview">
+                                    <span className="activity-category-icon">
+                                      {activity.category === 'attraction' ? '🏛️' :
+                                       activity.category === 'restaurant' ? '🍽️' :
+                                       activity.category === 'activity' ? '🎯' :
+                                       activity.category === 'transport' ? '🚗' :
+                                       activity.category === 'accommodation' ? '🏨' :
+                                       activity.category === 'shopping' ? '🛍️' : '📝'}
+                                    </span>
+                                    <span className="activity-title">{activity.title}</span>
+                                    {activity.time && <span className="activity-time">{activity.time}</span>}
+                                  </div>
+                                ))}
+                                {day.activities.length > 2 && (
+                                  <div className="more-activities">
+                                    +{day.activities.length - 2} {lang === 'ro' ? 'mai multe' : 'more'}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        {post.itinerary_data.days.length > 3 && (
+                          <div className="more-days">
+                            +{post.itinerary_data.days.length - 3} {lang === 'ro' ? 'mai multe zile' : 'more days'}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="post-excerpt">{post.content}</p>
+              )}
+            </>
           )}
           <div className="post-tags">
             {post.countries_visited && post.countries_visited.map((country, index) => (

@@ -9,7 +9,7 @@ import {
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
 
-const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page }) => {
+const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, onCreateItinerary }) => {
   const [info, setInfo] = useState(null);
   const { lang } = useLanguage();
 
@@ -120,6 +120,9 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page })
         <div className="btns">
           {page === 'bucketlist' ? (
             <>
+              <div className="create-itinerary" onClick={() => onCreateItinerary?.(name)}>
+                {translations[lang].createItinerary}
+              </div>
               <div className="remove" onClick={handleRemoveFromBucketlist}>{translations[lang].removeBtn}</div>
               <div
                 className="remove"

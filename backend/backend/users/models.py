@@ -86,6 +86,7 @@ class Post(models.Model):
     images = models.JSONField(default=list, blank=True)  # URL-uri către imagini
     passport_count = models.IntegerField(default=0)  # Count pentru "passport likes"
     is_in_journal = models.BooleanField(default=True)  # Dacă e inclus în jurnalul autorului
+    itinerary_data = models.JSONField(default=dict, blank=True)  # Store full itinerary details
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -120,6 +121,7 @@ class Post(models.Model):
             "comments_count": comments_count,
             "user_has_stamped": user_has_stamped,
             "is_in_journal": self.is_in_journal,
+            "itinerary_data": self.itinerary_data,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -159,3 +161,90 @@ class Comment(models.Model):
             "updatedAt": self.updated_at.isoformat(),
             "replies_count": self.replies.count(),
         }
+
+
+class Itinerary(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    country = models.CharField(max_length=255)
+    share_to_social = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def serializer(self, user=None):
+        days_data = []
+        for day in self.days.all().order_by('day_number'):
+            activities_data = []
+            for activity in day.activities.all().order_by('order'):
+                activities_data.append({
+                    "id": activity.id,
+                    "title": activity.title,
+                    "description": activity.description,
+                    "time": activity.time.strftime('%H:%M') if activity.time else '',
+                    "location": activity.location,
+                    "notes": activity.notes,
+                    "website": activity.website,
+                    "estimated_cost": activity.estimated_cost,
+                    "category": activity.category,
+                    "order": activity.order
+                })
+            
+            days_data.append({
+                "id": day.id,
+                "day_number": day.day_number,
+                "title": day.title,
+                "activities": activities_data
+            })
+
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "country": self.country,
+            "share_to_social": self.share_to_social,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "author": {
+                "id": self.author.id,
+                "username": self.author.username,
+                "avatar": self.author.profile_picture.url if self.author.profile_picture else '/anonymous.png'
+            },
+            "days": days_data
+        }
+
+
+class ItineraryDay(models.Model):
+    itinerary = models.ForeignKey(Itinerary, related_name='days', on_delete=models.CASCADE)
+    day_number = models.PositiveIntegerField()
+    title = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ['day_number']
+        unique_together = ['itinerary', 'day_number']
+
+
+class ItineraryActivity(models.Model):
+    CATEGORY_CHOICES = [
+        ('attraction', 'Attraction'),
+        ('restaurant', 'Restaurant'),
+        ('activity', 'Activity'),
+        ('transport', 'Transport'),
+        ('accommodation', 'Accommodation'),
+        ('shopping', 'Shopping'),
+        ('other', 'Other'),
+    ]
+
+    day = models.ForeignKey(ItineraryDay, related_name='activities', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    time = models.TimeField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    estimated_cost = models.CharField(max_length=100, blank=True, null=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='attraction')
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
