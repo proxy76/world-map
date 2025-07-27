@@ -333,7 +333,7 @@ export default function LandingPage({ profilePic, isLogged, setIsLogged }) {
                 <div className="footer-container">
                     <div className="footer-logo">
                         <h2>GlobeTales.</h2>
-                        <p>Innovative solutions for a modern world.</p>
+                        <p>{translations[lang].travelExperience}</p>
                     </div>
                     <div className="footer-social">
                         <h4>Follow Us</h4>
