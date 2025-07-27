@@ -304,8 +304,12 @@ const PostDetails = ({ isLogged }) => {
           )}
 
           <div className="post-content">
-            {post.content && post.content.split('\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+            {post.content &&
+              post.content
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map((line, index) => (
+                  <p key={index} dangerouslySetInnerHTML={{ __html: line.trim() }} />
             ))}
           </div>
 
