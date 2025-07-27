@@ -22,6 +22,7 @@ const PostDetails = ({ isLogged }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [previewImageIndex, setPreviewImageIndex] = useState(0);
   const location = useLocation();
+  const BACKEND_BASE_URL = 'http://localhost:8000';
 
   useEffect(() => {
     if (!location.search.includes("reloaded=1")) {
@@ -235,7 +236,7 @@ const PostDetails = ({ isLogged }) => {
           <header className="post-article-header">
             <div className="author-section">
               <img 
-                src={post.author.avatar} 
+                src={getImageUrl(post.author.profile_picture)}
                 alt={post.author.username}
                 className="author-avatar"
                 onError={(e) => { e.target.src = '/anonymous.png'; }}

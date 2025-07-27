@@ -216,7 +216,7 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
         <div className="post-header">
           <div className="author-info">
             <img 
-              src={post.author.avatar} 
+              src={getImageUrl(post.author.profile_picture)} 
               alt={post.author.username}
               className="author-avatar"
               onError={(e) => { e.target.src = '/anonymous.png'; }}
