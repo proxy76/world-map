@@ -7,7 +7,7 @@
     register: "Înregistrare",
     welcome: "Bine ai venit!",
     worldMap: "Harta lumii",
-    travelJournal: "Jurnal de călătorie",
+    travelJournal: "Vizitate",
     bucketlist: "Bucketlist",
     socialFeed: "Platformă de socializare",
     loading: "Se încarcă...",
@@ -111,7 +111,7 @@
     // Globe
     globeText: "Călătorește cu NOI!",
     // Journal
-    yourJournal: "Jurnalul tău",
+    yourJournal: "Vizitate",
     // Buttons
     visitedBtn: "VIZITATĂ",
     removeBtn: "ȘTERGE",
@@ -295,7 +295,7 @@
     register: "Register",
     welcome: "Welcome!",
     worldMap: "World Map",
-    travelJournal: "Travel Journal",
+    travelJournal: "Visited",
     bucketlist: "Bucketlist",
     socialFeed: "Social Feed",
     loading: "Loading...",

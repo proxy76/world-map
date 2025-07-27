@@ -313,7 +313,7 @@ const ProfilePage = ({ isLogged }) => {
             icon="📖"
           />
           <EnhancedButton
-            label={translations[lang]?.travelJournal || 'Travel Journal'}
+            label={translations[lang]?.travelJournal || 'Visited'}
             onClick={() => navigate('/journal')}
             isVisible={isVisible}
             variant="secondary"
