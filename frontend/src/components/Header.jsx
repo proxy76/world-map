@@ -122,7 +122,7 @@ const Header = ({isLogged}) => {
                 <div
                     ref={headerRef}
                     className="header finisher-header"
-                    style={{ width: "150%", height: "1000px" }}
+                    style={{ width: "100%", height: "1000px" }}
                 >
                 </div>
             </div>
