@@ -259,15 +259,15 @@
     
     &:hover {
       background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-      border-color: #667eea;
+      border-color: #00f2fe;
     }
     
     .privacy-checkbox {
       display: none;
       
       &:checked + .checkmark {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-color: #667eea;
+        background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
+        border-color: #00f2fe;
         
         &::after {
           opacity: 1;

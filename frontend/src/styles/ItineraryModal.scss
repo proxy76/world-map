@@ -30,7 +30,7 @@
 }
 
 .itinerary-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
   color: white;
   padding: 20px 30px;
   display: flex;
@@ -81,11 +81,11 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #667eea, #764ba2);
+    background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
     border-radius: 4px;
     
     &:hover {
-      background: linear-gradient(to bottom, #5a67d8, #6b46c1);
+      background: linear-gradient(135deg, rgb(83, 187, 124) 0%, rgb(25, 100, 111) 100%);
     }
   }
 }
@@ -174,9 +174,9 @@
     }
     
     &.active {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
       color: white;
-      border-color: #5a67d8;
+      border-color: #00f2fe;
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
     
@@ -557,7 +557,7 @@
     }
     
     &.share-public-btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
       color: white;
       
       &:hover {

@@ -27,7 +27,7 @@
 }
 
 .itinerary-view-modal {
-  background: linear-gradient(145deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
   border-radius: 24px;
   width: 95%;
   max-width: 900px;
@@ -235,7 +235,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+      background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
     }
 
     &:hover {
@@ -444,7 +444,7 @@
         .day-number {
           width: 50px;
           height: 50px;
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
           color: white;
           border-radius: 50%;
           display: flex;
@@ -460,7 +460,7 @@
         .day-line {
           width: 3px;
           height: 100%;
-          background: linear-gradient(180deg, #667eea, rgba(102, 126, 234, 0.3));
+          background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
           position: absolute;
           top: 50px;
           left: 50%;
@@ -540,7 +540,7 @@
                 }
 
                 .activity-time {
-                  background: linear-gradient(135deg, #667eea, #764ba2);
+                  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
                   color: white;
                   padding: 0.4rem 0.8rem;
                   border-radius: 20px;

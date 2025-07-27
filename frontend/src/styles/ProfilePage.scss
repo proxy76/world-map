@@ -423,7 +423,7 @@
   backdrop-filter: blur(10px);
 
   &.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
   }
 
