@@ -115,7 +115,7 @@
         .create-itinerary {
             width: 100%;
             padding: 10px 16px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
             color: white;
             border-radius: 8px;
             font-weight: 600;
@@ -142,7 +142,7 @@
             &:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-                background: linear-gradient(135deg, #5a67d8, #6b46c1);
+                background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
             }
             
             &:hover::before {
@@ -228,14 +228,14 @@
         }
         
         .create-itinerary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
             color: #fff;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
             
             &:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-                background: linear-gradient(135deg, #5a67d8, #6b46c1);
+                background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
             }
             
             &:active {

@@ -3,7 +3,6 @@ import React from 'react';
 import { useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
 
-import "../styles/header.scss";
 
 import axios from 'axios';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
@@ -122,7 +121,7 @@ const Header = ({isLogged}) => {
                 <div
                     ref={headerRef}
                     className="header finisher-header"
-                    style={{ width: "150%", height: "1000px" }}
+                    style={{ width: "100%", height: "1000px" }}
                 >
                 </div>
             </div>

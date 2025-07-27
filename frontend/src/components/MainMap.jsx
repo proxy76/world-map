@@ -10,7 +10,6 @@ import React, {
 } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 
-import "../styles/map.scss";
 const Menu = lazy(() => import("./Menu"));
 const GEO_URL = "/features.json";
 
