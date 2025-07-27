@@ -174,17 +174,14 @@ const CreatePost = ({ onClose, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!formData.title.trim() || !formData.content.trim()) {
-      alert('Titlul și conținutul sunt obligatorii!');
+      alert(translations[lang].requiredFieldsAlert);
       return;
     }
-
     if (formData.countries.length === 0) {
       alert(translations[lang].addAtLeastOneCountry);
       return;
     }
-
     setIsSubmitting(true);
 
     try {
@@ -212,7 +209,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
           }
         }
       );
-
       const newPost = {
         id: response.data.post.id,
         author: {
@@ -232,11 +228,10 @@ const CreatePost = ({ onClose, onSubmit }) => {
         created_at: response.data.post.created_at,
         user_has_stamped: response.data.post.user_has_stamped
       };
-
       onSubmit(newPost);
     } catch (error) {
       console.error('Failed to create post:', error);
-      alert('Eroare la crearea postării!');
+      alert(translations[lang].postCreationError);
     } finally {
       setIsSubmitting(false);
     }
@@ -247,25 +242,23 @@ const CreatePost = ({ onClose, onSubmit }) => {
       <div className="modal-backdrop" onClick={onClose}></div>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>✏️ Creează o postare nouă</h2>
+          <h2>{translations[lang].createNewPostHeader}</h2>
           <button className="close-btn" onClick={onClose}>✕</button>
         </div>
-
         <form onSubmit={handleSubmit} className="create-post-form">
           <div className="form-group">
-            <label>Titlu *</label>
+            <label>{translations[lang].titleLabel}</label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder="Un titlu captivant pentru postarea ta..."
+              placeholder={translations[lang].titlePlaceholder}
               required
             />
           </div>
-
           <div className="form-row">
             <div className="form-group">
-              <label>Tip postare *</label>
+              <label>{translations[lang].postTypeLabel}</label>
               <select
                 value={formData.postType}
                 onChange={(e) => handleInputChange('postType', e.target.value)}
@@ -277,9 +270,8 @@ const CreatePost = ({ onClose, onSubmit }) => {
                 ))}
               </select>
             </div>
-
             <div className="form-group">
-              <label>Tip călătorie *</label>
+              <label>{translations[lang].travelTypeLabel}</label>
               <select
                 value={formData.travelType}
                 onChange={(e) => handleInputChange('travelType', e.target.value)}
@@ -291,9 +283,8 @@ const CreatePost = ({ onClose, onSubmit }) => {
                 ))}
               </select>
             </div>
-
             <div className="form-group">
-              <label>Tematică *</label>
+              <label>{translations[lang].themeLabel}</label>
               <select
                 value={formData.theme}
                 onChange={(e) => handleInputChange('theme', e.target.value)}
@@ -306,20 +297,18 @@ const CreatePost = ({ onClose, onSubmit }) => {
               </select>
             </div>
           </div>
-
           <div className="form-group">
-            <label>Conținut *</label>
+            <label>{translations[lang].contentLabel}</label>
             <textarea
               value={formData.content}
               onChange={(e) => handleInputChange('content', e.target.value)}
-              placeholder="Povestește-ne despre experiența ta de călătorie..."
+              placeholder={translations[lang].contentPlaceholder}
               rows={6}
               required
             />
           </div>
-
           <div className="form-group">
-            <label>Țări vizitate *</label>
+            <label>{translations[lang].countriesVisitedLabel}</label>
             <div className="add-item-container country-autocomplete-container">
               <div className="country-autocomplete">
                 <input
@@ -356,45 +345,43 @@ const CreatePost = ({ onClose, onSubmit }) => {
                 )}
               </div>
               <button type="button" onClick={addCountry} className="add-btn">
-                {translations[lang].add}
+                {translations[lang].addCountry}
               </button>
             </div>
             <div className="tags-container">
               {formData.countries.map(country => (
                 <span key={country} className="tag">
-                  🏴 {translateCountryName(country)}
+                  {translations[lang].countriesTagPrefix}{translateCountryName(country)}
                   <button type="button" onClick={() => removeCountry(country)}>✕</button>
                 </span>
               ))}
             </div>
           </div>
-
           <div className="form-group">
-            <label>Tag-uri (opțional)</label>
+            <label>{translations[lang].tagsLabel}</label>
             <div className="add-item-container">
               <input
                 type="text"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Adaugă un tag..."
+                placeholder={translations[lang].tagPlaceholder}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
               />
               <button type="button" onClick={addTag} className="add-btn">
-                Adaugă
+                {translations[lang].addTagButton}
               </button>
             </div>
             <div className="tags-container">
               {formData.tags.map(tag => (
                 <span key={tag} className="tag">
-                  #{tag}
+                  {translations[lang].tagPrefix}{tag}
                   <button type="button" onClick={() => removeTag(tag)}>✕</button>
                 </span>
               ))}
             </div>
           </div>
-
           <div className="form-group">
-            <label>Imagini (opțional)</label>
+            <label>{translations[lang].imagesLabel}</label>
             <input
               type="file"
               multiple
@@ -405,7 +392,7 @@ const CreatePost = ({ onClose, onSubmit }) => {
             <div className="images-preview">
               {formData.images.map((image, index) => (
                 <div key={index} className="image-preview">
-                  <img src={URL.createObjectURL(image)} alt={`Preview ${index}`} />
+                  <img src={URL.createObjectURL(image)} alt={`${translations[lang].imagePreviewAlt} ${index}`} />
                   <button type="button" onClick={() => removeImage(index)} className="remove-image">
                     ✕
                   </button>
@@ -413,7 +400,6 @@ const CreatePost = ({ onClose, onSubmit }) => {
               ))}
             </div>
           </div>
-
           <div className="form-group privacy-toggle">
             <label className="privacy-label">
               <input
@@ -424,18 +410,17 @@ const CreatePost = ({ onClose, onSubmit }) => {
               />
               <span className="checkmark"></span>
               <span className="privacy-text">
-                🔒 {translations[lang]?.privatePost || 'Postare privată'} 
-                <small>({translations[lang]?.privatePostDesc || 'Vizibilă doar pentru tine și în jurnalul de călătorie'})</small>
+                🔒 {translations[lang].privacyLabel}
+                <small>({translations[lang].privacyDesc})</small>
               </span>
             </label>
           </div>
-
           <div className="form-actions">
             <button type="button" onClick={onClose} className="cancel-btn">
-              Anulează
+              {translations[lang].cancelButton}
             </button>
             <button type="submit" className="submit-btn" disabled={isSubmitting}>
-              {isSubmitting ? 'Se publică...' : 'Publică postarea'}
+              {isSubmitting ? translations[lang].publishing : translations[lang].submitButton}
             </button>
           </div>
         </form>
