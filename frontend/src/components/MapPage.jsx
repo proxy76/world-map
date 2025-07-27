@@ -3,11 +3,13 @@ import MainMap from "./MainMap";
 import SearchBar from "./SearchBar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback, useRef } from "react";
+import PackingLoader from './PackingLoader.jsx';
 
 const MapPage = ({ isLogged }) => {
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState("");
     const mapRef = useRef(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!location.search.includes("reloaded=1")) {
@@ -16,6 +18,12 @@ const MapPage = ({ isLogged }) => {
             window.history.replaceState({}, "", location.pathname);
         }
     }, [location]);
+
+    useEffect(() => {
+        // Simulate loading for 1s, or replace with real data loading logic
+        const timer = setTimeout(() => setLoading(false), 1000);
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleSearch = useCallback((term) => {
         setSearchTerm(term);
@@ -43,6 +51,9 @@ const MapPage = ({ isLogged }) => {
         }
     }, []);
 
+    if (loading) {
+        return <PackingLoader />;
+    }
     return (
         <div className="map">
             <GlobalHeader isLogged={isLogged} />
