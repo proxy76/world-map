@@ -186,7 +186,6 @@
   }
 }
 
-/* Animations */
 @keyframes bounce {
   0%, 100% {
     transform: translateY(0);
@@ -223,7 +222,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .achievements-container {
     padding: 0 15px;
@@ -290,43 +288,6 @@
       font-size: 1.8rem;
       flex-direction: column;
       gap: 10px;
-    }
-  }
-}
-
-/* Dark mode support (if needed) */
-@media (prefers-color-scheme: dark) {
-  .achievement-card {
-    background: rgba(40, 40, 40, 0.95);
-    color: #fff;
-    
-    .achievement-title {
-      color: #fff;
-    }
-    
-    .achievement-description {
-      color: #ccc;
-    }
-    
-    .achievement-progress-text {
-      .achievement-separator,
-      .achievement-target {
-        color: #aaa;
-      }
-    }
-    
-    .achievement-percentage {
-      color: #bbb;
-    }
-  }
-  
-  .achievements-header {
-    .achievements-title {
-      color: #fff;
-    }
-    
-    .achievements-subtitle {
-      color: #ccc;
     }
   }
 }

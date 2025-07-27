@@ -93,7 +93,6 @@ const ProfilePage = ({ isLogged }) => {
   const handleDeleteAccount = () => {
     return axios.delete(DELETE_ACCOUNT_ENDPOINT_URL, { withCredentials: true })
       .then(() => {
-        // Clear any stored user data and redirect to landing page
         localStorage.removeItem('userToken');
         sessionStorage.clear();
         navigate('/');

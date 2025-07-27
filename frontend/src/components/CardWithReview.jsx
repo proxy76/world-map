@@ -40,7 +40,6 @@ const CardWithReview = ({ name, setReviewsOpened, refreshData, onRemove, page, o
         const response = await axios.get(GET_JOURNAL_POSTS_ENDPOINT_URL, { withCredentials: true });
         const journalData = response.data.journal;
         
-        // Filter itineraries for this specific country
         const itineraries = journalData[name]?.filter(post => post.post_type === 'itinerariu') || [];
         setCountryItineraries(itineraries);
       } catch (error) {

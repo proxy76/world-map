@@ -104,7 +104,6 @@ const Bucketlist = ({ isLogged }) => {
       if (response.status === 201) {
         alert(`${translations[lang]?.itinerary || 'Itinerary'} "${itineraryData.title}" ${translations[lang]?.saved || 'saved'} ${itineraryData.shareToSocial ? translations[lang]?.andShared || 'and shared' : translations[lang]?.privately || 'privately'}!`);
         
-        // Trigger a refresh of the cards to show the new itinerary
         setRefreshKey(prev => prev + 1);
         setItineraryModalOpen(false);
       }
@@ -116,7 +115,6 @@ const Bucketlist = ({ isLogged }) => {
 
   return (
     <div className="journal-bucketlist-container">
-      {/* Floating decorative elements */}
       <div className="floating-decoration-extra"></div>
       <div className="floating-decoration"></div>
       <div className="floating-decoration"></div>
@@ -137,7 +135,6 @@ const Bucketlist = ({ isLogged }) => {
         ))}
       </div>
       
-      {/* Itinerary Modal */}
       <ItineraryModal
         isOpen={itineraryModalOpen}
         onClose={() => setItineraryModalOpen(false)}
@@ -145,7 +142,6 @@ const Bucketlist = ({ isLogged }) => {
         onSaveItinerary={handleSaveItinerary}
       />
       
-      {/* Itinerary View Modal - Now properly overlays the entire page */}
       <ItineraryViewModal
         isOpen={itineraryViewModalOpen}
         onClose={() => setItineraryViewModalOpen(false)}

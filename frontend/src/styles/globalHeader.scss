@@ -16,7 +16,6 @@
   font-family: 'Manrope', sans-serif;
 }
 
-/* Sections container layout */
 .sections {
   display: flex !important;
   justify-content: space-between !important;
@@ -70,7 +69,6 @@
     border-radius:12px;
 }
 
-/* Hamburger Menu Styles */
 .hamburger-btn {
   display: none;
   flex-direction: column;
@@ -105,7 +103,6 @@
   }
 }
 
-/* Mobile Navigation Overlay */
 .mobile-nav-overlay {
   position: fixed;
   top: 0;
@@ -125,7 +122,6 @@
   }
 }
 
-/* Mobile Navigation Menu */
 .mobile-nav-menu {
   position: fixed;
   top: 0;
@@ -222,7 +218,6 @@
   }
 }
 
-/* Show hamburger menu at larger screens */
 @media (min-width: 1001px) and (max-width: 1340px) {
   .hamburger-btn {
     display: flex !important;
@@ -234,7 +229,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 1340px) {
   .sections {
     position: relative;

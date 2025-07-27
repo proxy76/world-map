@@ -14,7 +14,6 @@ const Achievements = ({ profileInfo, isVisible }) => {
     uniqueCountriesFromPosts: []
   });
 
-  // Define achievements configuration (simplified - removed First Story and Storyteller)
   const achievementsConfig = [
     {
       id: 'first_visit',
@@ -108,13 +107,11 @@ const Achievements = ({ profileInfo, isVisible }) => {
     }
   ];
 
-  // Fetch user posts for achievement calculation
   const fetchUserPosts = async () => {
     try {
       const response = await axios.get(GET_USER_POSTS_ENDPOINT_URL, { withCredentials: true });
       const posts = response.data || [];
       
-      // Extract unique countries from posts
       const allCountries = posts.flatMap(post => post.countries_visited || []);
       const uniqueCountries = [...new Set(allCountries)];
       
@@ -142,7 +139,6 @@ const Achievements = ({ profileInfo, isVisible }) => {
         hasProfilePicture: profileInfo.profile_picture && !profileInfo.profile_picture.includes('anonymous.png')
       }));
       
-      // Fetch additional data
       fetchUserPosts();
     }
   }, [profileInfo]);

@@ -229,7 +229,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
           <div className="post-type-badge">
             {getPostTypeLabel(post.post_type)}
           </div>
-        {/* Privacy toggle for user's own posts */}
         {post.is_own_post && (
           <button
             className={`privacy-toggle-btn${privacyLoading ? ' loading' : ''}`}

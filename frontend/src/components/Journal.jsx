@@ -87,7 +87,6 @@ const Journal = ({ isLogged }) => {
 
   return (
     <div className="journal-bucketlist-container">
-      {/* Floating decorative elements */}
       <div className="floating-decoration-extra"></div>
       <div className="floating-decoration"></div>
       <div className="floating-decoration"></div>
@@ -111,7 +110,6 @@ const Journal = ({ isLogged }) => {
         ))}
       </div>
       
-      {/* Itinerary View Modal - Now properly overlays the entire page */}
       <ItineraryViewModal
         isOpen={itineraryViewModalOpen}
         onClose={() => setItineraryViewModalOpen(false)}

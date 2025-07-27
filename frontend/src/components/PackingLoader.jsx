@@ -5,7 +5,6 @@ const PackingLoader = () => {
   return (
     <div className="packing-loader-container">
       <div className="packing-animation">
-        {/* Suitcase */}
         <div className="suitcase">
           <div className="suitcase-body">
             <div className="suitcase-lock"></div>
@@ -14,7 +13,6 @@ const PackingLoader = () => {
           <div className="suitcase-lid"></div>
         </div>
 
-        {/* Items being packed */}
         <div className="packing-items">
           <div className="item camera">
             <div className="camera-body">
@@ -39,7 +37,6 @@ const PackingLoader = () => {
           </div>
         </div>
 
-        {/* Floating travel icons */}
         <div className="floating-icons">
           <div className="float-icon plane">✈️</div>
           <div className="float-icon globe">🌍</div>

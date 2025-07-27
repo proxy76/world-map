@@ -64,7 +64,6 @@ const GlobalHeader = ({ isLogged }) => {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="middleSection middleSectionFull">
             <Link to="/map" className={`middleItem`}>WorldMap</Link>
             <Link to="/journal" className="middleItem">Journal</Link>
@@ -72,7 +71,6 @@ const GlobalHeader = ({ isLogged }) => {
             <Link to="/social" className={`middleItemLarge ${isGradientPage ? 'socialize-gradient' : ''}`}>Socialize</Link> 
           </div>
 
-          {/* Mobile Hamburger Button */}
           <button 
             className="hamburger-btn" 
             onClick={toggleMobileMenu}
@@ -83,7 +81,7 @@ const GlobalHeader = ({ isLogged }) => {
             <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
           </button>
 
-          {/* Profile Dropdown */}
+
           <div
             onClick={() => setIsOpened(!isOpened)}
             ref={dropdownRef}
@@ -122,7 +120,6 @@ const GlobalHeader = ({ isLogged }) => {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
       <div className={`mobile-nav-overlay ${isMobileMenuOpen ? 'active' : ''}`} onClick={closeMobileMenu}>
         <div className={`mobile-nav-menu ${isMobileMenuOpen ? 'active' : ''}`} onClick={(e) => e.stopPropagation()}>
           <div className="mobile-nav-header">

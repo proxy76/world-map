@@ -189,12 +189,10 @@ const TravelJournal = ({ isOpen, onClose }) => {
     countries.forEach((country, countryIndex) => {
       const posts = journalData[country];
       let itineraryPost = null;
-      // Find itinerary post (post_type === 'itinerariu')
       const itineraryIndex = posts.findIndex(p => p.post_type === 'itinerariu');
       if (itineraryIndex !== -1) {
         itineraryPost = posts[itineraryIndex];
       }
-      // Filter out itinerary from normal posts
       const normalPosts = posts.filter((p, idx) => idx !== itineraryIndex);
       let numberedPosts = [];
       if (itineraryPost) {
@@ -281,7 +279,6 @@ const TravelJournal = ({ isOpen, onClose }) => {
     <div className="journal-overlay" onClick={onClose}>
       <div className="journal-container" onClick={(e) => e.stopPropagation()}>
         
-        {/* Closed Book */}
         {!isBookOpen && (
           <div className={`closed-book ${isPopping ? 'popping' : ''}`} onClick={handleBookClick}>
             <div className="book-spine">
@@ -303,7 +300,6 @@ const TravelJournal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Open Book */}
         {isBookOpen && (
           <div className={`open-book ${isFlipping ? 'flipping' : ''}`} ref={bookRef}>
             <button className="close-journal" onClick={onClose}>✕</button>
@@ -368,7 +364,6 @@ const TravelJournal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Restore Modal */}
         {showRestoreModal && (
           <RestoreModal 
             posts={removedPosts}

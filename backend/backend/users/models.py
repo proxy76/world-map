@@ -27,7 +27,7 @@ class User(AbstractUser):
         return {
             "username": self.username,
             "email": self.email,
-            "address": self.user_address,  # Fixed spelling typo
+            "address": self.user_address, 
             "profile_picture": self.profile_picture.url if self.profile_picture else None,
             "countriesVisited": self.countriesVisited,
             "countriesWishlist": self.countriesWishlist
@@ -80,16 +80,16 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=255)
     content = models.TextField()
-    countries_visited = models.JSONField(default=list)  # Lista de țări vizitate
+    countries_visited = models.JSONField(default=list)  
     post_type = models.CharField(max_length=50, choices=POST_TYPE_CHOICES)
     travel_type = models.CharField(max_length=50, choices=TRAVEL_TYPE_CHOICES)
     theme = models.CharField(max_length=50, choices=THEME_CHOICES)
-    travel_duration = models.CharField(max_length=100, blank=True)  # "2 săptămâni", "3 zile", etc.
-    images = models.JSONField(default=list, blank=True)  # URL-uri către imagini
-    passport_count = models.IntegerField(default=0)  # Count pentru "passport likes"
-    is_in_journal = models.BooleanField(default=True)  # Dacă e inclus în jurnalul autorului
-    is_private = models.BooleanField(default=False)  # Dacă postarea este privată (doar autorul o vede)
-    itinerary_data = models.JSONField(default=dict, blank=True)  # Store full itinerary details
+    travel_duration = models.CharField(max_length=100, blank=True)  
+    images = models.JSONField(default=list, blank=True) 
+    passport_count = models.IntegerField(default=0)  
+    is_in_journal = models.BooleanField(default=True)  
+    is_private = models.BooleanField(default=False)  
+    itinerary_data = models.JSONField(default=dict, blank=True)  
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -97,7 +97,6 @@ class Post(models.Model):
         ordering = ['-created_at']
     
     def serializer(self, user=None):
-        # Always include is_own_post as True/False
         is_own_post = False
         if user and hasattr(user, 'id') and self.author.id == user.id:
             is_own_post = True
@@ -120,9 +119,7 @@ class Post(models.Model):
             "updated_at": self.updated_at,
             "is_own_post": is_own_post
         }
-        # Calculăm numărul real de comentarii
         comments_count = self.comments.count()
-        # Verificăm dacă user-ul curent a dat stamp (dacă user este furnizat)
         user_has_stamped = False
         is_own_post = False
         if user and user.is_authenticated:
@@ -161,7 +158,7 @@ class PostPassport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        unique_together = ('user', 'post')  # Un user poate da un singur passport per postare
+        unique_together = ('user', 'post')  
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

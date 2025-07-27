@@ -24,7 +24,6 @@ def edit_post_privacy(request, post_id):
             post.is_private = bool(is_private)
             post.save()
 
-            # Invalidate relevant caches for immediate update
             cache.delete_many([
                 f"post_details:{post_id}:{request.user.id}",
                 f"post_details:{post_id}:anonymous"
@@ -130,7 +129,7 @@ def user_info(request):
             "profile_picture": user.profile_picture.url if user.profile_picture else None
         }
 
-        cache.set(cache_key, user_data, timeout=60 * 5)  # 5 min cache
+        cache.set(cache_key, user_data, timeout=60 * 5)  
         return JsonResponse(user_data, status=200)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -139,7 +138,6 @@ def user_info(request):
 @csrf_exempt
 def check_login_view(request):
     if request.method == "GET":
-        # short-term caching based on session key
         cache_key = f"login_status:{request.session.session_key}"
         cached_status = cache.get(cache_key)
 
@@ -147,7 +145,7 @@ def check_login_view(request):
             return JsonResponse({"isLogged": cached_status}, status=200)
 
         is_logged = request.user.is_authenticated
-        cache.set(cache_key, is_logged, timeout=30)  # short TTL
+        cache.set(cache_key, is_logged, timeout=30)  
         return JsonResponse({"isLogged": is_logged}, status=200)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -165,7 +163,6 @@ def add_bucketlist(request):
                 user.countriesWishlist.append(country)
                 user.save()
 
-                # Invalidate user_info cache
                 cache.delete(f"user_info:{user.id}")
 
             return JsonResponse({"isAdded": True}, status=200)
@@ -263,7 +260,6 @@ def add_review(request):
         )
         review.save()
 
-        # Invalidate cache for this country
         cache.delete(f"reviews:{country_name}")
         cache.delete(f"user_reviews:{user.id}:{country_name}")
 
@@ -431,8 +427,6 @@ def create_post(request):
                 is_private=is_private
             )
             
-            # PERFORMANCE: Clear posts cache when new post is created
-            # This ensures social feed shows new posts immediately
             for user_type in ['anonymous', str(request.user.id)]:
                 for country in ['all']:
                     for post_type_cache in ['all']:
@@ -458,7 +452,6 @@ def create_post(request):
 def get_posts(request):
     if request.method == 'GET':
         try:
-            # Create cache key based on filters for ultra performance
             country = request.GET.get('country')
             post_type = request.GET.get('postType')
             travel_type = request.GET.get('travelType')
@@ -473,7 +466,6 @@ def get_posts(request):
             
             posts = Post.objects.all()
             
-            # Filter out private posts unless they belong to the current user
             if request.user.is_authenticated:
                 posts = posts.filter(
                     Q(is_private=False) | Q(author=request.user)
@@ -516,7 +508,6 @@ def get_posts(request):
                 "count": len(serialized_posts)
             }
             
-            # Cache for 3 minutes for social feed performance
             cache.set(cache_key, response_data, timeout=60 * 3)
             
             return JsonResponse(response_data, status=200)
@@ -533,7 +524,6 @@ def get_private_posts(request):
     """Get user's private posts"""
     if request.method == 'GET':
         try:
-            # Get only the current user's private posts
             posts = Post.objects.filter(
                 author=request.user,
                 is_private=True
@@ -558,7 +548,6 @@ def get_private_posts(request):
 def get_post_details(request, post_id):
     if request.method == 'GET':
         try:
-            # Check cache first for massive performance boost
             cache_key = f"post_details:{post_id}:{request.user.id if request.user.is_authenticated else 'anonymous'}"
             cached_data = cache.get(cache_key)
             
@@ -578,7 +567,6 @@ def get_post_details(request, post_id):
             post_data['userHasStamped'] = user_has_stamped
             post_data['passportStamps'] = post.passport_count
             
-            # Cache for 5 minutes for ultra-fast loading
             cache.set(cache_key, post_data, timeout=60 * 5)
             
             return JsonResponse(post_data, status=200)
@@ -616,18 +604,14 @@ def stamp_post(request, post_id):
             
             post.passport_count = passport_count
             post.save()
-            
-            # CRITICAL: Invalidate all caches related to this post for immediate updates
-            # Clear post details cache for all users
+
             cache.delete_many([
                 f"post_details:{post_id}:{request.user.id}",
                 f"post_details:{post_id}:anonymous"
             ])
             
-            # Clear posts listing cache (this will force refresh of social feed)
             cache_pattern = f"posts:*"
-            # Note: In production, you might want to use a more sophisticated cache invalidation
-            # For now, we'll clear the most common cache keys
+
             for user_type in ['anonymous', str(request.user.id)]:
                 for country in ['all']:
                     for post_type in ['all']:
@@ -808,7 +792,6 @@ def get_journal_posts(request):
                 is_in_journal=True
             ).order_by('-created_at')
             
-            # Group posts by country
             journal_data = {}
             for post in posts:
                 if post.countries_visited:
@@ -860,10 +843,8 @@ def delete_account(request):
         try:
             user = request.user
             
-            # Log out the user first
             logout(request)
             
-            # Delete the user account (this will cascade delete all related data)
             user.delete()
             
             return JsonResponse({
@@ -883,8 +864,7 @@ def create_itinerary(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            
-            # Create the itinerary
+
             itinerary = Itinerary.objects.create(
                 author=request.user,
                 title=data.get('title'),
@@ -893,7 +873,6 @@ def create_itinerary(request):
                 share_to_social=data.get('shareToSocial', False)
             )
             
-            # Create days and activities
             for day_data in data.get('days', []):
                 day = ItineraryDay.objects.create(
                     itinerary=itinerary,
@@ -902,7 +881,6 @@ def create_itinerary(request):
                 )
                 
                 for i, activity_data in enumerate(day_data.get('activities', [])):
-                    # Parse time if provided (can be null)
                     time_obj = None
                     if activity_data.get('time'):
                         try:
@@ -922,9 +900,7 @@ def create_itinerary(request):
                         order=i
                     )
             
-            # If sharing to social, create a post with detailed itinerary
             if data.get('shareToSocial', False):
-                # Create detailed content with itinerary information
                 detailed_content = f"🗺️ <b>{itinerary.title}</b>\n\n "
                 if itinerary.description:
                     detailed_content += f"{itinerary.description}\n\n"
@@ -932,7 +908,6 @@ def create_itinerary(request):
                 detailed_content += f"📍 <b>Destination:</b> {itinerary.country}\n"
                 detailed_content += f"📅 <b>Duration:</b> {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
                 
-                # Add day-by-day breakdown
                 for day_data in data.get('days', []):
                     date_str = day_data.get('date', '')
                     if date_str:
@@ -952,7 +927,7 @@ def create_itinerary(request):
                     
                     activities = day_data.get('activities', [])
                     if activities:
-                        for activity in activities[:3]:  # Show first 3 activities
+                        for activity in activities[:3]:  
                             time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
                             detailed_content += f"• {activity.get('name', 'Activity')}{time_str}\n"
                         if len(activities) > 3:
@@ -960,7 +935,6 @@ def create_itinerary(request):
                     detailed_content += "\n"
                 
                 
-                # Store the full itinerary data
                 itinerary_data = {
                     "itinerary_id": itinerary.id,
                     "title": itinerary.title,
@@ -977,10 +951,10 @@ def create_itinerary(request):
                     content=detailed_content,
                     countries_visited=[itinerary.country],
                     post_type='itinerariu',
-                    travel_type='solo',  # Default value
-                    theme='cultura',  # Default value
+                    travel_type='solo',  
+                    theme='cultura',  
                     is_in_journal=True,
-                    is_private=not data.get('shareToSocial', False),  # Private if not sharing to social
+                    is_private=not data.get('shareToSocial', False),  
                     itinerary_data=itinerary_data
                 )
             
@@ -1022,7 +996,6 @@ def get_itinerary_details(request, itinerary_id):
         try:
             itinerary = Itinerary.objects.get(id=itinerary_id)
             
-            # Check if user has permission to view this itinerary
             if itinerary.author != request.user and not itinerary.share_to_social:
                 return JsonResponse({"error": "Permission denied"}, status=403)
             

@@ -69,7 +69,6 @@ const ItineraryViewModal = ({ isOpen, onClose, itineraries, countryName }) => {
 
         <div className="itinerary-modal-content">
           {!selectedItinerary ? (
-            // Itineraries List View
             <div className="itineraries-list-view">
               {itineraries.length === 0 ? (
                 <div className="no-itineraries">
@@ -125,7 +124,6 @@ const ItineraryViewModal = ({ isOpen, onClose, itineraries, countryName }) => {
               )}
             </div>
           ) : (
-            // Detailed Itinerary View
             <div className="itinerary-detail-view">
               {selectedItinerary.itinerary_data?.description && (
                 <div className="itinerary-description">
