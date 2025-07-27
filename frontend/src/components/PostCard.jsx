@@ -335,7 +335,6 @@ const PostCard = ({ post, isVisible, delay = 0, onStampUpdate }) => {
             <>
               {post.post_type === 'itinerariu' && post.itinerary_data ? (
                 <div className="itinerary-content">
-                  <p className="post-excerpt">{post.content}</p>
                   <div className="itinerary-details">
                     <div className="itinerary-summary">
                       <div className="summary-stats">

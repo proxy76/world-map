@@ -959,7 +959,6 @@ def create_itinerary(request):
                             detailed_content += f"• ...and {len(activities) - 3} more activities\n"
                     detailed_content += "\n"
                 
-                detailed_content += "🎯 Ready to explore? Check out my detailed itinerary!"
                 
                 # Store the full itinerary data
                 itinerary_data = {

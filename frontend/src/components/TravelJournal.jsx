@@ -226,7 +226,8 @@ const TravelJournal = ({ isOpen, onClose }) => {
                   <span class=\"print-post-title\">${post._isItinerary ? (translations[lang]?.itinerary || 'Itinerary') + ': ' : ''}${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
                   ${imagesHTML}
                   <div class=\"print-post-content\">
-                    ${post.content.replace(/\n/g, '<br>').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                    ${String(post.content).replace(/\n/g, '<br>')}
+
                   </div>
                   ${postIndex < numberedPosts.length - 1 ? '<div class=\"print-post-separator\"></div>' : ''}
                 </div>
