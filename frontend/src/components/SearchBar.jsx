@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../utils/translations";
-import "../styles/searchBar.scss";
 
 const SearchBar = ({ onSearch, onClear }) => {
   const [searchTerm, setSearchTerm] = useState('');

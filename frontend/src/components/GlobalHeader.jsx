@@ -7,8 +7,6 @@ import { getProfileInfo } from '../utils/profileInfo.js';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
 import axios from 'axios';
 
-import "../styles/header.scss";
-import "../styles/globalHeader.scss";
 
 const GlobalHeader = ({ isLogged }) => {
   const { lang } = useLanguage();

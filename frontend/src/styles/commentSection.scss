@@ -47,7 +47,7 @@
     }
   }
   button {
-    background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
+    background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -235,7 +235,7 @@
       }
     }
     &[type="submit"] {
-      background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
+      background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);;
       color: white;
       &:hover:not(:disabled) {
         transform: translateY(-1px);
@@ -304,7 +304,7 @@
   width: 100%;
   padding: 12px 20px;
   margin: 15px 0;
-  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
+  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);;
   color: white;
   border: none;
   border-radius: 12px;
@@ -329,7 +329,7 @@
   font-size: 12px;
   padding: 8px 16px;
   margin: 10px 0;
-  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);
+  background: linear-gradient(135deg, rgb(102, 234, 155) 0%, rgb(32, 130, 145) 100%);;
   &:hover {
     box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
   }

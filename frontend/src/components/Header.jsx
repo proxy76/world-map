@@ -3,7 +3,6 @@ import React from 'react';
 import { useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
 
-import "../styles/header.scss";
 
 import axios from 'axios';
 import { LOGOUT_ENDPOINT_URL } from '../utils/ApiHost.js';
