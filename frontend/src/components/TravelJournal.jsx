@@ -221,7 +221,9 @@ const TravelJournal = ({ isOpen, onClose }) => {
               return `
                 <div>
                   <span class=\"print-post-number\">${postIndex + 1}.</span>
-                  <span class=\"print-post-title\">${post._isItinerary ? (translations[lang]?.itinerary || 'Itinerary') + ': ' : ''}${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                  <span class=\"print-post-title\">${post._isItinerary ? (translations[lang]?.itinerary || 'Itinerary') + ': ' : ''}${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                 
+            </span>
                   ${imagesHTML}
                   <div class=\"print-post-content\">
                     ${String(post.content).replace(/\n/g, '<br>')}
@@ -427,7 +429,13 @@ const CountryPage = ({ country, posts, onRemovePost, onBackToContents, formatDat
               className="post-image"
             />
           )}
-          <p className="post-excerpt">{post.content.substring(0, 150)}...</p>
+          <p className="post-excerpt">{post.content &&
+              post.content
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map((line, index) => (
+                  <p key={index} dangerouslySetInnerHTML={{ __html: line.trim() }} />
+            ))}</p>
           <div className="post-meta">
             <span className="post-type">{post.post_type}</span>
             <span className="travel-type">{post.travel_type}</span>

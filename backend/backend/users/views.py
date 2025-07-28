@@ -521,7 +521,6 @@ def get_posts(request):
 @csrf_exempt
 @login_required
 def get_private_posts(request):
-    """Get user's private posts"""
     if request.method == 'GET':
         try:
             posts = Post.objects.filter(
@@ -741,7 +740,6 @@ def create_reply(request, comment_id):
 @csrf_exempt
 @login_required
 def get_user_posts(request):
-    """Get all posts by the current user"""
     if request.method == 'GET':
         try:
             posts = Post.objects.filter(author=request.user).order_by('-created_at')
@@ -761,7 +759,6 @@ def get_user_posts(request):
 @csrf_exempt
 @login_required
 def toggle_post_in_journal(request, post_id):
-    """Toggle whether a post is included in the user's journal"""
     if request.method == 'POST':
         try:
             post = Post.objects.get(id=post_id, author=request.user)
@@ -784,7 +781,6 @@ def toggle_post_in_journal(request, post_id):
 @csrf_exempt
 @login_required
 def get_journal_posts(request):
-    """Get all posts that are included in the user's journal, grouped by country"""
     if request.method == 'GET':
         try:
             posts = Post.objects.filter(
@@ -814,7 +810,6 @@ def get_journal_posts(request):
 @csrf_exempt
 @login_required
 def get_removed_journal_posts(request):
-    """Get all posts that have been removed from the user's journal"""
     if request.method == 'GET':
         try:
             posts = Post.objects.filter(
@@ -838,7 +833,6 @@ def get_removed_journal_posts(request):
 @csrf_exempt
 @login_required
 def delete_account(request):
-    """Permanently delete the user's account and all associated data"""
     if request.method == 'DELETE':
         try:
             user = request.user
@@ -860,119 +854,112 @@ def delete_account(request):
 @csrf_exempt
 @login_required
 def create_itinerary(request):
-    """Create a new itinerary"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-
-            itinerary = Itinerary.objects.create(
-                author=request.user,
-                title=data.get('title'),
-                description=data.get('description', ''),
-                country=data.get('country'),
-                share_to_social=data.get('shareToSocial', False)
-            )
-            
-            for day_data in data.get('days', []):
-                day = ItineraryDay.objects.create(
-                    itinerary=itinerary,
-                    date=day_data.get('date'),
-                    title=day_data.get('title', '')
-                )
-                
-                for i, activity_data in enumerate(day_data.get('activities', [])):
-                    time_obj = None
-                    if activity_data.get('time'):
-                        try:
-                            time_obj = datetime.strptime(activity_data['time'], '%H:%M').time()
-                        except ValueError:
-                            pass
-                    
-                    ItineraryActivity.objects.create(
-                        day=day,
-                        name=activity_data.get('name', ''),
-                        time=time_obj,
-                        location=activity_data.get('location', ''),
-                        notes=activity_data.get('notes', ''),
-                        website=activity_data.get('website', ''),
-                        estimated_cost=activity_data.get('estimatedCost', ''),
-                        category=activity_data.get('category', 'attraction'),
-                        order=i
-                    )
-            
-            if data.get('shareToSocial', False):
-                detailed_content = f"🗺️ <b>{itinerary.title}</b>\n\n "
-                if itinerary.description:
-                    detailed_content += f"{itinerary.description}\n\n"
-                
-                detailed_content += f"📍 <b>Destination:</b> {itinerary.country}\n"
-                detailed_content += f"📅 <b>Duration:</b> {len(data.get('days', []))} day{'s' if len(data.get('days', [])) != 1 else ''}\n\n"
-                
-                for day_data in data.get('days', []):
-                    date_str = day_data.get('date', '')
-                    if date_str:
-                        try:
-                            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-                            formatted_date = date_obj.strftime('%B %d')
-                        except ValueError:
-                            formatted_date = date_str
-                    else:
-                        formatted_date = "TBD"
-                    
-                    day_title = day_data.get('title', '')
-                    if day_title:
-                        detailed_content += f"<b>{formatted_date}:</b> {day_title}"
-                    else:
-                        detailed_content += f"<b>{formatted_date}:</b>"
-                    
-                    activities = day_data.get('activities', [])
-                    if activities:
-                        for activity in activities[:3]:  
-                            time_str = f" at {activity.get('time', '')}" if activity.get('time') else ""
-                            detailed_content += f"• {activity.get('name', 'Activity')}{time_str}\n"
-                        if len(activities) > 3:
-                            detailed_content += f"• ...and {len(activities) - 3} more activities\n"
-                    detailed_content += "\n"
-                
-                
-                itinerary_data = {
-                    "itinerary_id": itinerary.id,
-                    "title": itinerary.title,
-                    "description": itinerary.description,
-                    "country": itinerary.country,
-                    "days": data.get('days', []),
-                    "total_days": len(data.get('days', [])),
-                    "total_activities": sum(len(day.get('activities', [])) for day in data.get('days', []))
-                }
-                
-                Post.objects.create(
-                    author=request.user,
-                    title=f"🗺️ {itinerary.title}",
-                    content=detailed_content,
-                    countries_visited=[itinerary.country],
-                    post_type='itinerariu',
-                    travel_type='solo',  
-                    theme='cultura',  
-                    is_in_journal=True,
-                    is_private=not data.get('shareToSocial', False),  
-                    itinerary_data=itinerary_data
-                )
-            
-            return JsonResponse({
-                "message": "Itinerary created successfully",
-                "itinerary": itinerary.serializer()
-            }, status=201)
-            
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-    else:
+    if request.method != 'POST':
         return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        itinerary = Itinerary.objects.create(
+            author=request.user,
+            title=data['title'],
+            description=data.get('description', ''),
+            country=data['country'],
+            share_to_social=data.get('shareToSocial', False)
+        )
+
+        days_data = data.get('days', [])
+        for day_info in days_data:
+            day = ItineraryDay.objects.create(
+                itinerary=itinerary,
+                date=day_info.get('date'),
+                title=day_info.get('title', '')
+            )
+
+            for idx, activity in enumerate(day_info.get('activities', [])):
+                time_obj = None
+                time_str = activity.get('time')
+                if time_str:
+                    try:
+                        time_obj = datetime.strptime(time_str, '%H:%M').time()
+                    except ValueError:
+                        pass  
+
+                ItineraryActivity.objects.create(
+                    day=day,
+                    name=activity.get('name', ''),
+                    time=time_obj,
+                    location=activity.get('location', ''),
+                    notes=activity.get('notes', ''),
+                    website=activity.get('website', ''),
+                    estimated_cost=activity.get('estimatedCost', ''),
+                    category=activity.get('category', 'attraction'),
+                    order=idx
+                )
+
+        content_lines = [f"🗺️ <b>{itinerary.title}</b>\n"]
+        if itinerary.description:
+            content_lines.append(f"{itinerary.description}\n")
+        content_lines.append(f"📍 <b>Destination:</b> {itinerary.country}")
+        content_lines.append(f"📅 <b>Duration:</b> {len(days_data)} day{'s' if len(days_data) != 1 else ''}\n")
+
+        for day_info in days_data:
+            date_text = "TBD"
+            date_str = day_info.get('date')
+            if date_str:
+                try:
+                    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                    date_text = date_obj.strftime('%B %d')
+                except ValueError:
+                    date_text = date_str
+
+            day_title = day_info.get('title', '')
+            content_lines.append(f"<b>{date_text}:</b> {day_title}" if day_title else f"<b>{date_text}:</b>")
+
+            activities = day_info.get('activities', [])
+            for activity in activities[:3]:
+                time_part = f" at {activity['time']}" if activity.get('time') else ""
+                content_lines.append(f"• {activity.get('name', 'Activity')}{time_part}")
+            if len(activities) > 3:
+                content_lines.append(f"• ...and {len(activities) - 3} more activities")
+
+            content_lines.append("") 
+
+        itinerary_data = {
+            "itinerary_id": itinerary.id,
+            "title": itinerary.title,
+            "description": itinerary.description,
+            "country": itinerary.country,
+            "days": days_data,
+            "total_days": len(days_data),
+            "total_activities": sum(len(day.get('activities', [])) for day in days_data)
+        }
+
+        Post.objects.create(
+            author=request.user,
+            title=f"🗺️ {itinerary.title}",
+            content="\n".join(content_lines),
+            countries_visited=[itinerary.country],
+            post_type='itinerariu',
+            travel_type='solo',
+            theme='cultura',
+            is_in_journal=True,  
+            is_private=not itinerary.share_to_social,
+            itinerary_data=itinerary_data
+        )
+
+        return JsonResponse({
+            "message": "Itinerary created successfully",
+            "itinerary": itinerary.serializer()
+        }, status=201)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @csrf_exempt
 @login_required
 def get_user_itineraries(request):
-    """Get all itineraries for the current user"""
     if request.method == 'GET':
         try:
             itineraries = Itinerary.objects.filter(author=request.user).order_by('-created_at')
@@ -991,7 +978,6 @@ def get_user_itineraries(request):
 @csrf_exempt
 @login_required
 def get_itinerary_details(request, itinerary_id):
-    """Get details of a specific itinerary"""
     if request.method == 'GET':
         try:
             itinerary = Itinerary.objects.get(id=itinerary_id)
@@ -1014,7 +1000,6 @@ def get_itinerary_details(request, itinerary_id):
 @csrf_exempt
 @login_required
 def delete_itinerary(request, itinerary_id):
-    """Delete an itinerary"""
     if request.method == 'DELETE':
         try:
             itinerary = Itinerary.objects.get(id=itinerary_id, author=request.user)
