@@ -96,7 +96,7 @@ const Bucketlist = ({ isLogged }) => {
   const handleSaveItinerary = async (itineraryData) => {
     try {
       const response = await axios.post(
-        "https://globe-tales-backend.onrender.com/create_itinerary/",
+        CREATE_ITINERARY_ENDPOINT_URL,
         itineraryData,
         { withCredentials: true }
       );

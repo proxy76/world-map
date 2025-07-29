@@ -463,7 +463,13 @@ const RestoreModal = ({ posts, onRestore, onClose, getImageUrl, formatDate, lang
               <div className="post-info">
                 <h4>{post.title}</h4>
                 <p>{formatDate(post.created_at)}</p>
-                <p>{post.content.substring(0, 100)}...</p>
+                <p>{post.content &&
+              post.content
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map((line, index) => (
+                  <p key={index} dangerouslySetInnerHTML={{ __html: line.trim() }} />
+            ))}</p>
               </div>
               <button 
                 className="restore-btn"
